@@ -191,7 +191,7 @@
                         <a rel="author" href="${servePath}/member/${article.articleAuthorName}"
                            class="article__stats article__stats--a tooltipped tooltipped-e"
                            aria-label="${article.oId?number?number_to_datetime}">
-                            <span class="article__cnt">${article.articleAuthorName}</span>
+                            <span class="article__cnt"><#if article.articleAuthorNickName != "">${article.articleAuthorNickName}<#else>${article.articleAuthorName}</#if></span>
                             <time>${article.timeAgo}</time>
                             <#if 0 == article.articleAuthor.userUAStatus>
                                 <span id="articltVia" class="via" data-ua="${article.articleUA}"></span>
@@ -226,7 +226,7 @@
                                 <#if article.sysMetal != "[]">
                                     <span class="article__cnt">作者勋章</span>
                                     <#list article.sysMetal?eval as metal>
-                                        <img title="${metal.description}" src="https://fishpi.cn/gen?scale=0.79&txt=${metal.name}&${metal.attr}"/>
+                                        <img title="${metal.description}" src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=${metal.name}&${metal.attr}"/>
                                     </#list>
                                 </#if>
                             </div>
@@ -355,7 +355,7 @@
                                                 <a rel="nofollow"
                                                    href="${servePath}/member/${comment.commentAuthorName}"
                                                    class="ft-gray"><span
-                                                            class="ft-gray">${comment.commentAuthorName}</span></a>
+                                                            class="ft-gray"><#if comment.commentAuthorNickName != "">${comment.commentAuthorNickName} (${comment.commentAuthorName})<#else>${comment.commentAuthorName}</#if></span></a>
                                                 <span class="ft-fade">• ${comment.timeAgo}</span>
 
                                                 <#if comment.rewardedCnt gt 0>
@@ -370,7 +370,7 @@
                                                                                                data-ua="${comment.commentUA}"></span></#if>
                                             </span>
                                             &nbsp;<#list comment.sysMetal?eval as metal>
-                                                <img title="${metal.description}" src="https://fishpi.cn/gen?scale=0.79&txt=${metal.name}&${metal.attr}"/>
+                                                <img title="${metal.description}" src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=${metal.name}&${metal.attr}"/>
                                             </#list>
                                             <a class="ft-a-title fn-right tooltipped tooltipped-nw"
                                                aria-label="${goCommentLabel}"

@@ -38,6 +38,7 @@ import org.b3log.symphony.repository.ChatRoomRepository;
 import org.b3log.symphony.repository.CloudRepository;
 import org.b3log.symphony.service.*;
 import org.b3log.symphony.util.JSONs;
+import org.b3log.symphony.util.NodeUtil;
 import org.b3log.symphony.util.Sessions;
 import org.b3log.symphony.util.StatusCodes;
 import org.json.JSONArray;
@@ -100,7 +101,7 @@ public class ChatRoomBot {
         // ==! 前置参数 !==
 
         // ==? 判断是否在 Channel 中 ==?
-        boolean atChannel = false;
+        /*boolean atChannel = false;
         for (Map.Entry<WebSocketSession, JSONObject> onlineUser : ChatroomChannel.onlineUsers.entrySet()) {
             try {
                 String uName = onlineUser.getValue().optString(User.USER_NAME);
@@ -114,7 +115,7 @@ public class ChatRoomBot {
         if (!atChannel) {
             context.renderJSON(StatusCodes.ERR).renderMsg("发送失败：当前未在聊天室中，请刷新页面。");
             return false;
-        }
+        }*/
         // ==! 判断是否在 Channel 中 ==!
 
         // ==? 发弹幕频率限制 ?==
@@ -303,13 +304,32 @@ public class ChatRoomBot {
                                 }
                             }
                             StringBuilder userSessionList = new StringBuilder();
+                            userSessionList.append("<details><summary>北京一区（" + ChatroomChannel.SESSIONS.size() + "人）</summary>");
                             for (Map.Entry<String, Integer> s : sessionList.entrySet()) {
                                 userSessionList.append(s.getKey() + " " + s.getValue() + "<br>");
                             }
-                            int sessions = ChatroomChannel.SESSIONS.size();
+                            userSessionList.append("</details>");
+                            for (String key : NodeUtil.nodeNickNames.keySet()) {
+                                String nickName = NodeUtil.nodeNickNames.get(key);
+                                HashMap<String, Integer> map = NodeUtil.remoteUserPerNode.get(key);
+                                if (null == map) {
+                                    continue;
+                                }
+                                int count = 0;
+                                for (String i : map.keySet()) {
+                                    count += map.get(i);
+                                }
+                                userSessionList.append("<details><summary>" + nickName + "（" + count + "人）</summary>");
+                                for (String i : map.keySet()) {
+                                    int onlineNum = map.get(i);
+                                    userSessionList.append(i + " " + onlineNum + "<br>");
+                                }
+                                userSessionList.append("</details>");
+                            }
+                            int sessions = ChatroomChannel.SESSIONS.size() + NodeUtil.remoteUsers.length();
                             sendBotMsg("" +
                                     "当前聊天室会话数：" + sessions + "\n" +
-                                    "<details><summary>用户会话详情</summary>" + userSessionList + "</details>");
+                                    userSessionList);
                             break;
                         case "刷新缓存":
                             ChatroomChannel.sendOnlineMsg();
@@ -344,6 +364,7 @@ public class ChatRoomBot {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
+                                    NodeUtil.sendKick(disconnectUser);
                                     List<WebSocketSession> senderSessions = new ArrayList<>();
                                     for (Map.Entry<WebSocketSession, JSONObject> entry : ChatroomChannel.onlineUsers.entrySet()) {
                                         try {
@@ -367,9 +388,9 @@ public class ChatRoomBot {
                             Map<String, Long> result = ChatroomChannel.check();
                             StringBuilder stringBuilder = new StringBuilder();
                             if (result.isEmpty()) {
-                                sendBotMsg("报告！没有超过6小时未活跃的成员，一切都很和谐~");
+                                sendBotMsg("北京一区：报告！没有超过6小时未活跃的成员，一切都很和谐~");
                             } else {
-                                stringBuilder.append("报告！成功扫描超过6小时未活跃的成员，并已在通知后将他们断开连接：<br>");
+                                stringBuilder.append("北京一区：报告！成功扫描超过6小时未活跃的成员，并已将他们断开连接：<br>");
                                 stringBuilder.append("<details><summary>不活跃用户列表</summary>");
                                 for (String i : result.keySet()) {
                                     long time = result.get(i);
@@ -378,6 +399,7 @@ public class ChatRoomBot {
                                 stringBuilder.append("</details>");
                                 sendBotMsg(stringBuilder.toString());
                             }
+                            NodeUtil.sendClear();
                             break;
                         case "处罚":
                             try {
@@ -548,14 +570,15 @@ public class ChatRoomBot {
         // ==? 判定恶意发送非法红包 ?==
         try {
             JSONObject checkContent = new JSONObject(content);
-            if (checkContent.optString("msgType").equals("redPacket")) {
+            if (checkContent.optString("msgType").equals("redPacket") || checkContent.optString("msgType").equals("weather")|| checkContent.optString("msgType").equals("music")) {
                 if (RECORD_POOL_2_IN_24H.access(userName)) {
-                    sendBotMsg("监测到 @" + userName + "  伪造发送红包数据包，警告一次。");
+                    sendBotMsg("监测到 @" + userName + "  伪造发送红包/天气/音乐数据包，警告一次。");
                 } else {
-                    sendBotMsg("由于 @" + userName + "  第二次伪造发送红包数据包，现处以扣除积分 50 的处罚。");
-                    abusePoint(userId, 50, "机器人罚单-聊天室伪造发送红包数据包");
+                    sendBotMsg("由于 @" + userName + "  第二次伪造发送红包/天气/音乐数据包，现处以扣除积分 50 的处罚。");
+                    abusePoint(userId, 50, "机器人罚单-聊天室伪造发送红包/天气/音乐数据包");
                     RECORD_POOL_2_IN_24H.remove(userName);
                 }
+                return false;
             }
         } catch (Exception ignored) {
         }
@@ -605,9 +628,9 @@ public class ChatRoomBot {
                     boolean afternoon = date >= 1330 && date <= 1800;
                     // 判断是否在上午或下午时段
                     if (morning || afternoon) {
-                        // 每30秒全局锁只允许发送一条
-                        if (!RECORD_POOL_05_IN_1M.access("v")) {
-                            context.renderJSON(StatusCodes.ERR).renderMsg("现在是聊天高峰期，全局每30秒只允许发送一个猜拳红包，请稍候重试。高峰期时段为：08:30-11:30、13:30-18:00");
+                        // 每30秒每人只允许发送一条
+                        if (!RECORD_POOL_05_IN_1M.access("rps+" + userId)) {
+                            context.renderJSON(StatusCodes.ERR).renderMsg("现在是聊天高峰期，每人每30秒只允许发送一个猜拳红包，请稍候重试。高峰期时段为：08:30-11:30、13:30-18:00");
                             return false;
                         }
 
@@ -687,7 +710,7 @@ public class ChatRoomBot {
             final long time = System.currentTimeMillis();
             JSONObject msg = new JSONObject();
             msg.put(User.USER_NAME, "马库斯");
-            msg.put(UserExt.USER_AVATAR_URL, "https://pwl.stackoverflow.wiki/2022/01/robot3-89631199.png");
+            msg.put(UserExt.USER_AVATAR_URL, "https://file.fishpi.cn/2022/01/robot3-89631199.png");
             msg.put(Common.CONTENT, content);
             msg.put(Common.TIME, time);
             msg.put(UserExt.USER_NICKNAME, "RK200");

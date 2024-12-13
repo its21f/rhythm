@@ -112,7 +112,7 @@
                 <div style="margin-bottom: 3px">
                     <#if article.sysMetal != "[]">
                         <#list article.sysMetal?eval as metal>
-                            <img title="${metal.description}" src="https://fishpi.cn/gen?scale=0.79&txt=${metal.name}&${metal.attr}"/>
+                            <img title="${metal.description}" src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=${metal.name}&${metal.attr}"/>
                         </#list>
                     </#if>
                 </div>
@@ -121,7 +121,7 @@
                        title="${article.articleAuthorName}"><div class="avatar" style="background-image:url('${article.articleAuthorThumbnailURL48}')"></div></a>
                     <div class="article-params">
                         <a rel="author" href="${servePath}/member/${article.articleAuthorName}" class="ft-gray"
-                           title="${article.articleAuthorName}"><strong>${article.articleAuthorName}</strong></a>
+                           title="${article.articleAuthorName}"><strong><#if article.articleAuthorNickName != "">${article.articleAuthorNickName}<#else>${article.articleAuthorName}</#if></strong></a>
                         <span class="ft-gray">
                         <#if article.articleCity != "">
                         &nbsp;•&nbsp;
@@ -270,7 +270,7 @@
                                         <div class="fn-flex-1">
                                             <div class="fn-clear comment-info ft-smaller">
                                                 <span class="fn-left">
-                                                    <a rel="nofollow" href="${servePath}/member/${comment.commentAuthorName}" class="ft-gray"><span class="ft-gray">${comment.commentAuthorName}</span></a>
+                                                    <a rel="nofollow" href="${servePath}/member/${comment.commentAuthorName}" class="ft-gray"><span class="ft-gray"><#if comment.commentAuthorNickName != "">${comment.commentAuthorNickName} (${comment.commentAuthorName})<#else>${comment.commentAuthorName}</#if></span></a>
                                                     <span class="ft-fade">• ${comment.timeAgo}</span>
 
                                                     <#if comment.rewardedCnt gt 0>
@@ -283,7 +283,7 @@
                                                     <#if 0 == comment.commenter.userUAStatus><span class="cmt-via ft-fade" data-ua="${comment.commentUA}"></span></#if>
                                                 </span>
                                                 &nbsp;<#list comment.sysMetal?eval as metal>
-                                                <img title="${metal.description}" src="https://fishpi.cn/gen?scale=0.79&txt=${metal.name}&${metal.attr}"/>
+                                                <img title="${metal.description}" src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=${metal.name}&${metal.attr}"/>
                                                 </#list>
                                                 <a class="ft-a-title fn-right tooltipped tooltipped-nw" aria-label="${goCommentLabel}"
                                                    href="javascript:Comment.goComment('${servePath}/article/${article.oId}?p=${comment.paginationCurrentPageNum}&m=${userCommentViewMode}#${comment.oId}')"><svg><use xlink:href="#down"></use></svg></a>

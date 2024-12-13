@@ -307,20 +307,20 @@
                     <div class="metro-item" style="cursor: pointer">
                         <a class="preview" id="yesterday" onclick="yesterday()">
                             <img style="border-radius: 0" id="yesterdayImg"
-                                 src="https://pwl.stackoverflow.wiki/2021/10/coin-2-70217cc1.png"><b>领取昨日活跃奖励</b>
+                                 src="https://file.fishpi.cn/2021/10/coin-2-70217cc1.png"><b>领取昨日活跃奖励</b>
                         </a>
                     </div>
                     <div class="metro-item">
                         <a class="preview" href="${servePath}/activities">
                             <img style="border-radius: 10px"
-                                 src="https://pwl.stackoverflow.wiki/2021/10/psp-game-1a94ae64.png">
+                                 src="https://file.fishpi.cn/2021/10/psp-game-1a94ae64.png">
                             <b>摸鱼派在线游戏</b>
                         </a>
                     </div>
                     <div class="metro-item">
                         <a class="preview" href="${servePath}/shop">
                             <img style="border-radius: 0"
-                                 src="https://pwl.stackoverflow.wiki/2022/03/ss-61cf1b96.png">
+                                 src="https://file.fishpi.cn/2022/03/ss-61cf1b96.png">
                             <b>系统商店</b>
                         </a>
                     </div>
@@ -375,7 +375,7 @@
                                                 <div class="ft-smaller">
                                                     <a rel="nofollow" href="${servePath}/member/${msg.userName}">
                                                         <#if msg.userNickname?? && msg.userNickname?length gt 1>
-                                                            <span class="ft-gray">${msg.userNickname} ( ${msg.userName} )</span>
+                                                            <span class="ft-gray">${msg.userNickname} (${msg.userName})</span>
                                                         <#else>
                                                             <span class="ft-gray">${msg.userName}</span>
                                                         </#if>
@@ -385,6 +385,10 @@
                                                     <#assign text=msg.content>
                                                     <#if text?contains("\"msgType\":\"redPacket\"")>
                                                         [收到红包，请在完整版聊天室查看]
+                                                    <#elseif text?contains("\"msgType\":\"weather\"")>
+                                                        [天气卡片，请在完整版聊天室查看]
+                                                    <#elseif text?contains("\"msgType\":\"music\"")>
+                                                        [音乐卡片，请在完整版聊天室查看]
                                                     <#else>
                                                         ${text}
                                                     </#if>
@@ -506,7 +510,7 @@
                               data-csrf="${csrfToken}">${postLabel}</span>
                     </div>
                     <div class="module-panel">
-                        <ul class="module-list">
+                        <ul class="module-list active-bz-list">
                             <#list sideBreezemoons as item>
                                 <#if item_index <= 10>
                                     <li>
@@ -615,7 +619,15 @@
         </#if>
     }
 
-    ChatRoomChannel.init("${wsScheme}://${serverHost}:${serverPort}${contextPath}/chat-room-channel?type=index");
+    // Init [ChatRoom] channel
+    $.ajax({
+        url: Label.servePath + '/chat-room/node/get',
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            ChatRoomChannel.init(result.data);
+        }
+    });
 
     var chatRoomPictureStatus = "<#if 0 == chatRoomPictureStatus> blur</#if>";
 </script>
@@ -715,21 +727,21 @@
                 }
                 setTimeout(function () {
                     if (result.sum === -1) {
-                        $("#yesterday").html("<img style='border-radius: 0' src='https://pwl.stackoverflow.wiki/2021/09/embarrassed-4112bd37.png'><b>暂时没有昨日奖励可领取呦！明天再来试试吧</b>");
+                        $("#yesterday").html("<img style='border-radius: 0' src='https://file.fishpi.cn/2021/09/embarrassed-4112bd37.png'><b>暂时没有昨日奖励可领取呦！明天再来试试吧</b>");
                         Util.fadeIn(yesterdayBtn, function () {
                             setTimeout(function () {
                                 Util.fadeOut(yesterdayBtn, function () {
-                                    $("#yesterday").html('<img style="border-radius: 0" src="https://pwl.stackoverflow.wiki/2021/10/coin-2-70217cc1.png" alt="领取昨日活跃奖励"><b>领取昨日活跃奖励</b>');
+                                    $("#yesterday").html('<img style="border-radius: 0" src="https://file.fishpi.cn/2021/10/coin-2-70217cc1.png" alt="领取昨日活跃奖励"><b>领取昨日活跃奖励</b>');
                                     Util.fadeIn(yesterdayBtn);
                                 });
                             }, 2000);
                         });
                     } else {
-                        $("#yesterday").html("<img style='border-radius: 0' src='https://pwl.stackoverflow.wiki/2021/09/correct-1f5e3258.png'><b>昨日奖励已领取！积分 +" + result.sum + "</b>");
+                        $("#yesterday").html("<img style='border-radius: 0' src='https://file.fishpi.cn/2021/09/correct-1f5e3258.png'><b>昨日奖励已领取！积分 +" + result.sum + "</b>");
                         Util.fadeIn(yesterdayBtn, function () {
                             setTimeout(function () {
                                 Util.fadeOut(yesterdayBtn, function () {
-                                    $("#yesterday").html('<img style="border-radius: 0" src="https://pwl.stackoverflow.wiki/2021/10/coin-2-70217cc1.png" alt="领取昨日活跃奖励"><b>领取昨日活跃奖励</b>');
+                                    $("#yesterday").html('<img style="border-radius: 0" src="https://file.fishpi.cn/2021/10/coin-2-70217cc1.png" alt="领取昨日活跃奖励"><b>领取昨日活跃奖励</b>');
                                     Util.fadeIn(yesterdayBtn);
                                 });
                             }, 2000);

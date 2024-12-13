@@ -24,13 +24,31 @@
             摸鱼派 - 鱼油专属摸鱼社区
         </div>
         <div class="fn-flex-1">
-            <div class="fn-clear ft-smaller">
-                <div onclick="window.open('https://www.tsyvps.com/aff/HEHTPGYL')" style="text-align: center;padding: 8px 0px;color: #0f8cee;background-color: #e3f9fd;line-height: 20px;border-radius: 12px;width: 175px;margin-bottom: 15px;cursor: pointer;">
+            <div class="ft-smaller" style="display: inline-block">
+                <div onclick="window.open('https://www.tsyvps.com/')" style="text-align: center;padding: 8px 0px;color: #0f8cee;background-color: #e3f9fd;line-height: 20px;border-radius: 12px;width: 175px;margin-bottom: 15px;cursor: pointer;">
+                    <div>
+                        <img style="vertical-align:-3px;width: 14px;height: 14px;" src="https://file.fishpi.cn/2024/11/lanyiyun-e749f98f.png">&nbsp;&nbsp;<span style="font-weight: 600">CDN由蓝易云支持</span><br>
+                        <span style="color: #323232;">性价比主机，高防 CDN</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: inline-block; width: 5px"></div>
+            <div class="ft-smaller" style="display: inline-block">
+                <div onclick="window.open('https://www.asiayun.com/')" style="text-align: center;padding: 8px 0px;color: #ff6000;background-color: #ffefc3c9;line-height: 20px;border-radius: 12px;width: 175px;margin-bottom: 15px;cursor: pointer;">
+                    <div>
+                        <img style="vertical-align:-3px;width: 14px;height: 14px;" src="https://file.fishpi.cn/2024/11/asiayun-d4fdb0f6.png">&nbsp;&nbsp;<span style="font-weight: 600">云集群由亚洲云支持</span><br>
+                        <span style="color: #323232;">亚洲云，安全可靠的云服务</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: inline-block; width: 5px"></div>
+            <div class="ft-smaller" style="display: inline-block">
+                <div onclick="window.open('https://zhuayuya.com/')" style="text-align: center;padding: 8px 0px;color: #39b362;background-color: #d9ffcfc9;line-height: 20px;border-radius: 12px;width: 175px;margin-bottom: 15px;cursor: pointer;">
                     <div>
                         <svg style="vertical-align: -2px;">
-                            <use xlink:href="#shield"></use>
-                        </svg>&nbsp;&nbsp;防火墙由蓝易云支持<br>
-                        <span style="color: #323232;">性价比主机，高防 CDN</span>
+                            <use xlink:href="#zyy"></use>
+                        </svg>&nbsp;&nbsp;<span style="font-weight: 600">抓鱼鸭 - 新标签页</span><br>
+                        <span style="color: #323232;">是一个有趣的新标签页</span>
                     </div>
                 </div>
             </div>
@@ -40,18 +58,12 @@
                 &nbsp;｜&nbsp;
                 <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.lundao.pub/">论道社区</a>
                 &nbsp;｜&nbsp;
-                <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.tsyvps.com/aff/HEHTPGYL">蓝易云</a>
-                &nbsp;｜&nbsp;
                 <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://bbs.tampermonkey.net.cn/">油猴中文网</a>
             </div>
             <div class="fn-clear ft-smaller">
                 <div style="margin-top: 5px">探索</div>
                 <div>
-                    <a href="https://github.com/csfwff/rhythm" target="_blank">Rhythm 社区引擎</a>
-                    &nbsp;|&nbsp;
-                    技术支持 <a href="mailto:chenhui@admin.fishpi.cn" target="_blank">chenhui@admin.fishpi.cn</a>
-                    &nbsp;|&nbsp;
-                    <a href="https://fishpi.cn/article/1655691776330" target="_blank"><svg style="vertical-align: -2px;"><use xlink:href="#ic-wechat"></use></svg> 官方微信群</a>
+                    <a href="https://github.com/orgs/FishPiOffical/repositories" target="_blank">摸鱼派开源项目</a>
                     &nbsp;|&nbsp;
                     <a href="${servePath}/download">摸鱼派客户端</a>&nbsp;&nbsp;
                     <span>

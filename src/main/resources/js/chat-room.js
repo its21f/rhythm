@@ -40,7 +40,13 @@ var DarwColorPicker = null;
 var redPacketMap = new Map();
 var catchUserParam = window.localStorage['robot_list'] ? window.localStorage['robot_list'] : '';
 var catchUsers = catchUserParam.length > 0 ? catchUserParam.split(',') : [];
-var catchWordFlag = window.localStorage['catch-word-flag'] == true || window.localStorage['catch-word-flag'] == 'true'  ? true : false;
+var catchWordFlag;
+if (window.localStorage['catch-word-flag']) {
+    catchWordFlag = window.localStorage['catch-word-flag'] == true || window.localStorage['catch-word-flag'] == 'true' ? true : false;
+} else {
+    window.localStorage['catch-word-flag'] = true;
+    catchWordFlag = true;
+}
 $('#catch-word').prop('checked', catchWordFlag);
 var ChatRoom = {
     init: function () {
@@ -61,7 +67,6 @@ var ChatRoom = {
         if ($('#chatContent').length === 0) {
             return false
         }
-
         ChatRoom.editor = Util.newVditor({
             id: 'chatContent',
             cache: true,
@@ -125,6 +130,11 @@ var ChatRoom = {
         //   window.open($(this).attr('src'));
         // });
 
+        // 加载备注
+        let userRemarkList = localStorage.getItem('user_remark');
+        if (userRemarkList) {
+            ChatRoom.remarkList = JSON.parse(userRemarkList);
+        }
         // 表情包初始化
         // 加载表情
         ChatRoom.listenUploadEmojis();
@@ -144,7 +154,7 @@ var ChatRoom = {
                 }, navigator.userAgent.match(/(phone|pad|pod|ios|Android|Mobile|BlackBerry|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian)/i) !== null ? 0 : 600)
             }
             $("#emojiBtn").hover(function (e) {
-                $('#emojiList').css('top','290px')
+                $('#emojiList').css('top', '290px')
                 if (timeoutId !== 0) {
                     clearTimeout(timeoutId)
                     timeoutId = 0
@@ -466,10 +476,10 @@ var ChatRoom = {
 
         // 加载挂件
         ChatRoom.loadAvatarPendant();
-        // 加载小冰游戏
-        ChatRoom.loadXiaoIceGame();
         // 加载用户捕获
         ChatRoom.initCatchUser();
+        // 加载播放器
+        //ChatRoom.playSound.init();
         // 加载画图
         ChatRoom.charInit('paintCanvas');
         // 监听弹幕
@@ -481,7 +491,7 @@ var ChatRoom = {
                 $("#barragerContent").slideUp(1000);
             }
         });
-        $("#barragerInput").keydown(function(event) {
+        $("#barragerInput").keydown(function (event) {
             if (event.keyCode == 13) {
                 ChatRoom.sendBarrager();
             }
@@ -498,14 +508,16 @@ var ChatRoom = {
         BarragerColorPicker = new XNColorPicker({
             color: "#ffffff",
             selector: "#selectBarragerColor",
-            showhistorycolor:false,
-            colorTypeOption:'single',
-            autoConfirm:true,
-            onError:function(e){},
-            onCancel:function(color){},
-            onChange:function(color){
+            showhistorycolor: false,
+            colorTypeOption: 'single',
+            autoConfirm: true,
+            onError: function (e) {
             },
-            onConfirm:function(color){
+            onCancel: function (color) {
+            },
+            onChange: function (color) {
+            },
+            onConfirm: function (color) {
             }
         })
         // 监听弹幕颜色
@@ -514,19 +526,21 @@ var ChatRoom = {
         // });
         // 监听修改颜色
         // $('#selectColor').cxColor();
-        DarwColorPicker =  new XNColorPicker({
+        DarwColorPicker = new XNColorPicker({
             color: "#000000",
             selector: "#selectColor",
-            showhistorycolor:false,
-            colorTypeOption:'single',
-            autoConfirm:true,
-            onError:function(e){},
-            onCancel:function(color){},
-            onChange:function(color){
+            showhistorycolor: false,
+            colorTypeOption: 'single',
+            autoConfirm: true,
+            onError: function (e) {
+            },
+            onCancel: function (color) {
+            },
+            onChange: function (color) {
                 // console.log("change",color.color.rgba)
                 ChatRoom.changeColor(color.color.rgba);
             },
-            onConfirm:function(color){
+            onConfirm: function (color) {
                 // console.log("change",color.color.rgba)
                 ChatRoom.changeColor(color.color.rgba);
             }
@@ -613,7 +627,7 @@ var ChatRoom = {
                 chatLength[i].remove();
             }
         }
-        setTimeout(function() {
+        setTimeout(function () {
             $('#chats').css("display", "block");
             NProgress.done();
         }, 150);
@@ -701,7 +715,7 @@ border-bottom: none;
             <span class="ft__fade ft__smaller"><a onclick="Util.closeAlert(this);ChatRoom.editor.setValue('合议破戒 ` + userName + `');ChatRoom.send();$(window).scrollTop(0);" style="cursor: pointer; font-weight: bold;" href="javascript:void(0);">爲他求情</a></span>
         </div>
         <div class="fn__flex-center" style="color: #ff1919; font-weight: bold">
-        將於 ` + date.getFullYear() + `年` + (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + `月` + date.getDate() + `日 ` + date.getHours() + `時` + date.getMinutes() + `分 釋放
+        將於 ` + date.getFullYear() + `年` + (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + `月` + date.getDate() + `日 ` + date.getHours() + `時` + date.getMinutes() + `分 釋放
         </div>
   
     </li>
@@ -1319,7 +1333,7 @@ border-bottom: none;
     shileds: ',',
     shiled: function (uName) {
         if (confirm("友好的交流是沟通的基础, 确定要屏蔽 Ta 吗？\n本次屏蔽仅针对当前页面有效, 刷新后需重新屏蔽！")) {
-            ChatRoom.shileds += uName +",";
+            ChatRoom.shileds += uName + ",";
         }
     },
     /**
@@ -1358,6 +1372,21 @@ border-bottom: none;
         ChatRoom.editor.setValue(md);
         ChatRoom.send();
         $(window).scrollTop(0);
+    },
+    /**
+     * 屏蔽用户发言，收纳到小机器人里
+     * @param userName
+     */
+    block: function (userName) {
+        var robotList = window.localStorage['robot_list'] ? window.localStorage['robot_list'] : '';
+        if (robotList && robotList.length > 0) {
+            robotList = robotList + "," + userName;
+        } else {
+            robotList = userName;
+        }
+        window.localStorage['robot_list'] = robotList;
+        catchUsers = robotList.split(",");
+        Util.notice("success", 10000, "屏蔽 " + userName + " 成功，您可以在左侧小机器人图标中找到 TA 发送的消息，也可以在 “修改捕获用户” 中解除对 TA 的屏蔽。");
     },
     /**
      * 一键举报
@@ -1407,6 +1436,43 @@ border-bottom: none;
             ChatRoom.editor.insertValue(`\n##### 引用 @${userName} [↩](${Label.servePath}/cr#chatroom${id} "跳转至原消息")  \n> ${md}</span>\n`, !1);
         }
         $(window).scrollTop(0);
+    },
+    /**
+     * 给用户添加备注
+     */
+    remarkList: {},
+    remark: function (userId, userName) {
+        let userRemark = prompt(`要给 ${userName} 备注什么呢?`);
+        if (userRemark === null) return;
+        if (userRemark === '') {
+            delete ChatRoom.remarkList[userId];
+        } else {
+            ChatRoom.remarkList[userId] = userRemark;
+        }
+        localStorage.setItem('user_remark', JSON.stringify(ChatRoom.remarkList));
+    },
+    /**
+     * 处理消息
+     * 处理图片压缩 处理特殊颜色文字
+     * */
+    filterContent: function (content, isAdmin) {
+        let dom = document.createElement("div");
+        dom.innerHTML = content;
+        let imgList = dom.querySelectorAll('img');
+        imgList.forEach(ele => {
+            ele.setAttribute('originalsrc', ele.src);
+            if (ele.src.startsWith('https://file.fishpi.cn')) {
+                ele.src = ele.src.split('?')[0] + '?imageView2/0/w/150/h/150/interlace/0/q/90'
+            }
+        })
+        if (isAdmin) {
+            let textList = dom.querySelectorAll('p,h1,h2,h3,h4,h5,h6,h7');
+            let reg = /\[color=([^\]]+)\](.*?)\[\/color\]/g;
+            textList.forEach(ele => {
+                ele.innerHTML = ele.innerText.replaceAll(reg, '<span style="color:$1">$2</span>')
+            })
+        }
+        return dom.innerHTML;
     },
     /**
      * 渲染抢到红包的人的列表
@@ -1577,7 +1643,7 @@ border-bottom: none;
     /**
      * 拆开红包
      */
-    unpackRedPacket: function (oId,gesture) {
+    unpackRedPacket: function (oId, gesture) {
         if (undefined === gesture || null === gesture) {
             gesture = "0"
         }
@@ -1626,7 +1692,7 @@ ${result.info.msg}
                     ChatRoom.renderRedPacket(result.who, result.info.count, result.info.got, result.recivers, result.diceRet, result.info.userName)
                     if (result.info.count === result.info.got) {
                         $("#chatroom" + oId).find(".hongbao__item").css("opacity", ".36").attr('onclick', "ChatRoom.unpackRedPacket(" + oId + ")");
-                        if(!$("#chatroom" + oId).find(".hongbao__item").hasClass('opened')){
+                        if (!$("#chatroom" + oId).find(".hongbao__item").hasClass('opened')) {
                             $("#chatroom" + oId).find(".hongbao__item").addClass('opened')
                         }
                         if (result.dice === true) {
@@ -1655,7 +1721,7 @@ ${result.info.msg}
      * 渲染聊天室消息
      */
     renderMsg: function (data, more) {
-        if (ChatRoom.shileds.indexOf(data.userName) > 0){
+        if (ChatRoom.shileds.indexOf(data.userName) > 0) {
             // 被屏蔽了,
             return;
         }
@@ -1664,14 +1730,18 @@ ${result.info.msg}
         let newContent = data.content;
         let newMd = data.md ? data.md : '';
         let robotAvatar = data.userAvatarURL;
-        if ((!more) && catchUsers.includes(userName) && newContent.indexOf("\"msgType\":\"redPacket\"") == -1) {
-            let robotDom = '<div class="robot-msg-item"><div class="avatar" style="background-image: url(' + robotAvatar + ')"></div><div class="robot-msg-content"><div class="robot-username"><p>'+userName+'</p></div> ' + newContent + ' <div class="fn__right" style="margin-top: 5px; font-size: 10px;">'+data.time+'</div></div></div>';
+        // 看看是否有备注
+        let remark = ChatRoom.remarkList[data.userOId];
+        if ((!more) && catchUsers.includes(userName) && newContent.indexOf("\"msgType\":\"redPacket\"") == -1 && newContent.indexOf("\"msgType\":\"music\"") == -1 && newContent.indexOf("\"msgType\":\"weather\"") == -1) {
+            let robotDom = '<div class="robot-msg-item"><div class="avatar" style="background-image: url(' + robotAvatar + ')"></div><div class="robot-msg-content"><div class="robot-username"><p>' + userName + '</p></div> ' + newContent + ' <div class="fn__right" style="margin-top: 5px; font-size: 10px;">' + data.time + '</div></div></div>';
             ChatRoom.addRobotMsg(robotDom);
         } else if ((!more) && $('#catch-word').prop('checked') && newContent.indexOf("\"msgType\":\"redPacket\"") == -1 && (newMd.startsWith("鸽 ") || newMd.startsWith("小冰 ") || newMd.startsWith("凌 ") || newMd.startsWith("ida "))) {
-            let robotDom = '<div class="robot-msg-item"><div class="avatar" style="background-image: url(' + robotAvatar + ')"></div><div class="robot-msg-content"><div class="robot-username"><p>'+userName+'</p></div> ' + newContent + ' <div class="fn__right" style="margin-top: 5px; font-size: 10px;">'+data.time+'</div></div></div>';
+            let robotDom = '<div class="robot-msg-item"><div class="avatar" style="background-image: url(' + robotAvatar + ')"></div><div class="robot-msg-content"><div class="robot-username"><p>' + userName + '</p></div> ' + newContent + ' <div class="fn__right" style="margin-top: 5px; font-size: 10px;">' + data.time + '</div></div></div>';
             ChatRoom.addRobotMsg(robotDom);
         } else {
             let isRedPacket = false;
+            let isWeather = false;
+            let isMusic = false;
             let isPlusOne = Label.latestMessage === data.md;
             try {
                 let msgJSON = $.parseJSON(data.content.replace("<p>", "").replace("</p>", ""));
@@ -1733,13 +1803,13 @@ ${result.info.msg}
                             '    </div>\n' +
                             '</div>';
                     } else {
-                        if(msgJSON.type === 'rockPaperScissors' && msgJSON.senderId != Label.currentUserId){
+                        if (msgJSON.type === 'rockPaperScissors' && msgJSON.senderId != Label.currentUserId) {
                             data.content = '' +
                                 '<div class="hongbao__item fn__flex-inline" >\n' +
-                                '    <div class="hongbao__finger_guessing">\n'+
-                                '        <div class="hongbao__finger_guessing_icon" onclick="event.stopPropagation();Util.clearAlert();ChatRoom.unpackRedPacket('+ data.oId +',\'0\');"></div>\n' +
-                                '        <div class="hongbao__finger_guessing_icon" onclick="event.stopPropagation();Util.clearAlert();ChatRoom.unpackRedPacket('+ data.oId +',\'1\');"></div>\n' +
-                                '        <div class="hongbao__finger_guessing_icon" onclick="event.stopPropagation();Util.clearAlert();ChatRoom.unpackRedPacket('+ data.oId +',\'2\');"></div>\n' +
+                                '    <div class="hongbao__finger_guessing">\n' +
+                                '        <div class="hongbao__finger_guessing_icon" onclick="event.stopPropagation();Util.clearAlert();ChatRoom.unpackRedPacket(' + data.oId + ',\'0\');"></div>\n' +
+                                '        <div class="hongbao__finger_guessing_icon" onclick="event.stopPropagation();Util.clearAlert();ChatRoom.unpackRedPacket(' + data.oId + ',\'1\');"></div>\n' +
+                                '        <div class="hongbao__finger_guessing_icon" onclick="event.stopPropagation();Util.clearAlert();ChatRoom.unpackRedPacket(' + data.oId + ',\'2\');"></div>\n' +
                                 '    </div>\n' +
                                 '    <svg class="ft__red hongbao__icon">\n' +
                                 '        <use xlink:href="#redPacketIcon"></use>\n' +
@@ -1766,11 +1836,26 @@ ${result.info.msg}
                                 '</div>';
                         }
                     }
+                } else if (msgJSON.msgType === "weather") {
+                    isWeather = true;
+                    data.content = '<div id="weather_' + data.oId + '" style="width: 300px;height:280px;" data-date="' + msgJSON.date + '" data-code="' + msgJSON.weatherCode + '" data-max="' + msgJSON.max + '" data-min="' + msgJSON.min + '" data-t="' + msgJSON.t + '" data-st="' + msgJSON.st + '"></div>';
+                } else if (msgJSON.msgType === 'music') {
+                    isMusic = true;
+                    data.content = '<div class="music-player">' +
+                        '<img class="music-player-img" src="' + (msgJSON.coverURL === "" ? Label.servePath + "/images/music/cat.gif" : msgJSON.coverURL) + '" />' +
+                        '<div class="music-player-box"><div class="music-player-title">' + msgJSON.title + '</div>' +
+                        '<div class="music-player-controller"  data-source="' + msgJSON.source + '" data-cover="' + msgJSON.coverURL +
+                        '" data-title="' + msgJSON.title + '" data-from="' + msgJSON.from + '">' +
+                        '<span onclick="ChatRoom.playSound.add(this)">加入列表</span>' +
+                        ' | ' +
+                        '<span onclick="ChatRoom.playSound.play(this)">立即播放</span>' +
+                        '</div></div>' +
+                        '</div>'
                 }
             } catch (err) {
             }
             let meTag1 = "";
-            let meTag2 = "<a onclick=\"ChatRoom.shiled('" + data.userName + "')\" class=\"item\" style='color: red'>屏蔽Ta</a>\n";
+            let meTag2 = "";
             if (data.userNickname !== undefined && data.userNickname !== "") {
                 data.userNickname = data.userNickname + " (" + data.userName + ")"
             } else {
@@ -1807,6 +1892,7 @@ ${result.info.msg}
                 }
             } catch (err) {
             }
+            let isAdmin = [""].includes(data.userOId.toString());
             let newHTML = '<div class="fn-none">';
             newHTML += '<div id="chatroom' + data.oId + '" class="fn__flex chats__item' + meTag1 + '">\n' +
                 '    <a href="/member/' + data.userName + '" style="height: 38px">\n' +
@@ -1818,7 +1904,7 @@ ${result.info.msg}
             // let display = Label.currentUser === data.userName && !isPlusOne ? 'display: none;' : ''
             let display = '';
             newHTML += '<div id="userName" class="ft__fade ft__smaller" style="' + display + 'padding-bottom: 3px;border-bottom: 1px solid #eee">\n' +
-                '    <span class="ft-gray">' + data.userNickname + '</span>&nbsp;\n';
+                '    <span class="' + (isAdmin ? "ft-admin-user" : "ft-gray") + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n';
             if (data.sysMetal !== undefined && data.sysMetal !== "") {
                 let list = JSON.parse(data.sysMetal).list;
                 if (list !== undefined) {
@@ -1831,7 +1917,7 @@ ${result.info.msg}
             newHTML += '</div>';
 
             newHTML += '        <div class="vditor-reset ft__smaller ' + Label.chatRoomPictureStatus + '" style="margin-top: 3px">\n' +
-                '            ' + data.content + '\n' +
+                '            ' + ChatRoom.filterContent(data.content ,isAdmin) + '\n' +
                 '        </div>\n' +
                 '        <div class="ft__smaller ft__fade fn__right date-bar">\n' +
                 '            ' + data.time + '\n' +
@@ -1961,10 +2047,16 @@ ${result.info.msg}
                             '</span>';
                         newHTML += '<span class="fn__space5"></span>\n';
                         break;
+                    case 'Harmony':
+                        newHTML += '<span class="tooltipped tooltipped-n" aria-label="' + client + ' ' + version + '">' +
+                            '<svg style="vertical-align: -3px;"><use xlink:href="#ic-harmony"></use></svg>' +
+                            '</span>';
+                        newHTML += '<span class="fn__space5"></span>\n';
+                        break;
                 }
             }
             // === 客户端标识
-            if (!isRedPacket) {
+            if (!isRedPacket && !isWeather && !isMusic) {
                 newHTML += '                <details class="details action__item fn__flex-center">\n' +
                     '                    <summary>\n' +
                     '                        ···\n' +
@@ -1973,6 +2065,8 @@ ${result.info.msg}
                     '                        <a onclick=\"ChatRoom.at(\'' + data.userName + '\', \'' + data.oId + '\', true)\" class="item">@' + data.userName + '</a>\n' +
                     '                        <a onclick=\"ChatRoom.at(\'' + data.userName + '\', \'' + data.oId + '\', false)\" class="item">引用</a>\n' +
                     '                        <a onclick=\"ChatRoom.repeat(\'' + data.oId + '\')\" class="item">复读机</a>\n' +
+                    '                        <a onclick=\"ChatRoom.remark(\'' + data.userOId + '\', \'' + data.userName + '\')\" class="item">备注</a>\n' +
+                    '                        <a onclick=\"ChatRoom.block(\'' + data.userName + '\')\" class="item">屏蔽该用户发言</a>\n' +
                     '                        <a onclick=\"ChatRoom.report(\'' + data.oId + '\')\" class="item"><svg><use xlink:href="#icon-report"></use></svg> 一键举报</a>\n' +
                     meTag2 +
                     '                    </details-menu>\n' +
@@ -2042,6 +2136,449 @@ ${result.info.msg}
                 $fn.addClass("latest");
                 $fn.removeClass("fn-none");
             }
+            if (isWeather) {
+                ChatRoom.initNewWeather(data.oId);
+            }
+        }
+    },
+    /**
+     * 天气卡片渲染
+     */
+    initNewWeather: function (oId) {
+        let chartDom = document.getElementById('weather_' + oId);
+        let myChart = echarts.init(chartDom, null, {
+            renderer: 'svg'
+        });
+        let option;
+        let CodeMap = {
+            CLEAR_DAY: "晴",
+            CLEAR_NIGHT: "晴",
+            PARTLY_CLOUDY_DAY: "多云 ",
+            PARTLY_CLOUDY_NIGHT: "多云",
+            CLOUDY: "阴",
+            LIGHT_HAZE: "轻度雾霾",
+            MODERATE_HAZE: "中度雾霾",
+            HEAVY_HAZE: "重度雾霾",
+            LIGHT_RAIN: "小雨",
+            MODERATE_RAIN: "中雨",
+            HEAVY_RAIN: "大雨",
+            STORM_RAIN: "暴雨",
+            FOG: "雾",
+            LIGHT_SNOW: "小雪",
+            MODERATE_SNOW: "中雪",
+            HEAVY_SNOW: "大雪",
+            STORM_SNOW: "暴雪",
+            DUST: "浮尘",
+            SAND: "沙尘",
+            WIND: "大风",
+        }
+        let searchObj = {}
+
+        searchObj.date = chartDom.dataset.date.split(",");
+        searchObj.max = chartDom.dataset.max.split(",");
+        searchObj.min = chartDom.dataset.min.split(",");
+        searchObj.weatherCode = chartDom.dataset.code.split(",");
+        searchObj.weatherName = [];
+        searchObj.t = chartDom.dataset.t;
+        searchObj.st = chartDom.dataset.st;
+        for (var i = 0; i < searchObj.weatherCode.length; i++) {
+            searchObj.weatherName.push(CodeMap[searchObj.weatherCode[i]])
+        }
+        option = {
+            title: {
+                text: searchObj.t,
+                subtext: searchObj.st,
+                left: "center",
+                top: "top",
+                textStyle: {
+                    fontSize: 24
+                },
+                subtextStyle: {
+                    fontSize: 14
+                }
+            },
+            grid: {
+                show: true,
+                backgroundColor: 'transparent',
+                opacity: 0.3,
+                borderWidth: '0',
+                top: '200',
+                bottom: '50'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                show: false
+            },
+            xAxis: [
+                // 日期
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    position: 'top',
+                    offset: 100,
+                    zlevel: 100,
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        formatter: ['{a|{value}}'].join('\n'),
+                        rich: {
+                            a: {
+                                fontSize: 14
+                            }
+                        }
+                    },
+                    nameTextStyle: {},
+                    data: searchObj.date
+                },
+                // 天气图标
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    position: 'top',
+                    offset: 20,
+                    zlevel: 100,
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        interval: 0,
+                        formatter: function (value, index) {
+                            return '{' + index + '| }\n{b|' + value + '}';
+                        },
+                        rich: {
+                            0: {
+                                backgroundColor: {
+                                    image: Label.servePath + `/images/weather/svg/${searchObj.weatherCode[0]}.svg`
+                                },
+                                height: 40,
+                                width: 40
+                            },
+                            1: {
+                                backgroundColor: {
+                                    image: Label.servePath + `/images/weather/svg/${searchObj.weatherCode[1]}.svg`
+                                },
+                                height: 40,
+                                width: 40
+                            },
+                            2: {
+                                backgroundColor: {
+                                    image: Label.servePath + `/images/weather/svg/${searchObj.weatherCode[2]}.svg`
+                                },
+                                height: 40,
+                                width: 40
+                            },
+                            3: {
+                                backgroundColor: {
+                                    image: Label.servePath + `/images/weather/svg/${searchObj.weatherCode[3]}.svg`
+                                },
+                                height: 40,
+                                width: 40
+                            },
+                            4: {
+                                backgroundColor: {
+                                    image: Label.servePath + `/images/weather/svg/${searchObj.weatherCode[4]}.svg`
+                                },
+                                height: 40,
+                                width: 40
+                            },
+                            b: {
+                                fontSize: 12,
+                                lineHeight: 30,
+                                height: 20
+                            }
+                        }
+                    },
+                    nameTextStyle: {
+                        fontWeight: 'bold',
+                        fontSize: 19
+                    },
+                    data: searchObj.weatherName
+                }
+            ],
+            yAxis: {
+                type: 'value',
+                show: false,
+                axisLabel: {
+                    formatter: '{value} °C',
+                    color: 'white'
+                }
+            },
+            series: [{
+                name: '最高气温',
+                type: 'line',
+                data: searchObj.max,
+                symbol: 'emptyCircle',
+                symbolSize: 10,
+                showSymbol: true,
+                smooth: true,
+                itemStyle: {
+                    normal: {
+                        color: '#C95843'
+                    }
+                },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: '{c} °C'
+                },
+                lineStyle: {
+                    width: 1
+                },
+                areaStyle: {
+                    opacity: 1,
+                    color: 'transparent'
+                }
+            }, {
+                name: '最低气温',
+                type: 'line',
+                data: searchObj.min,
+                symbol: 'emptyCircle',
+                symbolSize: 10,
+                showSymbol: true,
+                smooth: true,
+                itemStyle: {
+                    normal: {
+                        color: 'blue'
+                    }
+                },
+                label: {
+                    show: true,
+                    position: 'bottom',
+                    formatter: '{c} °C'
+                },
+                lineStyle: {
+                    width: 1
+                },
+                areaStyle: {
+                    opacity: 1,
+                    color: 'transparent'
+                }
+            }]
+        };
+        option && myChart.setOption(option);
+    },
+    /**
+     * 音乐卡片
+     * [list] 播放列表
+     * [mode] 播放方式 0 列表循环 1 随机播放
+     * [playing] 当前是否在播放
+     * [isShow] 是否显示播放器
+     * [index] 当前播放的下标
+     * */
+    playSound: {
+        list: [],
+        mode: 0,
+        playing: false,
+        isShow: false,
+        index: 0,
+        ele: null,
+        timer: null,
+        isShowList: false,
+        isSHowVoice: false,
+        init() {
+            let radioEle = document.querySelector('#music-core-item');
+            let playIcon = document.querySelector('.music-play-icon');
+            let playBox = document.querySelector('.music-box');
+            let currentEle = document.querySelector('.music-current');
+            let durationEle = document.querySelector('.music-duration');
+            let titleEle = document.querySelector('.music-title');
+            let coverEle = document.querySelector('.music-img-item');
+            this.ele = radioEle;
+            radioEle.addEventListener('ended', () => {
+                // console.log('播放完成');
+                this.playing = false;
+                clearInterval(this.timer);
+                playIcon.src = Label.servePath + '/images/music/circle_play.png';
+                playBox.classList.remove('playing');
+                this.autoNext();
+            });
+            radioEle.addEventListener('play', () => {
+                // console.log('播放');
+                playIcon.src = Label.servePath + '/images/music/circle_pause.png';
+                playBox.classList.add('playing');
+                this.timer = setInterval(() => {
+                    currentEle.innerHTML = this.secondsToTime(this.ele.currentTime);
+                });
+            });
+            radioEle.addEventListener('pause', () => {
+                // console.log('暂停');
+                clearInterval(this.timer);
+                playIcon.src = Label.servePath + '/images/music/circle_play.png';
+                playBox.classList.remove('playing');
+            });
+            radioEle.addEventListener('canplay', () => {
+                // console.log('加载完成');
+                currentEle.innerHTML = this.secondsToTime(this.ele.currentTime);
+                durationEle.innerHTML = this.secondsToTime(this.ele.duration);
+                titleEle.innerHTML = this.list[this.index].title;
+                let cover = this.list[this.index].cover;
+                coverEle.src = cover === '' ? Label.servePath + '/images/music/cat.gif' : cover;
+            });
+        },
+        secondsToTime(time) {
+            time = parseInt(time);
+            let mm = 0, ss = 0;
+            if (time > 59) {
+                mm = Math.floor(time / 60);
+                ss = time % 60;
+                return (mm > 9 ? mm : '0' + mm) + ":" + (ss > 9 ? ss : '0' + ss);
+            } else {
+                ss = time;
+                return "00:" + (ss > 9 ? ss : '0' + ss);
+            }
+        },
+        toggleMode() {
+            let modeIcon = document.querySelector('.music-mode-icon');
+            if (this.mode === 0) {
+                this.mode = 1;
+                modeIcon.src = Label.servePath + '/images/music/shuffle.png';
+                modeIcon.setAttribute('alt', '顺序播放');
+            } else {
+                this.mode = 0;
+                modeIcon.src = Label.servePath + '/images/music/repeat.png';
+                modeIcon.setAttribute('alt', '随机播放');
+            }
+        },
+        add(e, showToast = true) {
+            let music = e.parentElement.dataset;
+            if (music.source.startsWith('http://music.163.com/song') || music.source.startsWith('https://music.163.com/song')) {
+                let sourceEle = music.source.split('=');
+                music.source = sourceEle[sourceEle.length - 1];
+            }
+            let idx = this.list.findIndex(e => e.source === music.source);
+            if (idx !== -1) {
+                this.index = idx;
+                return;
+            }
+            this.list.push(music);
+            this.renderList();
+            showToast && Util.notice("success", 2000, "已加入播放列表。");
+        },
+        remove(idx) {
+            this.list.splice(idx, 1);
+            this.renderList();
+            Util.notice("success", 2000, "已移出播放列表。");
+        },
+        renderList() {
+            let listEle = document.querySelector('.music-list-box');
+            let list = "";
+            for (let i = 0; i < this.list.length; i++) {
+                let item = this.list[i];
+                list += '<div class="music-list-item">' +
+                    '        <img src="' + item.cover + '" alt="">' +
+                    '        <div class="music-list-title">' + item.title + '</div>' +
+                    '        <div class="music-list-controller">' +
+                    '            <span style="color: #198cff" data-i="' + i + '" onclick="ChatRoom.playSound.playIndex(' + i + ')">播放</span>' +
+                    '            <span style="color: red" data-i="' + i + '" onclick="ChatRoom.playSound.remove(' + i + ')">移除</span>' +
+                    '        </div>' +
+                    '    </div>'
+            }
+            listEle.innerHTML = list;
+        },
+        next() {
+            if (this.list.length === 0) return;
+            this.index += 1;
+            if (this.index >= this.list.length) {
+                this.index = 0;
+            }
+            this.playIndex(this.index);
+        },
+        prev() {
+            if (this.list.length === 0) return;
+            this.index -= 1;
+            if (this.index < 0) {
+                this.index = this.list.length - 1;
+            }
+            this.playIndex(this.index);
+        },
+        play(e) {
+            let music = e.parentElement.dataset;
+            this.add(e, false);
+            if (music.source.startsWith('http://music.163.com/song') || music.source.startsWith('https://music.163.com/song')) {
+                let sourceEle = music.source.split('=');
+                music.source = sourceEle[sourceEle.length - 1];
+            }
+            //this.ele.src = music.source;
+            let iframeBox = document.querySelector('.music-detail');
+            iframeBox.innerHTML = '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="100%" height=86 src="//music.163.com/outchain/player?type=2&id=' + music.source + '&auto=1&height=66"></iframe>';
+            this.playing = false;
+            this.togglePlay();
+            !this.isShow && this.show();
+        },
+        playIndex(idx) {
+            //this.ele.src = this.list[idx].source;
+            let iframeBox = document.querySelector('.music-detail');
+            iframeBox.innerHTML = '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="100%" height=86 src="//music.163.com/outchain/player?type=2&id=' + this.list[idx].source + '&auto=1&height=66"></iframe>';
+            this.playing = false;
+            this.index = idx;
+            this.togglePlay();
+        },
+        autoNext() {
+            if (this.mode === 0) {
+                this.next();
+            } else {
+                this.playIndex(Math.floor(Math.random() * this.list.length));
+            }
+        },
+        togglePlay() {
+            this.playing = !this.playing;
+            // if(this.playing){
+            //     this.ele.play();
+            // }else{
+            //     this.ele.pause();
+            // }
+        },
+        hide() {
+            this.isShow = false;
+            let playEle = document.querySelector('#musicBox');
+            let closeEle = document.querySelector('.music-close-icon');
+            closeEle.src = Label.servePath + '/images/music/arrow_up.png';
+            playEle.classList.remove('show');
+            this.isShowList && this.toggleList();
+        },
+        show() {
+            this.isShow = true;
+            let playEle = document.querySelector('#musicBox');
+            let closeEle = document.querySelector('.music-close-icon');
+            closeEle.src = Label.servePath + '/images/music/arrow_down.png';
+            playEle.classList.add('show');
+        },
+        toggleShow() {
+            this.isShow ? this.hide() : this.show();
+        },
+        toggleList() {
+            let listEle = document.querySelector('.music-list-box');
+            this.isShowList = !this.isShowList;
+            if (this.isShowList) {
+                listEle.classList.add('show');
+            } else {
+                listEle.classList.remove('show');
+            }
+        },
+        changeVoice(voice) {
+            // console.log(voice.value);
+            let volume = voice.value;
+            let volumeEle = document.querySelector('.music-voice-icon');
+            if (volume > 80) {
+                volumeEle.src = Label.servePath + '/images/music/volume_3.png';
+            } else if (volume > 30) {
+                volumeEle.src = Label.servePath + '/images/music/volume_2.png';
+            } else if (volume > 0) {
+                volumeEle.src = Label.servePath + '/images/music/volume_1.png';
+            } else {
+                volumeEle.src = Label.servePath + '/images/music/volume_off.png';
+            }
+            this.ele.volume = volume / 100;
         }
     },
     /**
@@ -2089,102 +2626,6 @@ ${result.info.msg}
         // console.log("前", this.imgWaitting)
         this.imgWaitting = this.imgWaitting || delayshow()
         // console.log("后", this.imgWaitting)
-    },
-    /**
-     * xiaoIce Game
-     * */
-    iceWs: "",
-    IceGameCK: localStorage.getItem("IceGameCK") || null,
-    loadXiaoIceGame: function () {
-        // 连接游戏服务器
-        iceWs = new WebSocket('wss://game.yuis.cc/wss');
-        let iceWsHeart = null;
-        iceWs.onopen = function () {
-            iceWs.send(JSON.stringify({
-                type: 'setUser',
-                user: Label.currentUser,
-                ck: ChatRoom.IceGameCK,
-                uid: Label.currentUserId
-            }))
-            iceWsHeart = setInterval(() => {
-                iceWs.send(JSON.stringify({type: 'hb'}))
-            }, 15000)
-        }
-        iceWs.onclose = function () {
-            let html = `<div class="ice-msg-item">
-                    <div class="ice-msg-content">小冰网络失去连接</div>
-                  </div>`
-            $('#iceMsgList').prepend(html);
-        }
-        iceWs.onerror = function (err) {
-            let html = `<div class="ice-msg-item">
-                    <div class="ice-msg-content">小冰网络维护中...</div>
-                  </div>`
-            $('#iceMsgList').prepend(html);
-        }
-        // 收到消息
-        iceWs.onmessage = function (e) {
-            let data = JSON.parse(e.data);
-            if (data.user === "all" || data.user === Label.currentUser) {
-                let html = `<div class="ice-msg-item">
-                    <div class="ice-msg-content">${data.msg}</div>
-                  </div>`
-                $('#iceMsgList').prepend(html);
-            }
-            if (data.type === "setCK") {
-                ChatRoom.IceGameCK = data.ck;
-                localStorage.setItem("IceGameCK", data.ck);
-            }
-        }
-        // 打开游戏界面
-        $('#xiaoIceGameBtn').click(function () {
-            $("#xiaoIceGameBox").show(200);
-            $('#xiaoIceGameBtn').hide(200);
-            setTimeout(() => {
-                $("#xiaoIceGameBox").addClass('active');
-            }, 220)
-        })
-        // 关闭游戏界面
-        $('#iceClose').click(function () {
-            const gameBox = $("#xiaoIceGameBox")
-            setTimeout(() => {
-                $('.ice-chat-input').val("");
-                $("#xiaoIceGameBox").hide(200);
-                $('#xiaoIceGameBtn').show(200);
-            }, gameBox.hasClass('active') ? 420 : 1)
-            gameBox.removeClass('active');
-        })
-        // 最小化切换
-        $('#iceMinimize').click(function () {
-            $("#xiaoIceGameBox").toggleClass('active');
-        })
-        // 发送指令
-        $('#iceSendMsg').click(ChatRoom.sendIceMsg);
-        $('.ice-chat-input').bind('keypress', function (event) {
-            if (event.keyCode === 13) {
-                event.preventDefault();
-                ChatRoom.sendIceMsg();
-            }
-        });
-    },
-
-    sendIceMsg: function () {
-        let msg = $('.ice-chat-input').val();
-        $('.ice-chat-input').val("");
-        let uMsg = `<div class="ice-msg-item me">
-                    <div class="ice-msg-content">${msg}</div>
-                  </div>`
-        $('#iceMsgList').prepend(uMsg);
-        let type = "gameMsg";
-        console.log(/(登录)/.test(msg))
-        if (/(登录)/.test(msg)) {
-            type = "login"
-        }
-        iceWs.send(JSON.stringify({
-            type: type,
-            ck: ChatRoom.IceGameCK,
-            msg: msg
-        }));
     },
 
     /**
@@ -2249,7 +2690,7 @@ ${result.info.msg}
             $("#robotBox").show(200),
                 $("#robotBtn").hide(200),
                 setTimeout(() => {
-                    // 自动调整css样式，每次打开小窗，都要调整小窗高度，宽度目前固定300px;小窗用户概率性出现遮挡聊天室的情况
+                        // 自动调整css样式，每次打开小窗，都要调整小窗高度，宽度目前固定300px;小窗用户概率性出现遮挡聊天室的情况
                         $("#robotBox").addClass("robot-active");
                         $("#robotBox").attr("style", "height:" + (window.innerHeight - 25 - 58) + "px");
                         $("#robotMsgList").attr("style", "height:" + (window.innerHeight - 85 - 58) + "px");
@@ -2370,6 +2811,32 @@ ${result.info.msg}
             mobile_flag = true;
         }
         return mobile_flag;
+    },
+
+    switchNode: function () {
+        let text = "        <h3 style=\"margin: 0 0 10px; font-size: 18px; color: #333;\">请选择区服</h3>" +
+            "        <div style=\"margin-bottom: 15px;\">";
+        Label.node.avaliable.forEach(function (node) {
+            text += "<button onclick='ChatRoom.connectNewNode(\"" + node.node + "?apiKey=" + Label.node.apiKey + "\", \"" + node.name + "\")' style=\"background-color: #fff; color: #007bff; border: 1px solid #007bff; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; font-size: 14px; font-weight: bold;\">" + node.name + " " + node.online + "人</button>";
+        })
+        text += "        </div>" +
+            "        <p style=\"margin: 0; font-size: 14px; color: #666; line-height: 1.5;\">" +
+            "            您切换的区服仅为本次生效，系统会自动将您分配至最流畅的区服。" +
+            "        </p>" +
+            "        <p style=\"margin: 10px 0 0; font-size: 14px; color: #666; line-height: 1.5;\">" +
+            "            所有区服之间消息同步，完全互通。" +
+            "        </p>"
+        Util.alert(text);
+    },
+
+    connectNewNode: function (node, name) {
+        Util.clearAlert();
+        $('#nodeButton').html(`<svg style='vertical-align: -2px;'><use xlink:href="#server"></use></svg> ` + name);
+        ChatRoomChannel.ws.close();
+        ChatRoomChannel.init(node);
+        setTimeout(function () {
+            clearInterval(ChatRoomChannel.manual);
+        }, 1000);
     }
 }
 

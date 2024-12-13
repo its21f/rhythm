@@ -18,12 +18,14 @@
  */
 package org.b3log.symphony.processor;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.b3log.latke.Keys;
+import org.b3log.latke.Latkes;
 import org.b3log.latke.http.Dispatcher;
 import org.b3log.latke.http.RequestContext;
 import org.b3log.latke.http.WebSocketSession;
@@ -33,6 +35,7 @@ import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.User;
 import org.b3log.latke.repository.*;
+import org.b3log.latke.util.Crypts;
 import org.b3log.symphony.model.*;
 import org.b3log.symphony.processor.bot.ChatRoomBot;
 import org.b3log.symphony.processor.channel.ChatroomChannel;
@@ -61,6 +64,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.b3log.symphony.processor.channel.ChatroomChannel.sendCustomMessage;
+
 
 /**
  * Chatroom processor.
@@ -81,8 +86,7 @@ public class ChatroomProcessor {
      */
     private static final Logger LOGGER = LogManager.getLogger(ChatroomProcessor.class);
 
-    private static final Pattern AT_USER_PATTERN = Pattern.compile("(@)([a-zA-Z0-9 ]+)");
-
+    private static final Pattern AT_USER_PATTERN = Pattern.compile("(@)([a-zA-Z0-9- ]+)");
 
     private static final String PARTICIPANTS = "participants";
 
@@ -188,6 +192,8 @@ public class ChatroomProcessor {
 
     public static String barragerUnit = "积分";
 
+
+
     /**
      * Register request handlers.
      */
@@ -208,6 +214,115 @@ public class ChatroomProcessor {
         Dispatcher.post("/chat-room/red-packet/open", chatroomProcessor::openRedPacket, loginCheck::handle);
         Dispatcher.get("/chat-room/si-guo-list", chatroomProcessor::getSiGuoList);
 
+        Dispatcher.get("/chat-room/node/get", chatroomProcessor::getNode, loginCheck::handle);
+        Dispatcher.post("/chat-room/node/push", chatroomProcessor::nodePush);
+    }
+
+    public void nodePush(final RequestContext context) {
+        final JSONObject requestJSONObject = context.requestJSON();
+        String adminKey = requestJSONObject.optString("adminKey");
+        if (!Symphonys.get("chatroom.node.adminKey").equals(adminKey)) {
+            context.sendError(403);
+            context.abort();
+            return;
+        }
+
+        String msg = requestJSONObject.optString("msg");
+        String data = requestJSONObject.optString("data");
+        switch (msg) {
+            case "join":
+                String userName = data;
+                boolean joined = true;
+                for (Map.Entry<WebSocketSession, JSONObject> entry : ChatroomChannel.onlineUsers.entrySet()) {
+                    String name = entry.getValue().optString(User.USER_NAME);
+                    if (userName.equals(name)) {
+                        joined = false;
+                    }
+                }
+                if (joined) {
+                    String customMessage = ChatroomChannel.getCustomMessage(1, userName);
+                    if (!customMessage.isEmpty()) {
+                        sendCustomMessage(customMessage);
+                    }
+                }
+                break;
+            case "leave":
+                String userName2 = data;
+                boolean left = true;
+                for (Map.Entry<WebSocketSession, JSONObject> entry : ChatroomChannel.onlineUsers.entrySet()) {
+                    String name = entry.getValue().optString(User.USER_NAME);
+                    if (userName2.equals(name)) {
+                        left = false;
+                    }
+                }
+                if (left) {
+                    String customMessage2 = ChatroomChannel.getCustomMessage(0, userName2);
+                    if (!customMessage2.isEmpty()) {
+                        sendCustomMessage(customMessage2);
+                    }
+                }
+                break;
+        }
+    }
+
+    public void getNode(final RequestContext context) {
+        JSONObject currentUser = Sessions.getUser();
+        try {
+            currentUser = ApiProcessor.getUserByKey(context.param("apiKey"));
+        } catch (NullPointerException ignored) {
+        }
+        try {
+            final JSONObject requestJSONObject = context.requestJSON();
+            currentUser = ApiProcessor.getUserByKey(requestJSONObject.optString("apiKey"));
+        } catch (NullPointerException ignored) {
+        }
+        if (null == currentUser) {
+            context.sendError(401);
+            context.abort();
+            return;
+        }
+        final String userId = currentUser.optString(Keys.OBJECT_ID);
+        final String userPassword = currentUser.optString(User.USER_PASSWORD);
+        final JSONObject cookieJSONObject = new JSONObject();
+        cookieJSONObject.put(Keys.OBJECT_ID, userId);
+        final String random = RandomStringUtils.randomAlphanumeric(16);
+        cookieJSONObject.put(Keys.TOKEN, userPassword + ApiProcessor.COOKIE_ITEM_SEPARATOR + random);
+        final String key = Crypts.encryptByAES(cookieJSONObject.toString(), Symphonys.COOKIE_SECRET);
+
+        JSONObject ret = new JSONObject();
+        ret.put(Keys.CODE, StatusCodes.SUCC);
+        ret.put(Keys.MSG, "");
+        if (NodeUtil.wsOnline == null || NodeUtil.wsOnline.isEmpty()) {
+            final String serverScheme = Latkes.getServerScheme();
+            String wsScheme = StringUtils.containsIgnoreCase(serverScheme, "https") ? "wss" : "ws";
+            String wsHost = Latkes.getServerHost();
+            String port1 = Latkes.getServerPort();
+            String port2 = "";
+            if (StringUtils.isNotBlank(port1) && !"80".equals(port1) && !"443".equals(port1)) {
+                port2 = ":" + port1;
+            }
+            ret.put(Keys.DATA, wsScheme + "://" + wsHost + port2 + "/chat-room-channel?apiKey=" + key);
+        } else {
+            Map.Entry<String, Integer> minEntry = null;
+            for (Map.Entry<String, Integer> entry : NodeUtil.wsOnline.entrySet()) {
+                if (minEntry == null || entry.getValue() < minEntry.getValue()) {
+                    minEntry = entry;
+                }
+            }
+            ret.put(Keys.DATA, minEntry.getKey() + "?apiKey=" + key);
+            ret.put(Keys.MSG, NodeUtil.nodeNickNames.get(minEntry.getKey()));
+        }
+        JSONArray data = new JSONArray();
+        for (Map.Entry<String, Integer> entry : NodeUtil.wsOnline.entrySet()) {
+            JSONObject node = new JSONObject();
+            node.put("node", entry.getKey());
+            node.put("name", NodeUtil.nodeNickNames.get(entry.getKey()));
+            node.put("online", entry.getValue());
+            data.put(node);
+        }
+        ret.put("avaliable", data);
+        ret.put("apiKey", key);
+        context.renderJSON(ret);
     }
 
     /**
@@ -666,6 +781,7 @@ public class ChatroomProcessor {
                 legalClient.add("Golang");
                 legalClient.add("Bird");
                 legalClient.add("Dart");
+                legalClient.add("Harmony");
                 legalClient.add("Other");
                 if (legalClient.contains(client)) {
                     source = client + "/" + version;
@@ -712,6 +828,7 @@ public class ChatroomProcessor {
             String userId = currentUser.optString(Keys.OBJECT_ID);
 
             if (content.startsWith("[redpacket]") && content.endsWith("[/redpacket]")) {
+                LOGGER.log(Level.INFO, "Sent red packet [content={}], userName={}]", content, userName);
                 // 是否收税
                 Boolean collectTaxes = false;
                 // 税率
@@ -904,7 +1021,69 @@ public class ChatroomProcessor {
                 } catch (Exception e) {
                     LOGGER.log(Level.INFO, "User " + userName + " failed to send a red packet.");
                 }
-            } else if (content.startsWith("[setdiscuss]") && content.endsWith("[/setdiscuss]")) {
+            }  else if (content.startsWith("[weather]") && content.endsWith("[/weather]")){
+                String weatherString = content.replaceAll("^\\[weather\\]", "").replaceAll("\\[/weather\\]$", "");
+                JSONObject weather = new JSONObject(weatherString);
+                weather.put("msgType","weather");
+                // 加活跃
+                incLiveness(userId);
+                // 聊天室内容保存到数据库
+                final Transaction transaction = chatRoomRepository.beginTransaction();
+                try {
+                    msg.put(Common.CONTENT, weather.toString());
+                    String oId = chatRoomRepository.add(new JSONObject().put("content", msg.toString()));
+                    msg.put("oId", oId);
+                } catch (RepositoryException e) {
+                    LOGGER.log(Level.ERROR, "Cannot save ChatRoom message to the database.", e);
+                }
+                transaction.commit();
+                msg = msg.put("md", msg.optString(Common.CONTENT)).put(Common.CONTENT, processMarkdown(msg.optString(Common.CONTENT)));
+                final JSONObject pushMsg = JSONs.clone(msg);
+                pushMsg.put(Common.TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(msg.optLong(Common.TIME)));
+                ChatroomChannel.notifyChat(pushMsg);
+
+                context.renderJSON(StatusCodes.SUCC);
+
+                try {
+                    final JSONObject user = userQueryService.getUser(userId);
+                    user.put(UserExt.USER_LATEST_CMT_TIME, System.currentTimeMillis());
+                    userMgmtService.updateUser(userId, user);
+                } catch (final Exception e) {
+                    LOGGER.log(Level.ERROR, "Update user latest comment time failed", e);
+                }
+
+            }  else if (content.startsWith("[music]") && content.endsWith("[/music]")){
+                String musicString = content.replaceAll("^\\[music\\]", "").replaceAll("\\[/music\\]$", "");
+                JSONObject music = new JSONObject(musicString);
+                music.put("msgType","music");
+                // 加活跃
+                incLiveness(userId);
+                // 聊天室内容保存到数据库
+                final Transaction transaction = chatRoomRepository.beginTransaction();
+                try {
+                    msg.put(Common.CONTENT, music.toString());
+                    String oId = chatRoomRepository.add(new JSONObject().put("content", msg.toString()));
+                    msg.put("oId", oId);
+                } catch (RepositoryException e) {
+                    LOGGER.log(Level.ERROR, "Cannot save ChatRoom message to the database.", e);
+                }
+                transaction.commit();
+                msg = msg.put("md", msg.optString(Common.CONTENT)).put(Common.CONTENT, processMarkdown(msg.optString(Common.CONTENT)));
+                final JSONObject pushMsg = JSONs.clone(msg);
+                pushMsg.put(Common.TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(msg.optLong(Common.TIME)));
+                ChatroomChannel.notifyChat(pushMsg);
+
+                context.renderJSON(StatusCodes.SUCC);
+
+                try {
+                    final JSONObject user = userQueryService.getUser(userId);
+                    user.put(UserExt.USER_LATEST_CMT_TIME, System.currentTimeMillis());
+                    userMgmtService.updateUser(userId, user);
+                } catch (final Exception e) {
+                    LOGGER.log(Level.ERROR, "Update user latest comment time failed", e);
+                }
+
+            }  else if (content.startsWith("[setdiscuss]") && content.endsWith("[/setdiscuss]")) {
                 // 扣钱
                 final boolean succ = null != pointtransferMgmtService.transfer(userId, Pointtransfer.ID_C_SYS,
                         Pointtransfer.TRANSFER_TYPE_C_ACTIVITY_SET_DISCUSS,
@@ -1184,7 +1363,7 @@ public class ChatroomProcessor {
                 JSONObject jsonObject = new JSONObject(content);
                 String msgType = jsonObject.optString("msgType");
                 if (!msgType.isEmpty()) {
-                    dataModel.put("raw", "{\"msg\":\"想看红包金额，想得美 :)\",\"recivers\":\"[]\",\"senderId\":\"1380013800000\",\"msgType\":\"redPacket\",\"money\":14250,\"count\":250,\"type\":\"random\",\"got\":0,\"who\":[]}");
+                    dataModel.put("raw", "{\"msg\":\"6\",\"recivers\":\"[]\",\"senderId\":\"1380013800000\",\"msgType\":\"redPacket\",\"money\":14250,\"count\":250,\"type\":\"random\",\"got\":0,\"who\":[]}");
                     return;
                 }
             } catch (Exception ignored) {
@@ -1427,7 +1606,7 @@ public class ChatroomProcessor {
     public static String processMarkdown(String content) {
         try {
             JSONObject checkContent = new JSONObject(content);
-            if (checkContent.optString("msgType").equals("redPacket")) {
+            if (checkContent.optString("msgType").equals("redPacket") || checkContent.optString("msgType").equals("weather") || checkContent.optString("msgType").equals("music")) {
                 return content;
             }
         } catch (Exception ignored) {

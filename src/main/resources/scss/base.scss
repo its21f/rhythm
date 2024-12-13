@@ -1876,113 +1876,207 @@ a[class*=" icon-"]:hover {
   }
 }
 
-// 机器人捕获
-.robot-btn {
+// 音乐播放器
+#musicBox{
   position: fixed;
-  bottom: 40vh;
+  bottom: -106px;
   left: 0;
-  z-index: 1024;
-  width: 75px;
-  height: 150px;
-  cursor: pointer;
-}
-#robotBox{
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  z-index: 1024;
-  width: 300px;
-  height: 30px;
-  transition: .4s;
-  background-color: #fff;
-  box-shadow: -2px -2px 5px rgba(0, 0, 0, .3);
-  &:not(.active){
-
-  }
-  &.active{
-    height: 360px;
-  }
-  .robot-tool-bar {
+  width: 100%;
+  height: 106px;
+  background: #fff;
+  box-shadow: -1px -1px 4px 1px rgba(0,0,0,.3);
+  z-index: 9990;
+  transition: .3s;
+  .music-box{
+    position: relative;
+    margin: 0 auto;
+    width: 90%;
+    height: 106px;
+    min-width: 720px;
+    max-width: 1300px;
     display: flex;
-    justify-content: space-between;
+    padding: 5px 0;
     align-items: center;
-    width: 100%;
-    height: 30px;
-    padding: 0 5px;
-    box-sizing: border-box;
-    background-color: #3b3e43;
-    color: #fff;
-    .robot-toolbar-btn {
+    .music-img{
+      .music-img-item{
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        border-radius: 50%;
+      }
+      margin: 0 10px;
+    }
+    &.playing .music-img-item{
+      animation: spin 2s linear infinite;
+    }
+    .music-detail{
+      flex: 1;
+      height: 106px;
+      background: #fff;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      .music-title{
+        font-weight: bold;
+      }
+    }
+    .music-close-btn{
+      position: absolute;
+      top: -20px;
+      right: 0;
+      width: 50px;
+      height: 20px;
+      background: #fff;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      cursor:pointer;
+      text-align: center;
+      box-shadow: 0 -1px 0 1px rgba(0,0,0,.3);
+      padding-top: 2px;
+      box-sizing: border-box;
+      img{
+        width: 20px;
+        height: 20px;
+      }
+    }
+    .music-controller{
       display: flex;
       justify-content: space-between;
       align-items: center;
-      cursor: pointer;
-      svg {
-        display: flex;
+      width: 70px;
+      height: 40px;
+      img{
+        cursor:pointer;
+      }
+      .music-prev,.music-next,.music-list,.music-voice,.music-mode{
+        width: 30px;
+        height: 30px;
+      }
+      .music-play{
+        width: 40px;
+        height: 40px;
+      }
+      .music-voice-box{
+        position: fixed;
+        bottom: 40px;
+        display: none;
+        padding: 10px;
+        background: #fff;
+        z-index: 9991;
+      }
+      .music-voice:hover{
+        .music-voice-box{
+          display: block;
+        }
       }
     }
   }
-
-  .robot-logo {
-    width: 25px;
-    height: 25px;
-    transform: rotateZ(-25deg);
+  &.show{
+    bottom: 0;
   }
+  .music-core{
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    z-index: -1;
+  }
+}
 
-  #robotMsgList {
-    padding: 10px;
-    height: 650px;
-    box-sizing: border-box;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    .robot-msg-item {
-      display: flex;
-      margin: 10px 0;
-      .robot-msg-content {
-        position: relative;
-        background-color: var(--background-secondary-color);
-        border-radius: 5px;
-        padding: 8px 15px;
-        overflow: initial;
-        max-width: 75%;
-        font-size: 12px;
-        box-sizing: border-box;
+.music-list-box{
+  position: fixed;
+  bottom: -400px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: .3s;
+  width: 80%;
+  height: 400px;
+  min-width: 720px;
+  max-width: 800px;
+  padding: 20px;
+  background: #fff;
+  box-shadow: -1px -1px 4px 1px rgba(0,0,0,.3);
+  z-index: 9980;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+  &::-webkit-scrollbar{
+    width: 0;
+  }
+  &.show{
+    bottom: 50px;
+  }
+  .music-list-item{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,.3);
+    padding: 5px;
+    background: #fff;
+    transition: .3s;
+    &:hover{
+      background: rgba(0,0,0,.1);
+    }
+    img{
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+    .music-list-title{
+      flex: 1;
+    }
+    .music-list-controller{
+      span{
+        cursor: pointer;
+        &:hover{
+          text-decoration: underline;
+        }
       }
     }
   }
-  .robot-chat-box{
-    .robot-clear-btn {
-      position: absolute;
-      right: 3px;
-      top: 3px;
-      width: 50px;
-      height: 24px;
-      line-height: 24px;
-      text-align: center;
-      cursor: pointer;
-      background-color: #60b044;
-      color: #fff;
-      border-radius: 2px;
+}
+
+.music-player{
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 0 10px #ccc;
+  background: #fff;
+  .music-player-img{
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+  }
+  .music-player-box{
+    .music-player-title{
+      width: 200px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-weight: bold;
+      font-size: 18px;
     }
-    .robot-catch-input {
-      margin-left: 15px;
-      height: 30px;
-      padding: 5px 55px 5px 10px;
-      box-sizing: border-box;
+    .music-player-controller{
+      span{
+        cursor: pointer;
+        &:hover{
+          text-decoration: underline;
+        }
+      }
     }
-    .robot-change-btn {
-      position: absolute;
-      right: 60px;
-      top: 3px;
-      width: 100px;
-      height: 24px;
-      line-height: 24px;
-      text-align: center;
-      cursor: pointer;
-      background-color: #60b044;
-      color: #fff;
-      border-radius: 2px;
-    }
+  }
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -2163,6 +2257,12 @@ a[class*=" icon-"]:hover {
       border-radius: 2px;
     }
   }
+}
+
+/* color userName */
+.ft-admin-user {
+  color: red;
+  font-weight: bold;
 }
 
 /*@keyframes swim {

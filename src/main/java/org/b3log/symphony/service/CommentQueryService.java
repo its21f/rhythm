@@ -249,6 +249,7 @@ public class CommentQueryService {
             }
 
             ret.put(Comment.COMMENT_T_AUTHOR_NAME, comment.optString(Comment.COMMENT_T_AUTHOR_NAME));
+            ret.put("commentAuthorNickName", comment.optString("commentAuthorNickName"));
             ret.put(Comment.COMMENT_T_AUTHOR_THUMBNAIL_URL, comment.optString(Comment.COMMENT_T_AUTHOR_THUMBNAIL_URL));
             ret.put(Common.TIME_AGO, comment.optString(Common.TIME_AGO));
             ret.put(Comment.COMMENT_CREATE_TIME_STR, comment.optString(Comment.COMMENT_CREATE_TIME_STR));
@@ -309,6 +310,7 @@ public class CommentQueryService {
                 }
 
                 reply.put(Comment.COMMENT_T_AUTHOR_NAME, comment.optString(Comment.COMMENT_T_AUTHOR_NAME));
+                reply.put("commentAuthorNickName", comment.optString("commentAuthorNickName"));
                 reply.put(Comment.COMMENT_T_AUTHOR_THUMBNAIL_URL, comment.optString(Comment.COMMENT_T_AUTHOR_THUMBNAIL_URL));
                 reply.put(Common.TIME_AGO, comment.optString(Common.TIME_AGO));
                 reply.put(Comment.COMMENT_CREATE_TIME_STR, comment.optString(Comment.COMMENT_CREATE_TIME_STR));
@@ -867,6 +869,7 @@ public class CommentQueryService {
             }
             comment.put(Comment.COMMENT_T_COMMENTER, author);
             comment.put(Comment.COMMENT_T_AUTHOR_NAME, author.optString(User.USER_NAME));
+            comment.put("commentAuthorNickName", author.optString(UserExt.USER_NICKNAME));
             comment.put(Comment.COMMENT_T_AUTHOR_URL, author.optString(User.USER_URL));
             final String thumbnailURL = avatarQueryService.getAvatarURLByUser(author, "48");
             comment.put(Comment.COMMENT_T_AUTHOR_THUMBNAIL_URL, thumbnailURL);

@@ -74,7 +74,7 @@ var Util = {
         } else {
             attr = '';
         }
-        return 'https://fishpi.cn/gen?scale=0.79&txt=' + name + attr;
+        return 'https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=' + name + attr;
     },
 
     genMiniMetal(attr) {
@@ -83,7 +83,7 @@ var Util = {
         } else {
             attr = '';
         }
-        return 'https://fishpi.cn/gen?scale=0.79&txt=' + attr;
+        return 'https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=' + attr;
     },
 
     parseDom(arg) {
@@ -1401,7 +1401,7 @@ var Util = {
                         list.find("li:first").slideDown(200);
                         Util.listenUserCard();
                     } else {
-                        Util.alert(result.msg)
+                        Util.alert(result.msg);
                     }
                 },
                 complete: function () {
@@ -1589,22 +1589,22 @@ var Util = {
                     '                       aria-label="用户分组：' + userRole + '">\n';
                 switch (userRole) {
                     case '管理员':
-                        html += '<img style="height: 20px;margin: 0px;" src="https://pwl.stackoverflow.wiki/adminRole.png"/>';
+                        html += '<img style="height: 20px;margin: 0px;" src="https://file.fishpi.cn/adminRole.png"/>';
                         break;
                     case 'OP':
-                        html += '<img style="height: 20px;margin: 0px;" src="https://pwl.stackoverflow.wiki/opRole.png"/>';
+                        html += '<img style="height: 20px;margin: 0px;" src="https://file.fishpi.cn/opRole.png"/>';
                         break;
                     case '纪律委员':
-                        html += '<img style="height: 20px;margin: 0px;" src="https://pwl.stackoverflow.wiki/policeRole.png"/>';
+                        html += '<img style="height: 20px;margin: 0px;" src="https://file.fishpi.cn/policeRole.png"/>';
                         break;
                     case '超级会员':
-                        html += '<img style="height: 20px;margin: 0px;" src="https://pwl.stackoverflow.wiki/svipRole.png"/>';
+                        html += '<img style="height: 20px;margin: 0px;" src="https://file.fishpi.cn/svipRole.png"/>';
                         break;
                     case '成员':
-                        html += '<img style="height: 20px;margin: 0px;" src="https://pwl.stackoverflow.wiki/vipRole.png"/>';
+                        html += '<img style="height: 20px;margin: 0px;" src="https://file.fishpi.cn/vipRole.png"/>';
                         break;
                     default:
-                        html += '<img style="height: 20px;margin: 0px;" src="https://pwl.stackoverflow.wiki/newRole.png"/>';
+                        html += '<img style="height: 20px;margin: 0px;" src="https://file.fishpi.cn/newRole.png"/>';
                         break;
                 }
                 html += '                    </a>\n';
@@ -1727,6 +1727,62 @@ var Util = {
             var data = JSON.parse(evt.data)
 
             switch (data.command) {
+                case 'bz-update':
+                    if ($(".active-bz-list-big")[0] !== undefined) {
+                        let breezemoonAuthorName = data.bz.breezemoonAuthorName;
+                        let breezemoonAuthorThumbnailURL48 = data.bz.breezemoonAuthorThumbnailURL48;
+                        let breezemoonContent = data.bz.breezemoonContent;
+                        let breezemoonOId = data.bz.oId;
+                        let list = $($(".active-bz-list-big")[0]);
+                        list.prepend(
+                            "<li>" +
+                            "<div class=\"fn-flex\">" +
+                            "<div class=\"fn-flex-1\">" +
+                            "<div class=\"fn-flex\">" +
+                            "<a rel=\"nofollow\" href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "\">" +
+                            "<div class=\"avatar\" aria-label=\"" + breezemoonAuthorName + "\" style=\"background-image:url('" + breezemoonAuthorThumbnailURL48 + "')\"></div>" +
+                            "</a>" +
+                            "<div class=\"fn-ellipsis ft-fade ft-smaller list-info\">" +
+                            "<a rel=\"nofollow\" class=\"author\" href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "\">" +
+                            breezemoonAuthorName +
+                            "</a>" +
+                            "<br>" +
+                            "刚刚" +
+                            "<br>" +
+                            "</div>" +
+                            "</div>" +
+                            "<a style=\"color: #3b3b3b\" class=\"abstract\" href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "/breezemoons/" + breezemoonOId + "\">" +
+                            breezemoonContent +
+                            "</a>" +
+                            "</div>" +
+                            "</div>" +
+                            "</li>"
+                        );
+                    }
+                    if ($(".active-bz-list")[0] !== undefined) {
+                        let breezemoonAuthorName = data.bz.breezemoonAuthorName;
+                        if (breezemoonAuthorName != Label.currentUserName) {
+                            let breezemoonAuthorThumbnailURL48 = data.bz.breezemoonAuthorThumbnailURL48;
+                            let breezemoonContent = data.bz.breezemoonContent;
+                            let breezemoonOId = data.bz.oId;
+                            let list = $($(".active-bz-list")[0]);
+                            list.prepend(
+                                "<li style=\"display: none\">\n" +
+                                "<a href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "\">\n" +
+                                "<span class=\"avatar-small slogan\" aria-label=\"" + breezemoonAuthorName + "\" style=\"background-image: url(" + breezemoonAuthorThumbnailURL48 + ")\"></span>\n" +
+                                "</a>\n" +
+                                "<a href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "/breezemoons/" + breezemoonOId + "\" class=\"title\">" + breezemoonContent + "</a>\n" +
+                                "</li>"
+                            );
+
+                            list.find("li:last").fadeOut(199, function () {
+                                list.find("li:last").remove();
+                            });
+                            list.find("li:first").slideDown(200);
+                            Util.listenUserCard();
+                        }
+                    }
+                    break;
                 case 'refreshNotification':
                     if (window.location.pathname === '/cr') {
                         Util.makeNotificationRead('at');
@@ -1737,7 +1793,7 @@ var Util = {
                             Util.notice("default", 3000, "你有新的通知！<a href='/notifications'>点击查看</a>");
                         }
                     }
-                    break
+                    break;
                 case 'chatUnreadCountRefresh':
                     if (data.count === 0) {
                         Util.pauseBling();

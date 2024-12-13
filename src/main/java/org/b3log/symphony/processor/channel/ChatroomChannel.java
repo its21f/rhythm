@@ -32,10 +32,12 @@ import org.b3log.latke.repository.*;
 import org.b3log.latke.repository.jdbc.JdbcRepository;
 import org.b3log.symphony.model.Common;
 import org.b3log.symphony.model.UserExt;
+import org.b3log.symphony.processor.AdminProcessor;
 import org.b3log.symphony.processor.ApiProcessor;
 import org.b3log.symphony.repository.CloudRepository;
 import org.b3log.symphony.service.AvatarQueryService;
 import org.b3log.symphony.service.UserQueryService;
+import org.b3log.symphony.util.NodeUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
@@ -67,8 +69,7 @@ public class ChatroomChannel implements WebSocketChannel {
     /**
      * Online user information storage.
      */
-    public static final Map<WebSocketSession, JSONObject> onlineUsers = Collections.synchronizedMap(new HashMap<>());
-
+    public static final ConcurrentHashMap<WebSocketSession, JSONObject> onlineUsers = new ConcurrentHashMap<>();
     /**
      * 当前讨论话题
      */
@@ -108,9 +109,14 @@ public class ChatroomChannel implements WebSocketChannel {
             SESSIONS.add(session);
             // 单独发送在线信息
             final String msgStr = getOnline().toString();
-            session.sendText(msgStr);
+            sendText(session, msgStr);
+            NodeUtil.sendTell(userName, msgStr);
+            AdminProcessor.manager.onMessageSent(4, msgStr.length());
             // 保存 Active 信息
             userActive.put(user.optString("userName"), System.currentTimeMillis());
+            // 发送过期客户端消息
+            String text = "{\"userOId\":1630399192600,\"userAvatarURL\":\"https://file.fishpi.cn/2023/12/blob-1d3b18ec.png\",\"userNickname\":\"阿达\",\"oId\":\"" + System.currentTimeMillis() + "\",\"userName\":\"adlered\",\"type\":\"msg\",\"content\":\"<p><\\/p><h3>您正在使用过期的客户端<\\/h3>\\n<p>您的客户端正在使用过期的协议连接到摸鱼派聊天室，该协议将于 2025 年 3 月 1 日 被停用。<\\/p>\\n<p>请将客户端更新到最新版本以享受更快的聊天室服务，如已是最新版本，请联系客户端开发者更新客户端。<\\/p>\\n<p>新版摸鱼派聊天室协议开发指南：<a href=\\\"https://fishpi.cn/article/1733591297543\\\" target=\\\"_blank\\\" rel=\\\"nofollow\\\">https://fishpi.cn/article/1733591297543<\\/a><\\/p>\\n<p><\\/p>\",\"md\":\"### 您正在使用过期的客户端\\n\\n您的客户端正在使用过期的协议连接到摸鱼派聊天室，该协议将于 2025年3月1日 被停用。\\n\\n请将客户端更新到最新版本以享受更快的聊天室服务，如已是最新版本，请联系客户端开发者更新客户端。\\n\\n新版摸鱼派聊天室协议开发指南：https://fishpi.cn/article/1733591297543\",\"userAvatarURL20\":\"https://file.fishpi.cn/2023/12/blob-1d3b18ec.png\",\"sysMetal\":\"{\\\"list\\\":[{\\\"data\\\":\\\"\\\",\\\"name\\\":\\\"摸鱼派铁粉\\\",\\\"description\\\":\\\"捐助摸鱼派达1024RMB; 编号No.9\\\",\\\"attr\\\":\\\"url=https://file.fishpi.cn/2021/12/ht3-b97ea102.jpg&backcolor=ee3a8c&fontcolor=ffffff\\\",\\\"enabled\\\":true},{\\\"data\\\":\\\"\\\",\\\"name\\\":\\\"摸鱼派忠粉\\\",\\\"description\\\":\\\"捐助摸鱼派达256RMB; 编号No.20\\\",\\\"attr\\\":\\\"url=https://file.fishpi.cn/2021/12/ht2-bea67b29.jpg&backcolor=87cefa&fontcolor=efffff\\\",\\\"enabled\\\":true},{\\\"data\\\":\\\"\\\",\\\"name\\\":\\\"摸鱼派粉丝\\\",\\\"description\\\":\\\"捐助摸鱼派达16RMB; 编号No.38\\\",\\\"attr\\\":\\\"url=https://file.fishpi.cn/2021/12/ht1-d8149de4.jpg&backcolor=ffffff&fontcolor=ff3030\\\",\\\"enabled\\\":true}]}\",\"client\":\"Web/PC网页端\",\"time\":\"" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()) + "\",\"userAvatarURL210\":\"https://file.fishpi.cn/2023/12/blob-1d3b18ec.png\",\"userAvatarURL48\":\"https://file.fishpi.cn/2023/12/blob-1d3b18ec.png\"}";
+            sendText(session, text);
         } else {
             session.close();
         }
@@ -212,6 +218,7 @@ public class ChatroomChannel implements WebSocketChannel {
         jsonObject.put(Common.TYPE, "customMessage");
         jsonObject.put("message", msg);
         String message = jsonObject.toString();
+        NodeUtil.sendAll(message);
         new Thread(() -> {
             int i = 0;
             for (WebSocketSession s : ChatroomChannel.SESSIONS) {
@@ -222,7 +229,8 @@ public class ChatroomChannel implements WebSocketChannel {
                     } catch (Exception ignored) {
                     }
                 }
-                s.sendText(message);
+                sendText(s, message);
+                AdminProcessor.manager.onMessageSent(4, message.length());
             }
         }).start();
     }
@@ -299,6 +307,11 @@ public class ChatroomChannel implements WebSocketChannel {
         boolean quick = sender.isEmpty() || isRedPacket || type.equals("redPacketStatus") || type.equals("revoke") || type.equals("discussChanged");
         avatarQueryService.fillUserAvatarURL(message);
         final String msgStr = message.toString();
+        if (quick) {
+            NodeUtil.sendAll(msgStr);
+        } else {
+            NodeUtil.sendMsg(sender, msgStr);
+        }
         // 先给发送人反馈
         if (!quick) {
             List<WebSocketSession> senderSessions = new ArrayList<>();
@@ -309,7 +322,8 @@ public class ChatroomChannel implements WebSocketChannel {
                 }
             }
             for (WebSocketSession session : senderSessions) {
-                session.sendText(msgStr);
+                sendText(session, msgStr);
+                AdminProcessor.manager.onMessageSent(4, msgStr.length());
             }
         }
         MESSAGE_POOL.submit(() -> {
@@ -331,10 +345,12 @@ public class ChatroomChannel implements WebSocketChannel {
                     if (!quick) {
                         String toUser = onlineUsers.get(session).optString(User.USER_NAME);
                         if (!sender.equals(toUser)) {
-                            session.sendText(msgStr);
+                            sendText(session, msgStr);
+                            AdminProcessor.manager.onMessageSent(4, msgStr.length());
                         }
                     } else {
-                        session.sendText(msgStr);
+                        sendText(session, msgStr);
+                        AdminProcessor.manager.onMessageSent(4, msgStr.length());
                     }
                 } catch (Exception ignored) {
                 }
@@ -409,21 +425,6 @@ public class ChatroomChannel implements WebSocketChannel {
                 }
             }
             for (WebSocketSession session : senderSessions) {
-                session.sendText("{\n" +
-                        "    \"md\": \"由于您超过6小时未活跃，已将您断开连接，如要继续聊天请刷新页面，谢谢 :)\",\n" +
-                        "    \"userAvatarURL\": \"https://pwl.stackoverflow.wiki/2022/01/robot3-89631199.png\",\n" +
-                        "    \"userAvatarURL20\": \"https://pwl.stackoverflow.wiki/2022/01/robot3-89631199.png\",\n" +
-                        "    \"userNickname\": \"人工智障\",\n" +
-                        "    \"sysMetal\": \"\",\n" +
-                        "    \"time\": \"" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(System.currentTimeMillis()) + "\",\n" +
-                        "    \"oId\": \"" + System.currentTimeMillis() + "\",\n" +
-                        "    \"userName\": \"摸鱼派官方巡逻机器人\",\n" +
-                        "    \"type\": \"msg\",\n" +
-                        "    \"userAvatarURL210\": \"https://pwl.stackoverflow.wiki/2022/01/robot3-89631199.png\",\n" +
-                        "    \"content\": \"<p>由于您超过6小时未活跃，已将您断开连接，如要继续聊天请刷新页面，谢谢 :)</p>\",\n" +
-                        "    \"client\": \"Other/Robot\",\n" +
-                        "    \"userAvatarURL48\": \"https://pwl.stackoverflow.wiki/2022/01/robot3-89631199.png\"\n" +
-                        "}");
                 removeSession(session);
             }
             JdbcRepository.dispose();
@@ -445,6 +446,14 @@ public class ChatroomChannel implements WebSocketChannel {
             for (JSONObject object : onlineUsers.values()) {
                 String name = object.optString(User.USER_NAME);
                 filteredOnlineUsers.put(name, object);
+            }
+
+            for (int i = 0; i < NodeUtil.remoteUsers.length(); i++) {
+                try {
+                    JSONObject temp = NodeUtil.remoteUsers.getJSONObject(i);
+                    filteredOnlineUsers.put(temp.optString(User.USER_NAME), temp);
+                } catch (Exception ignored) {
+                }
             }
 
             JSONArray onlineArray = new JSONArray();
@@ -481,6 +490,7 @@ public class ChatroomChannel implements WebSocketChannel {
         if (!onlineMsgLock) {
             onlineMsgLock = true;
             final String msgStr = getOnline().toString();
+            NodeUtil.sendSlow(msgStr);
             new Thread(() -> {
                 int i = 0;
                 for (WebSocketSession s : SESSIONS) {
@@ -491,10 +501,15 @@ public class ChatroomChannel implements WebSocketChannel {
                         } catch (Exception ignored) {
                         }
                     }
-                    s.sendText(msgStr);
+                    sendText(s, msgStr);
+                    AdminProcessor.manager.onMessageSent(4, msgStr.length());
                 }
                 onlineMsgLock = false;
             }).start();
         }
+    }
+
+    public static void sendText(WebSocketSession wss, String text) {
+        wss.sendText(text);
     }
 }

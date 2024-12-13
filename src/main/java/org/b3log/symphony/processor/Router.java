@@ -61,6 +61,9 @@ public final class Router {
         final LogsChannel logsChannel = beanManager.getReference(LogsChannel.class);
         Dispatcher.webSocket("/logs-channel", logsChannel);
 
+        final LoginChannel loginChannel = beanManager.getReference(LoginChannel.class);
+        Dispatcher.webSocket("/login-channel", loginChannel);
+
         // 注册 HTTP 错误处理
         final ErrorProcessor errorProcessor = beanManager.getReference(ErrorProcessor.class);
         Dispatcher.error("/error/{statusCode}", errorProcessor::handle);
@@ -119,6 +122,8 @@ public final class Router {
         ChatProcessor.register();
         // 日志
         LogsProcessor.register();
+        // 微信
+        WeChatPayProcessor.register();
 
         final BeanManager beanManager = BeanManager.getInstance();
         final LoginCheckMidware loginCheck = beanManager.getReference(LoginCheckMidware.class);

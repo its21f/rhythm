@@ -60,7 +60,7 @@
     </div>
     <div class="tags fn__clear">
         <#list tags as tag>
-            <a class="fn__clear tag" href="${servePath}/tag/${tag.tagURI}">
+            <a class="tag" href="${servePath}/tag/${tag.tagURI}">
                 <#if tag.tagIconPath!="">
                     <img src="${tag.tagIconPath}" alt="${tag.tagTitle}"/>
                 </#if>
@@ -161,7 +161,7 @@
 
 <div class="slogan">
     摸鱼派 - 鱼油专属摸鱼社区&nbsp;
-    <a href="https://github.com/csfwff/rhythm" target="_blank">
+    <a href="https://github.com/FishPiOffical/rhythm" target="_blank">
         <svg>
             <use xlink:href="#github"></use>
         </svg>
