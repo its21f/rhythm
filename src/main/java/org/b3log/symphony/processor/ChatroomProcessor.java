@@ -1667,7 +1667,7 @@ public class ChatroomProcessor {
         content = Emotions.toAliases(content);
         content = Emotions.convert(content);
         content = Markdowns.toHTML(content);
-        content = Markdowns.clean(content, "");
+        content = Markdowns.cleanChat(content, "");
         content = MediaPlayers.renderAudio(content);
         content = MediaPlayers.renderVideo(content);
 
