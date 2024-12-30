@@ -1380,7 +1380,9 @@ var Util = {
                 }),
                 success: function (result) {
                     if (result.code === 0) {
-                        let breezemoonAuthorName = result.data.breezemoonAuthorName;
+                        let input = $btn.parent().find("input");
+                        input.val("");
+                        /*let breezemoonAuthorName = result.data.breezemoonAuthorName;
                         let breezemoonAuthorThumbnailURL48 = result.data.breezemoonAuthorThumbnailURL48;
                         let breezemoonContent = result.data.breezemoonContent;
                         let breezemoonOId = result.data.oId;
@@ -1393,13 +1395,11 @@ var Util = {
                             "<a href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "/breezemoons/" + breezemoonOId + "\" class=\"title\">" + breezemoonContent + "</a>\n" +
                             "</li>"
                         );
-                        let input = $btn.parent().find("input");
-                        input.val("");
                         list.find("li:last").fadeOut(199, function () {
                             list.find("li:last").remove();
                         });
                         list.find("li:first").slideDown(200);
-                        Util.listenUserCard();
+                        Util.listenUserCard();*/
                     } else {
                         Util.alert(result.msg);
                     }
@@ -1761,26 +1761,24 @@ var Util = {
                     }
                     if ($(".active-bz-list")[0] !== undefined) {
                         let breezemoonAuthorName = data.bz.breezemoonAuthorName;
-                        if (breezemoonAuthorName != Label.currentUserName) {
-                            let breezemoonAuthorThumbnailURL48 = data.bz.breezemoonAuthorThumbnailURL48;
-                            let breezemoonContent = data.bz.breezemoonContent;
-                            let breezemoonOId = data.bz.oId;
-                            let list = $($(".active-bz-list")[0]);
-                            list.prepend(
-                                "<li style=\"display: none\">\n" +
-                                "<a href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "\">\n" +
-                                "<span class=\"avatar-small slogan\" aria-label=\"" + breezemoonAuthorName + "\" style=\"background-image: url(" + breezemoonAuthorThumbnailURL48 + ")\"></span>\n" +
-                                "</a>\n" +
-                                "<a href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "/breezemoons/" + breezemoonOId + "\" class=\"title\">" + breezemoonContent + "</a>\n" +
-                                "</li>"
-                            );
+                        let breezemoonAuthorThumbnailURL48 = data.bz.breezemoonAuthorThumbnailURL48;
+                        let breezemoonContent = data.bz.breezemoonContent;
+                        let breezemoonOId = data.bz.oId;
+                        let list = $($(".active-bz-list")[0]);
+                        list.prepend(
+                            "<li style=\"display: none\">\n" +
+                            "<a href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "\">\n" +
+                            "<span class=\"avatar-small slogan\" aria-label=\"" + breezemoonAuthorName + "\" style=\"background-image: url(" + breezemoonAuthorThumbnailURL48 + ")\"></span>\n" +
+                            "</a>\n" +
+                            "<a href=\"" + Label.servePath + "/member/" + breezemoonAuthorName + "/breezemoons/" + breezemoonOId + "\" class=\"title\">" + breezemoonContent + "</a>\n" +
+                            "</li>"
+                        );
 
-                            list.find("li:last").fadeOut(199, function () {
-                                list.find("li:last").remove();
-                            });
-                            list.find("li:first").slideDown(200);
-                            Util.listenUserCard();
-                        }
+                        list.find("li:last").fadeOut(199, function () {
+                            list.find("li:last").remove();
+                        });
+                        list.find("li:first").slideDown(200);
+                        Util.listenUserCard();
                     }
                     break;
                 case 'refreshNotification':
