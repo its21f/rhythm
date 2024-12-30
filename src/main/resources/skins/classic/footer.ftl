@@ -54,7 +54,7 @@
             </div>
             <div class="footer-nav fn-clear ft-smaller">
                 摸鱼好站&nbsp;
-                <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.cxy521.com/">程序员导航</a>
+                <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="http://www.cxy521.com/">程序员导航</a>
                 &nbsp;｜&nbsp;
                 <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.lundao.pub/">论道社区</a>
                 &nbsp;｜&nbsp;

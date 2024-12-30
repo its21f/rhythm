@@ -30,7 +30,7 @@
             摸鱼好站
         </div>
         <div>
-            <a target="_blank" href="https://www.cxy521.com/">程序员导航</a><br>
+            <a target="_blank" href="http://www.cxy521.com/">程序员导航</a><br>
             <a target="_blank" href="https://www.lundao.pub/">论道社区</a><br>
             <a target="_blank" href="https://bbs.tampermonkey.net.cn/">油猴中文网</a>
         </div>
