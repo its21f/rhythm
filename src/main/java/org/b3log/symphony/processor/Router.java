@@ -139,8 +139,8 @@ public final class Router {
         final StatisticProcessor statisticProcessor = beanManager.getReference(StatisticProcessor.class);
         Dispatcher.get("/statistic", statisticProcessor::showStatistic, anonymousViewCheckMidware::handle);
         // 跳转页
-        final ForwardProcessor forwardProcessor = beanManager.getReference(ForwardProcessor.class);
-        Dispatcher.get("/forward", forwardProcessor::showForward);
+        //final ForwardProcessor forwardProcessor = beanManager.getReference(ForwardProcessor.class);
+        //Dispatcher.get("/forward", forwardProcessor::showForward);
         // 领域
         final DomainProcessor domainProcessor = beanManager.getReference(DomainProcessor.class);
         Dispatcher.get("/domain/{domainURI}", domainProcessor::showDomainArticles, anonymousViewCheckMidware::handle);

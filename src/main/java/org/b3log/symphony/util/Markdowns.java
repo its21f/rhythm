@@ -458,7 +458,7 @@ public final class Markdowns {
 
                 if (!MediaPlayers.isMedia(src)) {
                     src = URLs.encode(src);
-                    a.attr("href", Latkes.getServePath() + "/forward?goto=" + src);
+                    //a.attr("href", Latkes.getServePath() + "/forward?goto=" + src);
                 }
                 a.attr("target", "_blank");
                 a.attr("rel", "nofollow");
