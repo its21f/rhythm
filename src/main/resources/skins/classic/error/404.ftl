@@ -40,7 +40,7 @@
         <#include '../footer.ftl'/>
     </body>
     <script>
-        $('.main .wrapper div.ft-center').html('<img src="${staticServePath}/images/404/' + Math.round(Math.random() * 6) + '.gif">');
+        $('.main .wrapper div.ft-center').html('<img src="${staticServePath}/images/404/' + Math.round(Math.random() * 5) + '.gif">');
         Util.mouseClickEffects();
     </script>
 </html>
