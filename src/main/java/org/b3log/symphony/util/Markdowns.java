@@ -457,11 +457,13 @@ public final class Markdowns {
                 }
 
                 if (!MediaPlayers.isMedia(src)) {
-                    src = URLs.encode(src);
+                    //src = URLs.encode(src);
                     //a.attr("href", Latkes.getServePath() + "/forward?goto=" + src);
+                    a.tagName("p");
+                    a.html(src);
                 }
-                a.attr("target", "_blank");
-                a.attr("rel", "nofollow");
+                //a.attr("target", "_blank");
+                //a.attr("rel", "nofollow");
             });
             doc.outputSettings().prettyPrint(false);
 
