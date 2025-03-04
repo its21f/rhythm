@@ -277,8 +277,10 @@ public final class Server extends BaseServer {
             }
         }).start();
 
-        NodeUtil.init();
-        NodeUtil.initOnline();
+        new Thread(() -> {
+            NodeUtil.init();
+            NodeUtil.initOnline();
+        }).start();
 
         System.out.println(">>> Quick boot mode requirements is ready!");
 
