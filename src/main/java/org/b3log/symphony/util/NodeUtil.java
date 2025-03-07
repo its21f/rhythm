@@ -178,36 +178,6 @@ public class NodeUtil {
         }
     }
 
-    public static HashMap<String, Long> parseStringToHashMap(String input) {
-        HashMap<String, Long> map = new HashMap<>();
-
-        // 去掉前后的大括号
-        if (input.startsWith("{") && input.endsWith("}")) {
-            input = input.substring(1, input.length() - 1).trim();
-        } else {
-            throw new IllegalArgumentException("Invalid input format");
-        }
-
-        // 分割键值对
-        String[] pairs = input.split(", ");
-        for (String pair : pairs) {
-            String[] keyValue = pair.split("=");
-            if (keyValue.length != 2) {
-                throw new IllegalArgumentException("Invalid key-value pair: " + pair);
-            }
-            String key = keyValue[0].trim();
-            Long value;
-            try {
-                value = Long.parseLong(keyValue[1].trim());
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid value for key: " + key);
-            }
-            map.put(key, value);
-        }
-
-        return map;
-    }
-
     public static void initOnline() {
         JSONArray onlineList = new JSONArray();
         Map<String, Integer> tmp_wsOnline = new HashMap<>();
