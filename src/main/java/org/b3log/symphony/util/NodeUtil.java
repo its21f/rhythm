@@ -38,7 +38,6 @@ import javax.net.ssl.X509TrustManager;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
-import java.nio.ByteBuffer;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,12 +157,12 @@ public class NodeUtil {
                     if (response.equals("{}")) {
                         ChatRoomBot.sendBotMsg(nickName + "：报告！没有超过6小时未活跃的成员，一切都很和谐~");
                     } else {
-                        HashMap<String, Long> result = parseStringToHashMap(response);
+                        Map<String, Object> result = new JSONObject(response).toMap();
                         StringBuilder stringBuilder = new StringBuilder();
                         stringBuilder.append(nickName + "：报告！成功扫描超过6小时未活跃的成员，并已将他们断开连接：<br>");
                         stringBuilder.append("<details><summary>不活跃用户列表</summary>");
                         for (String j : result.keySet()) {
-                            long time = result.get(j);
+                            long time = Long.parseLong(result.get(j).toString());
                             stringBuilder.append(j + " AFK " + time + "小时<br>");
                         }
                         stringBuilder.append("</details>");
@@ -361,6 +360,7 @@ public class NodeUtil {
         }
 
         private final StringBuilder messageBuffer = new StringBuilder();
+
         @Override
         public CompletionStage<?> onText(WebSocket webSocket, CharSequence data, boolean last) {
             messageBuffer.append(data);
