@@ -831,6 +831,7 @@ public class ChatroomProcessor {
                 legalClient.add("Bird");
                 legalClient.add("Dart");
                 legalClient.add("Harmony");
+                legalClient.add("Rust");
                 legalClient.add("Other");
                 if (legalClient.contains(client)) {
                     source = client + "/" + version;
