@@ -323,7 +323,7 @@ public class LoginProcessor {
             final String userId = user.optString(Keys.OBJECT_ID);
             final String ip = Requests.getRemoteAddr(context.getRequest());
             final String name = user.optString(User.USER_NAME);
-            if (verifySMSCodeLimiterOfIP.access(ip) && verifySMSCodeLimiterOfName.access(name) && verifySMSCodeLimiterOfPhone.access(phone)) {
+            if (verifySMSCodeLimiterOfIPLong.access(ip) && verifySMSCodeLimiterOfIP.access(ip) && verifySMSCodeLimiterOfName.access(name) && verifySMSCodeLimiterOfPhone.access(phone)) {
                 final String code = RandomStringUtils.randomNumeric(6);
                 if (!verifycodeMgmtService.sendVerifyCodeSMS(phone, code)) {
                     context.renderMsg("验证码发送失败，请稍候重试");
@@ -540,6 +540,7 @@ public class LoginProcessor {
      *
      * @param context the specified context
      */
+    public static SimpleCurrentLimiter verifySMSCodeLimiterOfIPLong = new SimpleCurrentLimiter(60 * 60 * 24, 3);
     public static SimpleCurrentLimiter verifySMSCodeLimiterOfIP = new SimpleCurrentLimiter(600, 2);
     public static SimpleCurrentLimiter verifySMSCodeLimiterOfName = new SimpleCurrentLimiter(600, 2);
     public static SimpleCurrentLimiter verifySMSCodeLimiterOfPhone = new SimpleCurrentLimiter(600, 2);
@@ -549,7 +550,7 @@ public class LoginProcessor {
         final JSONObject requestJSONObject = context.getRequest().getJSON();
         final String name = requestJSONObject.optString(User.USER_NAME);
         final String userPhone = requestJSONObject.optString("userPhone");
-        if (verifySMSCodeLimiterOfIP.access(ip) && verifySMSCodeLimiterOfName.access(name) && verifySMSCodeLimiterOfPhone.access(userPhone)) {
+        if (verifySMSCodeLimiterOfIPLong.access(ip) && verifySMSCodeLimiterOfIP.access(ip) && verifySMSCodeLimiterOfName.access(name) && verifySMSCodeLimiterOfPhone.access(userPhone)) {
             final String invitecode = requestJSONObject.optString(Invitecode.INVITECODE);
 
             final JSONObject user = new JSONObject();

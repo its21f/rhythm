@@ -18,6 +18,8 @@
  */
 package org.b3log.symphony.processor;
 
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -216,6 +218,28 @@ public class ChatroomProcessor {
 
         Dispatcher.get("/chat-room/node/get", chatroomProcessor::getNode, loginCheck::handle);
         Dispatcher.post("/chat-room/node/push", chatroomProcessor::nodePush);
+
+        Dispatcher.get("/gen", chatroomProcessor::genMetal, loginCheck::handle);
+    }
+
+    public void genMetal(final RequestContext context) {
+        Set<String> params = context.getRequest().getParameterNames();
+        String paramString = "";
+        for (String param : params) {
+            paramString += param + "=" + context.getRequest().getParameter(param) + "&";
+        }
+        paramString = "?" + paramString.substring(0, paramString.length() - 1);
+        String genUrl = Symphonys.get("gen.metal.url") + paramString;
+        final HttpRequest req = HttpRequest.get(genUrl).header(Common.USER_AGENT, Symphonys.USER_AGENT_BOT);
+        final HttpResponse res = req.connectionTimeout(3000).timeout(5000).send();
+        res.close();
+        if (200 != res.statusCode()) {
+            context.sendError(500);
+            return;
+        }
+        String body = res.charset("utf-8").bodyText();
+        context.getResponse().setContentType("image/svg+xml");
+        context.getResponse().sendBytes(body.getBytes());
     }
 
     public void nodePush(final RequestContext context) {

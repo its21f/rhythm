@@ -465,7 +465,7 @@ public class SettingsProcessor {
             final String name = user.optString(User.USER_NAME);
             final String ip = Requests.getRemoteAddr(context.getRequest());
 
-            if (LoginProcessor.verifySMSCodeLimiterOfIP.access(ip) && LoginProcessor.verifySMSCodeLimiterOfName.access(name) && LoginProcessor.verifySMSCodeLimiterOfPhone.access(userPhone)) {
+            if (LoginProcessor.verifySMSCodeLimiterOfIPLong.access(ip) && LoginProcessor.verifySMSCodeLimiterOfIP.access(ip) && LoginProcessor.verifySMSCodeLimiterOfName.access(name) && LoginProcessor.verifySMSCodeLimiterOfPhone.access(userPhone)) {
                 final String code = RandomStringUtils.randomNumeric(6);
                 if (!verifycodeMgmtService.sendVerifyCodeSMS(userPhone, code)) {
                     context.renderMsg("验证码发送失败，请稍候重试");
