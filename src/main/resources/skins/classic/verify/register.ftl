@@ -27,6 +27,8 @@
         </@head>
         <link rel="stylesheet" href="${staticServePath}/css/index.css?${staticResourceVersion}" />
         <link rel="canonical" href="${servePath}/register">
+        <script src="http://static.geetest.com/v4/gt4.js"></script>
+        <script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.js"></script>
     </head>
     <body>
         <#include "../header.ftl">
@@ -50,17 +52,37 @@
                                 <svg><use xlink:href="#heart"></use></svg>
                                 <input id="registerInviteCode" type="text" placeholder="${invitecodePlaceholderLabel}" autocomplete="off" />
                             </div>
-
-
-                            <div class="input-wrap<#if "2" == miscAllowRegister> fn-none</#if>">
-                                <img id="registerCaptchaImg" class="fn-pointer captcha-img " src="${servePath}/captcha" onclick="this.src = '${servePath}/captcha?' + (new Date()).getTime()" />
-                                <input type="text" id="registerCaptcha" class="captcha-input" placeholder="${captchaLabel}" />
-                            </div>
                         </div>
 
+                        <br>
+                        <div id="captcha"></div>
+                        <br>
+                        <script>
+                            var captchaId = "6d886bcaec3f86fcfd6f61bff5af2cb4"
+                            var product = "float"
+                            if (product !== 'bind') {
+                                $('#btn').remove();
+                            }
+
+                            initGeetest4({
+                                captchaId: captchaId,
+                                product: product,
+                            }, function (gt) {
+                                window.gt = gt
+                                gt
+                                    .appendTo("#captcha")
+                                    .onSuccess(function (e) {
+                                        var result = gt.getValidate();
+                                        Verify.register(result);
+                                        setTimeout(function () {
+                                            gt.reset();
+                                        }, 3000);
+                                    })
+                            });
+
+                        </script>
                         <div id="registerTip" class="tip"></div>
-                        <button class="green" id="registerBtn" onclick="Verify.register()">发送验证码</button>
-                        <button id="gotoLoginBtn" onclick="Util.goLogin()">${loginLabel}</button>
+                        <button class="green" style="display: none" id="registerBtn" onclick="Verify.register()">发送验证码</button>
                     </div>
                 </div>
                 <div class="intro vditor-reset">

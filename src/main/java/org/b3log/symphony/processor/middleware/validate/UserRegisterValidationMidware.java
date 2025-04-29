@@ -231,7 +231,7 @@ public class UserRegisterValidationMidware {
         // open register
         if (useInvitationLink || "0".equals(option.optString(Option.OPTION_VALUE))) {
             final String captcha = requestJSONObject.optString(CaptchaProcessor.CAPTCHA);
-            if (CaptchaProcessor.invalidCaptcha(captcha)) {
+            if (!CaptchaProcessor.jiyan(captcha)) {
                 context.renderJSON(new JSONObject().put(Keys.MSG, langPropsService.get("registerFailLabel") + " - " + langPropsService.get("captchaErrorLabel")));
                 context.abort();
                 return;

@@ -79,7 +79,7 @@ var Verify = {
     /**
      * @description Register Step 1
      */
-    register: function () {
+    register: function (result) {
         if (Validate.goValidate({
             target: $("#registerTip"),
             data: [{
@@ -97,7 +97,7 @@ var Verify = {
                 userName: $("#registerUserName").val().replace(/(^\s*)|(\s*$)/g, ""),
                 userPhone: $("#registerUserPhone").val().replace(/(^\s*)|(\s*$)/g, ""),
                 invitecode: $("#registerInviteCode").val().replace(/(^\s*)|(\s*$)/g, ""),
-                captcha: $("#registerCaptcha").val()
+                captcha: result
             };
 
             let args = "";
@@ -119,6 +119,8 @@ var Verify = {
                             '    <svg><use xlink:href="#email"></use></svg>\n' +
                             '    <input id="registerVerifyCode" type="text" placeholder="短信验证码" autocomplete="off" />\n' +
                             '</div>');
+                        $("#captcha").remove();
+                        $("#registerBtn").show();
                         $("#registerBtn").text('验证');
                         if (Util.getParameterByName("r") !== '') {
                             $("#registerBtn").attr('onclick', 'location.href = Label.servePath + "/register?r=" + Util.getParameterByName("r") + "&code=" + $("#registerVerifyCode").val()');

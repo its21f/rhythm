@@ -18,6 +18,10 @@
  */
 package org.b3log.symphony.processor;
 
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
+import org.apache.commons.codec.digest.HmacAlgorithms;
+import org.apache.commons.codec.digest.HmacUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +36,7 @@ import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.Strings;
 import org.b3log.symphony.model.Common;
+import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
 import org.patchca.background.BackgroundFactory;
 import org.patchca.color.GradientColorFactory;
@@ -96,6 +101,59 @@ public class CaptchaProcessor {
 
         Dispatcher.get("/captcha", captchaProcessor::get);
         Dispatcher.get("/captcha/login", captchaProcessor::getLoginCaptcha);
+    }
+
+    public static boolean jiyan(String captcha) {
+        try {
+            String captchaId = Symphonys.get("jiyan.id");
+            String captchaKey = Symphonys.get("jiyan.key");
+            String domain = Symphonys.get("jiyan.domain");
+
+            JSONObject c = new JSONObject(captcha);
+            String lotNumber = c.optString("lot_number");
+            String captchaOutput = c.optString("captcha_output");
+            String passToken = c.optString("pass_token");
+            String genTime = c.optString("gen_time");
+
+            String signToken = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, captchaKey).hmacHex(lotNumber);
+
+            Map<String, String> queryParams = new HashMap<>();
+            queryParams.put("lot_number", lotNumber);
+            queryParams.put("captcha_output", captchaOutput);
+            queryParams.put("pass_token", passToken);
+            queryParams.put("gen_time", genTime);
+            queryParams.put("sign_token", signToken);
+
+            String url = String.format(domain + "/validate" + "?captcha_id=%s", captchaId);
+            JSONObject jsonObject = new JSONObject();
+
+            try {
+                HttpResponse response = HttpRequest.post(url)
+                        .form("lot_number", lotNumber)
+                        .form("captcha_output", captchaOutput)
+                        .form("pass_token", passToken)
+                        .form("gen_time", genTime)
+                        .form("sign_token", signToken)
+                        .charset("UTF-8")
+                        .timeout(5000)
+                        .send();
+                if (response.statusCode() == 200) {
+                    jsonObject = new JSONObject(response.bodyText());
+                } else {
+                    throw new IOException("HTTP Status: " + response.statusCode());
+                }
+            } catch (Exception e) {
+                jsonObject.put("result", "fail");
+                jsonObject.put("reason", "request geetest api fail");
+            }
+            if (jsonObject.getString("result").equals("success")) {
+                return true;
+            }
+
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**

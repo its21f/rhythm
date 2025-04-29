@@ -460,8 +460,9 @@ var Settings = {
   /**
    * 获取手机验证码
    * @param csrfToken
+   * @param result
    */
-  getPhoneCaptcha: function (csrfToken) {
+  getPhoneCaptcha: function (csrfToken, result) {
     $('#phoneGetBtn').attr('disabled', 'disabled').css('opacity', '0.3')
     $.ajax({
       url: Label.servePath + '/settings/phone/vc',
@@ -469,7 +470,7 @@ var Settings = {
       headers: {'csrfToken': csrfToken},
       data: JSON.stringify({
         userPhone: $('#phoneInput').val(),
-        captcha: $('#phoneVerify').val(),
+        captcha: result
       }),
       success: function (result) {
         if (0 === result.code) {

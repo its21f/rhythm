@@ -87,12 +87,35 @@
     <div class="module-panel form fn-clear">
         <label>手机号</label>
         <input id="phoneInput" type="text" value="${currentUser.userPhone}" />
+        <button style="margin-top: 10px" onclick="$('#change-phone-form').removeClass('fn-none');$('#change-phone-form img').click();$(this).remove()">修改绑定手机</button>
+        <span id="change-phone-form" class="fn-none">
+            <br>
+                        <div id="captcha"></div>
+                        <br>
+                        <script>
+                            var captchaId = "6d886bcaec3f86fcfd6f61bff5af2cb4"
+                            var product = "float"
+                            if (product !== 'bind') {
+                                $('#btn').remove();
+                            }
 
-        <div class="home-account__captch" id="phone_captch">
-            <label>${imageCaptchaLabel}</label>
-            <img class="fn-pointer" height="20px" src="${servePath}/captcha?v=01" onclick="this.src = '${servePath}/captcha?' + (new Date()).getTime()" />
-            <input id="phoneVerify" type="text" />
-        </div>
+                            initGeetest4({
+                                captchaId: captchaId,
+                                product: product,
+                            }, function (gt) {
+                                window.gt = gt
+                                gt
+                                    .appendTo("#captcha")
+                                    .onSuccess(function (e) {
+                                        var result = gt.getValidate();
+                                        Settings.getPhoneCaptcha('${csrfToken}', result)
+                                        $("#captcha").remove();
+                                    })
+                            });
+
+                        </script>
+        </span>
+
         <div class="fn-none" id="phoneCodePanel">
             <label>请输入短信验证码</label>
             <input id="phoneCode" type="text" />
@@ -100,9 +123,6 @@
         <div id="phoneTip" class="tip"></div><br/>
         <button id="phoneSubmitBtn" class="fn-right fn-none"
                 onclick="Settings.updatePhone('${csrfToken}')">${submitLabel}</button>
-        <button id="phoneGetBtn"
-                class="fn-right"
-                onclick="Settings.getPhoneCaptcha('${csrfToken}')">获取短信验证码</button>
     </div>
 
     <div class="module-header" id="bind-email">
