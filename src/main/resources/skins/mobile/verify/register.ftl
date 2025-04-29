@@ -26,7 +26,7 @@
         <meta name="description" content="${registerLabel} ${symphonyLabel}"/>
         </@head>
         <link rel="canonical" href="${servePath}/register">
-        <script src="http://static.geetest.com/v4/gt4.js"></script>
+        <script src="https://static.geetest.com/v4/gt4.js"></script>
         <script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.js"></script>
     </head>
     <body>

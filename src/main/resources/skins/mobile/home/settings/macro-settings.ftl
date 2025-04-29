@@ -26,7 +26,7 @@
         <@head title="${settingsLabel} - ${user.userName} - ${symphonyLabel}">
         <meta name="description" content="${user.userName}${deLabel}${settingsLabel}"/>
         </@head>
-        <script src="http://static.geetest.com/v4/gt4.js"></script>
+        <script src="https://static.geetest.com/v4/gt4.js"></script>
         <script src="https://apps.bdimg.com/libs/jquery/1.9.1/jquery.js"></script>
     </head>
     <body>
