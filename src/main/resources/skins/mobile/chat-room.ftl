@@ -59,9 +59,6 @@
                         <svg id="emojiBtn" style="width: 30px; height: 30px; cursor:pointer;">
                             <use xlink:href="#emojiIcon"></use>
                         </svg>
-                        <svg id="paintBtn" style="width: 30px; height: 30px; cursor:pointer;">
-                            <use xlink:href="#icon-paint"></use>
-                        </svg>
                         <svg id="barragerBtn" style="width: 30px; height: 30px; cursor:pointer;">
                             <use xlink:href="#danmu"></use>
                         </svg>
@@ -153,9 +150,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div style="margin-top: 10px;">
-                                弹幕颜色：<div id="selectBarragerColor" style="display: inline-block;border:1px solid #000"></div>
-                            </div>
+
                             <div class="ft__smaller ft__fade" style="margin-top: 10px; margin-bottom: 10px;">发送弹幕每次将花费 <b><span id="barragerCost">${barragerCost}</span></b> <span id="barragerUnit">${barragerUnit}</span></div>
                         </div>
                     </div>
@@ -245,7 +240,6 @@
 <script src="${staticServePath}/js/chat-room${miniPostfix}.js?${staticResourceVersion}"></script>
 <script src="${staticServePath}/js/lib/viewer.min.js?${staticResourceVersion}"></script>
 <script src="${staticServePath}/js/lib/barrager/jquery.barrager.min.js"></script>
-<script src="${staticServePath}/js/lib/xncolorpicker.min.js"></script>
 <script>
     Label.addBoldLabel = '${addBoldLabel}';
     Label.addItalicLabel = '${addItalicLabel}';

@@ -508,7 +508,7 @@ var ChatRoom = {
                 $("#paintContent").slideUp(1000);
             }
         });
-        BarragerColorPicker = new XNColorPicker({
+        /*BarragerColorPicker = new XNColorPicker({
             color: "#ffffff",
             selector: "#selectBarragerColor",
             showhistorycolor: false,
@@ -522,14 +522,14 @@ var ChatRoom = {
             },
             onConfirm: function (color) {
             }
-        })
+        })*/
         // 监听弹幕颜色
         // $('#selectBarragerColor').cxColor({
         //     color: '#ffffff'
         // });
         // 监听修改颜色
         // $('#selectColor').cxColor();
-        DarwColorPicker = new XNColorPicker({
+        /*DarwColorPicker = new XNColorPicker({
             color: "#000000",
             selector: "#selectColor",
             showhistorycolor: false,
@@ -547,7 +547,7 @@ var ChatRoom = {
                 // console.log("change",color.color.rgba)
                 ChatRoom.changeColor(color.color.rgba);
             }
-        })
+        })*/
         // $("#selectColor").bind("change", function () {
         //     ChatRoom.changeColor(this.value);
         // });
@@ -588,7 +588,7 @@ var ChatRoom = {
     },
     sendBarrager: function () {
         // let color = $("#selectBarragerColor")[0].value;
-        let color = BarragerColorPicker.color.rgba;
+        let color = 'rgba(255,255,255,1)';
         let content = $('#barragerInput').val();
         let json = {
             color: color,
