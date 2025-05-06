@@ -185,23 +185,18 @@ var Verify = {
     /**
      * @description Forget password
      */
-    forgetPwd: function () {
+    forgetPwd: function (result) {
         if (Validate.goValidate({
             target: $("#fpwdTip"),
             data: [{
                 "target": $("#fpwdPhone"),
                 "msg": "手机号码不合法",
                 "type": "phone"
-            }, {
-                "target": $("#fpwdSecurityCode"),
-                "msg": Label.captchaErrorLabel,
-                "type": 'string',
-                'max': 4
             }]
         })) {
             var requestJSONObject = {
                 userPhone: $("#fpwdPhone").val(),
-                captcha: $("#fpwdSecurityCode").val()
+                captcha: result
             };
 
             $.ajax({
@@ -212,12 +207,15 @@ var Verify = {
                 success: function (result, textStatus) {
                     if (0 === result.code) {
                         $("#fpwdTip").addClass('succ').removeClass('error').html('<ul><li>' + result.msg + '</li></ul>');
-                        $("#fpwdPhone, #fpwdCaptcha, #fpwdSecurityCode").hide();
+                        $('#fpwdPhone').parent().hide();
+                        //$("#fpwdPhone, #fpwdCaptcha, #fpwdSecurityCode").hide();
                         $("#fpwdTip").before('' +
                             '<div class="input-wrap">\n' +
                             '    <svg><use xlink:href="#email"></use></svg>\n' +
                             '    <input id="resetPwdVerifyCode" type="text" placeholder="短信验证码" autocomplete="off" />\n' +
                             '</div>');
+                        $("#captcha").remove();
+                        $("#forgetBtn").show();
                         $("#forgetBtn").text('验证');
                         $("#forgetBtn").attr('onclick', 'location.href = Label.servePath + "/reset-pwd?code=" + $("#resetPwdVerifyCode").val()');
                     } else {

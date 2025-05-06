@@ -49,7 +49,7 @@ public class UserForgetPwdValidationMidware {
         final String phone = requestJSONObject.optString("userPhone");
         final String captcha = requestJSONObject.optString(CaptchaProcessor.CAPTCHA);
 
-        if (CaptchaProcessor.invalidCaptcha(captcha)) {
+        if (!CaptchaProcessor.jiyan(captcha)) {
             context.renderJSON(new JSONObject().put(Keys.MSG, langPropsService.get("submitFailedLabel") + " - " + langPropsService.get("captchaErrorLabel")));
             context.abort();
             return;
