@@ -55,6 +55,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
+import pers.adlered.simplecurrentlimiter.cache.pair.CachePair;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 
 import java.math.BigDecimal;
@@ -194,8 +195,6 @@ public class ChatroomProcessor {
 
     public static String barragerUnit = "积分";
 
-
-
     /**
      * Register request handlers.
      */
@@ -222,6 +221,12 @@ public class ChatroomProcessor {
         Dispatcher.get("/gen", chatroomProcessor::genMetal, loginCheck::handle);
     }
 
+    public static Map<String, String> metalCache = Collections.synchronizedMap(new LinkedHashMap<String, String>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > 2000;
+        }
+    });
     public void genMetal(final RequestContext context) {
         Set<String> params = context.getRequest().getParameterNames();
         String paramString = "";
@@ -229,15 +234,22 @@ public class ChatroomProcessor {
             paramString += param + "=" + context.getRequest().getParameter(param) + "&";
         }
         paramString = "?" + paramString.substring(0, paramString.length() - 1);
-        String genUrl = Symphonys.get("gen.metal.url") + paramString;
-        final HttpRequest req = HttpRequest.get(genUrl).header(Common.USER_AGENT, Symphonys.USER_AGENT_BOT);
-        final HttpResponse res = req.connectionTimeout(3000).timeout(5000).send();
-        res.close();
-        if (200 != res.statusCode()) {
-            context.sendError(500);
-            return;
+        String body = "";
+        if (!metalCache.containsKey(paramString)) {
+            String genUrl = Symphonys.get("gen.metal.url") + paramString;
+            final HttpRequest req = HttpRequest.get(genUrl).header(Common.USER_AGENT, Symphonys.USER_AGENT_BOT);
+            final HttpResponse res = req.connectionTimeout(3000).timeout(5000).send();
+            res.close();
+            if (200 != res.statusCode()) {
+                context.sendError(500);
+                return;
+            }
+            body = res.charset("utf-8").bodyText();
+            metalCache.put(paramString, body);
+        } else {
+            body = metalCache.get(paramString);
         }
-        String body = res.charset("utf-8").bodyText();
+
         context.getResponse().setContentType("image/svg+xml");
         context.getResponse().sendBytes(body.getBytes());
     }
