@@ -218,7 +218,7 @@ public class ChatroomProcessor {
         Dispatcher.get("/chat-room/node/get", chatroomProcessor::getNode, loginCheck::handle);
         Dispatcher.post("/chat-room/node/push", chatroomProcessor::nodePush);
 
-        Dispatcher.get("/gen", chatroomProcessor::genMetal, loginCheck::handle);
+        Dispatcher.get("/gen", chatroomProcessor::genMetal);
     }
 
     public static Map<String, String> metalCache = Collections.synchronizedMap(new LinkedHashMap<String, String>() {
