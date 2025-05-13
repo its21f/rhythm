@@ -228,21 +228,14 @@ public class ChatroomProcessor {
         }
     });
     public void genMetal(final RequestContext context) {
-        Set<String> params = context.getRequest().getParameterNames();
-        String paramString = "";
-        List<String> paramList = new ArrayList<>();
-        paramList.add("ver");
-        paramList.add("scale");
-        paramList.add("txt");
-        paramList.add("url");
-        paramList.add("backcolor");
-        paramList.add("fontcolor");
-        for (String param : params) {
-            if (paramList.contains(param)) {
-                paramString += param + "=" + context.getRequest().getParameter(param) + "&";
-            }
-        }
-        paramString = "?" + paramString.substring(0, paramString.length() - 1);
+        String ver = safeParam(context.param("ver"), "ver");
+        String scale = safeParam(context.param("scale"), "scale");
+        String txt = safeParam(context.param("txt"), "txt");
+        String url = safeParam(context.param("url"), "url");
+        String backcolor = safeParam(context.param("backcolor"), "backcolor");
+        String fontcolor = safeParam(context.param("fontcolor"), "fontcolor");
+        String paramString = "?ver=" + ver + "&scale=" + scale + "&txt=" + txt + "&url=" + url + "&backcolor=" + backcolor + "&fontcolor=" + fontcolor;
+
         String body = "";
         if (!metalCache.containsKey(paramString)) {
             String genUrl = Symphonys.get("gen.metal.url") + paramString;
@@ -262,6 +255,32 @@ public class ChatroomProcessor {
         context.getResponse().setContentType("image/svg+xml");
         context.getResponse().sendBytes(body.getBytes());
     }
+
+    public static String safeParam(String value, String type) {
+        if (value == null) return "";
+
+        if ("ver".equals(type) || "scale".equals(type)) {
+            return value.replaceAll("[^\\d.]", "")
+                    .replaceAll("\\.{2,}", ".")
+                    .replaceAll("^[^\\d]+", "")
+                    .replaceAll("(\\..*)\\.", "$1");
+        } else if ("txt".equals(type)) {
+            return value.replaceAll("[^\\u4e00-\\u9fa5a-zA-Z0-9\\s，。！？；：“”‘’（）【】《》…—~-]", "");
+        } else if ("url".equals(type)) {
+            String filtered = value.replaceAll("[^a-zA-Z0-9\\-._~:/?#@!$&'()*+,;=%]", "");
+            return filtered.startsWith("https://file.fishpi.cn") ? filtered : "";
+        } else if ("fontcolor".equals(type)) {
+            return value.replaceAll("[^0-9a-fA-F]", "")
+                    .substring(0, Math.min(6, value.length()))
+                    .toLowerCase();
+        } else if ("backcolor".equals(type)) {
+            return value.replaceAll("[^0-9a-fA-F,]", "")
+                    .substring(0, Math.min(13, value.length()))
+                    .toLowerCase();
+        }
+        return value;
+    }
+
 
     public void nodePush(final RequestContext context) {
         final JSONObject requestJSONObject = context.requestJSON();
