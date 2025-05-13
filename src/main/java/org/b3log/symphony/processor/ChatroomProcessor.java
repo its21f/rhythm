@@ -230,8 +230,17 @@ public class ChatroomProcessor {
     public void genMetal(final RequestContext context) {
         Set<String> params = context.getRequest().getParameterNames();
         String paramString = "";
+        List<String> paramList = new ArrayList<>();
+        paramList.add("ver");
+        paramList.add("scale");
+        paramList.add("txt");
+        paramList.add("url");
+        paramList.add("backcolor");
+        paramList.add("fontcolor");
         for (String param : params) {
-            paramString += param + "=" + context.getRequest().getParameter(param) + "&";
+            if (paramList.contains(param)) {
+                paramString += param + "=" + context.getRequest().getParameter(param) + "&";
+            }
         }
         paramString = "?" + paramString.substring(0, paramString.length() - 1);
         String body = "";
