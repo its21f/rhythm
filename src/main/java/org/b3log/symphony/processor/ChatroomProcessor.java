@@ -267,7 +267,7 @@ public class ChatroomProcessor {
         } else if ("txt".equals(type)) {
             return value.replaceAll("[^\\u4e00-\\u9fa5a-zA-Z0-9\\s，。！？；：“”‘’（）【】《》…—~-]", "");
         } else if ("url".equals(type)) {
-            String filtered = value.replaceAll("[^a-zA-Z0-9\\-._~:/?#@!$&'()*+,;=%]", "");
+            String filtered = value.replaceAll("[^\\u4e00-\\u9fa5a-zA-Z0-9\\-._~:/?#@!$&'()*+,;=%]", "");
             return filtered.startsWith("https://file.fishpi.cn") ? filtered : "";
         } else if ("fontcolor".equals(type)) {
             return value.replaceAll("[^0-9a-fA-F]", "")
