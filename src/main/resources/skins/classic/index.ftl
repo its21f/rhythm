@@ -445,7 +445,7 @@
                 <div class="module-panel">
                     <ul class="module-list">
                         <#list qna as article>
-                            <#if article_index <= 8>
+                            <#if article_index <= 9>
                                 <li class="fn-flex">
                                     <a rel="nofollow" href="${servePath}/member/${article.articleAuthorName}">
                                     <span class="avatar-small slogan"
@@ -512,7 +512,7 @@
                     <div class="module-panel">
                         <ul class="module-list active-bz-list">
                             <#list sideBreezemoons as item>
-                                <#if item_index <= 10>
+                                <#if item_index <= 11>
                                     <li>
                                         <a href="${servePath}/member/${item.breezemoonAuthorName}">
                     <span class="avatar-small slogan" aria-label="${item.breezemoonAuthorName}"
