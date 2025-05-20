@@ -921,7 +921,49 @@ label.cmt-anonymous {
   }
 
   /* end register & login form */
+
+  /* start opeinid login form */
+  .openid-info {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 100px 20px;
+
+    .tip1 {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .tip2 {
+      color: #b0a114
+    }
+
+    .info-box{
+      margin-top: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: row;
+      padding: 10px;
+      align-items: center;
+      background: #eeeeee;
+      border-radius: 2px;
+    }
+
+    .info-detail{
+      font-size: 18px;
+    }
+
+  }
+
+  .openid-intro{
+    .openid-intro-title{
+      color:#4285f4
+    }
+  }
+
+
+  /* end opeinid login form */
 }
+
 
 /* start guide */
 .guide {

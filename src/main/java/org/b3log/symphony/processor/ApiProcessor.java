@@ -123,6 +123,7 @@ public class ApiProcessor {
         Dispatcher.get("/api/user/exists/{user}", apiProcessor::userExists);
         Dispatcher.post("/api/getKey", apiProcessor::getKey);
         Dispatcher.get("/api/user", apiProcessor::getUser);
+        Dispatcher.get("/api/user/getInfoById", apiProcessor::getUserInfoById);
         Dispatcher.get("/api/user/recentReg", apiProcessor::getRecentReg);
 
         final RewardQueryService rewardQueryService = beanManager.getReference(RewardQueryService.class);
@@ -398,6 +399,32 @@ public class ApiProcessor {
             context.renderJSON(ret);
         }
     }
+
+
+    /**
+     * 根据用户id查询信息
+     */
+    public void getUserInfoById(final RequestContext context) {
+        JSONObject ret = new JSONObject();
+        try {
+            JSONObject user = userQueryService.getUser(context.param("userId"));
+            final JSONObject filteredUserProfile = new JSONObject();
+            filteredUserProfile.put(User.USER_NAME, user.optString(User.USER_NAME));
+            filteredUserProfile.put(UserExt.USER_NICKNAME, user.optString(UserExt.USER_NICKNAME));
+            filteredUserProfile.put(UserExt.USER_AVATAR_URL, user.optString(UserExt.USER_AVATAR_URL));
+
+            ret.put(Keys.CODE, StatusCodes.SUCC);
+            ret.put(Keys.MSG, "");
+            ret.put(Keys.DATA, filteredUserProfile);
+            context.renderJSON(ret);
+        } catch (Exception e) {
+            ret.put(Keys.CODE, StatusCodes.ERR);
+            ret.put(Keys.MSG, "Query user error");
+            context.renderJSON(ret);
+        }
+    }
+
+
 
     /**
      * 获取最近注册的20个鱼油  只需要用户名和昵称吧

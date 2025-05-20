@@ -124,6 +124,8 @@ public final class Router {
         LogsProcessor.register();
         // 微信
         WeChatPayProcessor.register();
+        // OpenID
+        OpenIdProcessor.register();
 
         final BeanManager beanManager = BeanManager.getInstance();
         final LoginCheckMidware loginCheck = beanManager.getReference(LoginCheckMidware.class);

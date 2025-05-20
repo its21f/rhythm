@@ -1700,6 +1700,55 @@ label.cmt-anonymous {
       padding-left: 91px;
     }
   }
+
+
+  /* start opeinid login form */
+  .openid-info {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 20px 0;
+
+    .avatar-openid{
+      width: 50px !important;
+      height: 50px !important;
+    }
+
+    .tip1 {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .tip2 {
+      color: #b0a114
+    }
+
+    .info-box{
+      margin-top: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: row;
+      padding: 10px;
+      align-items: center;
+      background: #eeeeee;
+      border-radius: 2px;
+    }
+
+    .info-detail{
+      font-size: 18px;
+      margin-left: 10px;
+      line-height: 24px;
+    }
+
+  }
+
+  .openid-intro{
+    .openid-intro-title{
+      color:#4285f4
+    }
+  }
+
+
+  /* end opeinid login form */
 }
 
 /* end verify */
