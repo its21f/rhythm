@@ -127,8 +127,8 @@ public class TopProcessor {
         final TopProcessor topProcessor = beanManager.getReference(TopProcessor.class);
         Dispatcher.get("/api/top/any", topProcessor::getAnyTop, anonymousViewCheckMidware::handle);
         Dispatcher.get("/top", topProcessor::showTop, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/top/link", topProcessor::showLink, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/api/top/link", topProcessor::getLink, anonymousViewCheckMidware::handle);
+//        Dispatcher.get("/top/link", topProcessor::showLink, anonymousViewCheckMidware::handle);
+//        Dispatcher.get("/api/top/link", topProcessor::getLink, anonymousViewCheckMidware::handle);
         Dispatcher.get("/top/balance", topProcessor::showBalance, anonymousViewCheckMidware::handle);
         Dispatcher.get("/api/top/balance", topProcessor::getBalance, anonymousViewCheckMidware::handle);
         Dispatcher.get("/top/consumption", topProcessor::showConsumption, anonymousViewCheckMidware::handle);

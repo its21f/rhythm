@@ -22,9 +22,8 @@ import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class OpenIdProcessor {
@@ -67,6 +66,16 @@ public class OpenIdProcessor {
         Dispatcher.get("/openid/login", openIdProcessor::showLoginForm, loginCheck::handle,csrfMidware::fill);
         Dispatcher.post("/openid/confirm", openIdProcessor::confirm, loginCheck::handle,csrfMidware::fill);
         Dispatcher.post("/openid/verify", openIdProcessor::verify, csrfMidware::fill);
+
+        // 开启定时任务，清理过期的nonce
+        Symphonys.SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
+            try {
+                clearExpiredNonce();
+            } catch (final Exception e) {
+                LOGGER.log(Level.ERROR, "清理nonce定时任务出错", e);
+            } finally {
+            }
+        }, 0, 60 * 1000, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -360,5 +369,24 @@ public class OpenIdProcessor {
 
     }
 
+    // 清理过期的nonce
+    private static void clearExpiredNonce(){
+        long now = System.currentTimeMillis();
+        List<String> toRemove = new ArrayList<>();
+        for (String nonce : respNonceMap.keySet()) {
+            try {
+                Date nonceTime = OpenIdUtil.extractNonceTimestamp(nonce);
+                long delta = Math.abs(now - nonceTime.getTime());
+                if (delta > 5 * 60 * 1000) {
+                    toRemove.add(nonce);
+                }
+            } catch (Exception e) {
+                toRemove.add(nonce);
+            }
+        }
+        for (String nonce : toRemove) {
+            respNonceMap.remove(nonce);
+        }
+    }
 
 }
