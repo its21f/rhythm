@@ -1045,9 +1045,10 @@ public class SettingsProcessor {
         }
 
         // 敏感词检测
-        String content = userNickname + "\n" + userIntro + "\n" + userTags + "\n" + userURL;
+        String content = userNickname + "\n" + userIntro + "\n" + userTags;
         JSONObject censorResult = QiniuTextCensor.censor(content);
-        if (censorResult.optString("do").equals("block")) {
+        JSONObject censor2Result = QiniuTextCensor.censor(userURL);
+        if (censorResult.optString("do").equals("block") || censor2Result.optString("do").equals("block")) {
             context.renderMsg("个人信息中含违规信息，请修改后重试。");
             context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
             return;
