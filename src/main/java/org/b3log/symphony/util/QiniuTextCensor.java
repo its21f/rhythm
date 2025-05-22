@@ -34,6 +34,9 @@ public class QiniuTextCensor {
     private static HashMap<String, JSONObject> cache = new HashMap<>();
 
     public static JSONObject censor(String text) {
+        if (text.isEmpty()) {
+            return new JSONObject().put("do", "pass").put("action", "review").put("type", "未知");
+        }
         try {
             String md5 = convertToMD5(text);
             if (cache.containsKey(md5)) {
