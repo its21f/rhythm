@@ -235,8 +235,8 @@ public class BreezemoonProcessor {
         JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
         if (censorResult.optString("do").equals("block")) {
             // 违规内容，不予显示
-            ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 500 积分的处罚，请引以为戒。\n@adlered  留档");
-            ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 500, "机器人罚单-上传违规内容（清风明月）");
+            ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 50 积分的处罚，请引以为戒。\n@adlered  留档");
+            ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 50, "机器人罚单-上传违规内容（清风明月）");
             // 记录日志
             LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
             System.out.println("用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
@@ -324,8 +324,8 @@ public class BreezemoonProcessor {
             JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
             if (censorResult.optString("do").equals("block")) {
                 // 违规内容，不予显示
-                ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 500 积分的处罚，请引以为戒。\n@adlered  留档");
-                ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 500, "机器人罚单-上传违规内容（清风明月）");
+                ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 50 积分的处罚，请引以为戒。\n@adlered  留档");
+                ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 50, "机器人罚单-上传违规内容（清风明月）");
                 // 记录日志
                 LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
                 System.out.println("用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
