@@ -29,7 +29,7 @@
         <#list topLinks as link>
             <li class="fn-flex-1">
                 <h2>
-                    <a rel="bookmark" href="${servePath}/forward?goto=${link.linkAddr}">
+                    <a rel="bookmark" href="${link.linkAddr}">
                         ${link_index + 1}.${link.linkTitle}</a>
                     <span class="ft-gray ft-smaller"> &nbsp;
                         ${link.linkClickCnt?c} ${clickLabel}

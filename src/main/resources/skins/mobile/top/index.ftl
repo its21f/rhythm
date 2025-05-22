@@ -33,16 +33,16 @@
                     <h2 class="sub-head"><span>🏅</span> ${totalRankLabel}</h2>
                     <div class="list">
                         <ul>
-                            <li class="fn__flex">
-                                <svg class="avatar"><use xlink:href="#linkIcon"></use></svg>
-                                <div class="fn-flex-1">
-                                    <h2>
-                                        <a class="title"
-                                           href="${servePath}/top/link">链接排行</a>
-                                    </h2>
-                                    <div class="ft-fade ft-smaller">链接排行榜</div>
-                                </div>
-                            </li>
+<#--                            <li class="fn__flex">-->
+<#--                                <svg class="avatar"><use xlink:href="#linkIcon"></use></svg>-->
+<#--                                <div class="fn-flex-1">-->
+<#--                                    <h2>-->
+<#--                                        <a class="title"-->
+<#--                                           href="${servePath}/top/link">链接排行</a>-->
+<#--                                    </h2>-->
+<#--                                    <div class="ft-fade ft-smaller">链接排行榜</div>-->
+<#--                                </div>-->
+<#--                            </li>-->
                             <li class="fn__flex">
                                 <svg class="avatar"><use xlink:href="#balanceIcon"></use></svg>
                                 <div class="fn-flex-1">

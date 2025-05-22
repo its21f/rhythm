@@ -1625,7 +1625,7 @@ var Util = {
                 }
                 if (userURL !== "") {
                     html += '' +
-                        '<a target="_blank" href="' +  Label.servePath + '/forward?goto=' + userURL + '" class="tooltipped-new tooltipped__n" rel="nofollow"\n' +
+                        '<a target="_blank" href="' +  userURL + '" class="tooltipped-new tooltipped__n" rel="nofollow"\n' +
                         '   aria-label="' + userURL + '">\n' +
                         '    <svg>\n' +
                         '        <use xlink:href="#card-link"></use>\n' +

@@ -38,11 +38,11 @@
         <link rel="canonical" href="${servePath}/top/checkin">
         </@head>
         </#if>
-        <#if type == "link">
-            <@head title="${linkRankLabel} - ${symphonyLabel}">
-        <link rel="canonical" href="${servePath}/top/link">
-            </@head>
-        </#if>
+<#--        <#if type == "link">-->
+<#--            <@head title="${linkRankLabel} - ${symphonyLabel}">-->
+<#--        <link rel="canonical" href="${servePath}/top/link">-->
+<#--            </@head>-->
+<#--        </#if>-->
         <#if type == "online">
             <@head title="在线时间排行 - ${symphonyLabel}">
                 <link rel="canonical" href="${servePath}/top/online">
