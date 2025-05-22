@@ -76,7 +76,7 @@ public class QiniuTextCensor {
             return retResult;
         } catch (Exception e) {
             e.printStackTrace();
-            return new JSONObject().put("action", "review").put("type", "未知");
+            return new JSONObject().put("do", "pass").put("action", "review").put("type", "未知");
         }
     }
 
