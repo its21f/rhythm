@@ -18,6 +18,12 @@
  */
 package org.b3log.symphony.processor;
 
+import com.qiniu.cdn.CdnManager;
+import com.qiniu.cdn.CdnResult;
+import com.qiniu.storage.BucketManager;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.Region;
+import com.qiniu.util.Auth;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -194,14 +200,32 @@ public class ApiProcessor {
             String userId = userQueryService.getUserByName(userName).optString(Keys.OBJECT_ID);
             switch (suggestion) {
                 case "block":
-                    LOGGER.log(Level.WARN, "Block file " + fileURL);
-                    ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + userName + "  由于上传违法文件/图片，被处以 500 积分的处罚，请引以为戒。\n@adlered  留档");
-                    ChatRoomBot.abusePoint(userId, 500, "机器人罚单-上传违法文件");
+                    try {
+                        Auth auth = Auth.create(Symphonys.UPLOAD_QINIU_AK, Symphonys.UPLOAD_QINIU_SK);
+                        String[] urls = new String[]{fileURL};
+                        CdnManager c = new CdnManager(auth);
+                        CdnResult.RefreshResult result = c.refreshUrls(urls);
+                        LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
+                        LOGGER.log(Level.WARN, "Block file " + fileURL);
+                        ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + userName + "  由于上传违法文件/图片，被处以 500 积分的处罚，请引以为戒。\n@adlered  留档");
+                        ChatRoomBot.abusePoint(userId, 500, "机器人罚单-上传违法文件");
+                    } catch (Exception e) {
+                        LOGGER.error(e);
+                    }
                     break;
                 case "review":
-                    LOGGER.log(Level.WARN, "Review file " + fileURL);
-                    ChatRoomBot.sendBotMsg("用户 @" + userName + "  由于上传疑似违规文件/图片，被处以 200 积分的处罚，请引以为戒。\n@adlered  留档");
-                    ChatRoomBot.abusePoint(userId, 200, "机器人罚单-上传疑似违规文件");
+                    try {
+                        Auth auth = Auth.create(Symphonys.UPLOAD_QINIU_AK, Symphonys.UPLOAD_QINIU_SK);
+                        String[] urls = new String[]{fileURL};
+                        CdnManager c = new CdnManager(auth);
+                        CdnResult.RefreshResult result = c.refreshUrls(urls);
+                        LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
+                        LOGGER.log(Level.WARN, "Review file " + fileURL);
+                        ChatRoomBot.sendBotMsg("用户 @" + userName + "  由于上传疑似违规文件/图片，被处以 200 积分的处罚，请引以为戒。\n@adlered  留档");
+                        ChatRoomBot.abusePoint(userId, 200, "机器人罚单-上传疑似违规文件");
+                    } catch (Exception e) {
+                        LOGGER.error(e);
+                    }
                     break;
                  default:
                     LOGGER.log(Level.INFO, "Normal file " + fileURL);
