@@ -1045,7 +1045,7 @@ public class SettingsProcessor {
         }
 
         // 敏感词检测
-        String content = userTags + userURL + userQQ + userIntro + userNickname;
+        String content = userNickname + "\n" + userIntro + "\n" + userTags + "\n" + userURL;
         JSONObject censorResult = QiniuTextCensor.censor(content);
         if (censorResult.optString("do").equals("block")) {
             context.renderMsg("个人信息中含违规信息，请修改后重试。");
