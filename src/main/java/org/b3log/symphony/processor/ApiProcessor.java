@@ -208,7 +208,7 @@ public class ApiProcessor {
                         LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
                         LOGGER.log(Level.WARN, "Block file " + fileURL);
                         ChatRoomBot.sendBotMsg("[AI审查] 犯罪嫌疑人 @" + userName + "  由于上传违法文件/图片，被处以 500 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
-                        ChatRoomBot.abusePoint(userId, 500, "机器人罚单-上传违法文件");
+                        ChatRoomBot.abusePoint(userId, 500, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违法文件");
                         LogsService.censorLog(context, userName, "用户：" + userName + " 上传违规图片：" + fileURL);
                     } catch (Exception e) {
                         LOGGER.error(e);
@@ -223,7 +223,7 @@ public class ApiProcessor {
                         LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
                         LOGGER.log(Level.WARN, "Review file " + fileURL);
                         ChatRoomBot.sendBotMsg("[AI审查] 用户 @" + userName + "  由于上传疑似违规文件/图片，被处以 200 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
-                        ChatRoomBot.abusePoint(userId, 200, "机器人罚单-上传疑似违规文件");
+                        ChatRoomBot.abusePoint(userId, 200, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传疑似违规文件");
                         LogsService.censorLog(context, userName, "用户：" + userName + " 上传疑似违规图片：" + fileURL);
                     } catch (Exception e) {
                         LOGGER.error(e);
