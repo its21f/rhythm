@@ -82,6 +82,9 @@ public class QiniuTextCensor {
                 case "meaningless":
                     retResult.put("type", "无意义");
                     break;
+                default:
+                    retResult.put("type", "未知");
+                    break;
             }
             // 如果是涉政、暴恐、色情、违禁
             if ("politics".equals(type) || "terrorism".equals(type) || "porn".equals(type) || "contraband".equals(type)) {
