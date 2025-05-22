@@ -28,6 +28,7 @@ import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
 import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
+import org.b3log.latke.model.User;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.Paginator;
@@ -35,15 +36,13 @@ import org.b3log.latke.util.Requests;
 import org.b3log.symphony.model.Breezemoon;
 import org.b3log.symphony.model.Common;
 import org.b3log.symphony.model.UserExt;
+import org.b3log.symphony.processor.bot.ChatRoomBot;
 import org.b3log.symphony.processor.channel.UserChannel;
 import org.b3log.symphony.processor.middleware.AnonymousViewCheckMidware;
 import org.b3log.symphony.processor.middleware.CSRFMidware;
 import org.b3log.symphony.processor.middleware.LoginCheckMidware;
 import org.b3log.symphony.processor.middleware.PermissionMidware;
-import org.b3log.symphony.service.BreezemoonMgmtService;
-import org.b3log.symphony.service.BreezemoonQueryService;
-import org.b3log.symphony.service.DataModelService;
-import org.b3log.symphony.service.OptionQueryService;
+import org.b3log.symphony.service.*;
 import org.b3log.symphony.util.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -232,6 +231,20 @@ public class BreezemoonProcessor {
             context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
             return;
         }
+        // 敏感词检测
+        JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
+        if (censorResult.optString("do").equals("block")) {
+            // 违规内容，不予显示
+            ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 500 积分的处罚，请引以为戒。\n@adlered  留档");
+            ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 500, "机器人罚单-上传违规内容（清风明月）");
+            // 记录日志
+            LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
+            System.out.println("用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
+            context.renderMsg("您的内容存在严重违规内容，内容已被记录，管理员将会复审，请修改内容后重试。");
+            context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
+            return;
+        }
+
         breezemoon.put(Breezemoon.BREEZEMOON_CONTENT, breezemoonContent);
         breezemoon.put(Breezemoon.BREEZEMOON_AUTHOR_ID, authorId);
         final String ip = Requests.getRemoteAddr(request);
@@ -302,6 +315,24 @@ public class BreezemoonProcessor {
             final JSONObject breezemoon = new JSONObject();
             breezemoon.put(Keys.OBJECT_ID, id);
             final String breezemoonContent = requestJSONObject.optString(Breezemoon.BREEZEMOON_CONTENT);
+            final String authorId = user.optString(Keys.OBJECT_ID);
+            if (!addBreezemoonLimiter.access(authorId)) {
+                context.renderJSON(StatusCodes.ERR).renderMsg("操作过于频繁，请稍候重试。");
+                return;
+            }
+            // 敏感词检测
+            JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
+            if (censorResult.optString("do").equals("block")) {
+                // 违规内容，不予显示
+                ChatRoomBot.sendBotMsg("犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 500 积分的处罚，请引以为戒。\n@adlered  留档");
+                ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 500, "机器人罚单-上传违规内容（清风明月）");
+                // 记录日志
+                LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
+                System.out.println("用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
+                context.renderMsg("您的内容存在严重违规内容，内容已被记录，管理员将会复审，请修改内容后重试。");
+                context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
+                return;
+            }
             breezemoon.put(Breezemoon.BREEZEMOON_CONTENT, breezemoonContent);
             final String ip = Requests.getRemoteAddr(request);
             breezemoon.put(Breezemoon.BREEZEMOON_IP, ip);

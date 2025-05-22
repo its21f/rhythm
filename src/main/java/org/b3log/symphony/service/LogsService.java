@@ -71,6 +71,13 @@ public class LogsService {
         }
     }
 
+    public static void censorLog(RequestContext context, String userName, String text) {
+        try {
+            log("censor-log", getTime(), getAddress(context), userName, text, false);
+        } catch (Exception ignored) {
+        }
+    }
+
     public static void simpleLog(RequestContext context, String module, String message) {
         log("simple", getTime(), getAddress(context), module, message, true);
     }
