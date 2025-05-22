@@ -27,11 +27,18 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class QiniuTextCensor {
 
-    private static HashMap<String, JSONObject> cache = new HashMap<>();
+    public static final Map<String, JSONObject> cache = Collections.synchronizedMap(new LinkedHashMap<>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry eldest) {
+            return size() > 2000;
+        }
+    });
 
     public static JSONObject censor(String text) {
         if (text.isEmpty()) {
