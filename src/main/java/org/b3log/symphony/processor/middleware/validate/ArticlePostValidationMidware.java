@@ -252,7 +252,7 @@ public class ArticlePostValidationMidware {
         }
 
         // 敏感词检测
-        JSONObject titleCensorResult = QiniuTextCensor.censor(articleTitle);
+        JSONObject titleCensorResult = QiniuTextCensor.censor(articleTitle + " 标签：" + articleTags);
         JSONObject articleCensorResult = QiniuTextCensor.censor(articleContent);
         if (titleCensorResult.optString("do").equals("block") || articleCensorResult.optString("do").equals("block")) {
             // 违规内容，不予显示
