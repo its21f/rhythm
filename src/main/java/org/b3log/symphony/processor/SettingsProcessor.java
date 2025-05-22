@@ -410,7 +410,7 @@ public class SettingsProcessor {
             user.put(User.USER_NAME, newName);
 
             if (!updateProfilesLimiter.access(user.optString(Keys.OBJECT_ID))) {
-                context.renderMsg("操作频繁，请稍后重试。");
+                context.renderMsg("操作频繁，请稍候重试。");
                 context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
                 return;
             }
@@ -1039,7 +1039,7 @@ public class SettingsProcessor {
         user.put(UserExt.USER_AVATAR_TYPE, UserExt.USER_AVATAR_TYPE_C_UPLOAD);
 
         if (!updateProfilesLimiter.access(user.optString(Keys.OBJECT_ID))) {
-            context.renderMsg("操作频繁，请稍后重试。");
+            context.renderMsg("操作频繁，请稍候重试。");
             context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
             return;
         }
