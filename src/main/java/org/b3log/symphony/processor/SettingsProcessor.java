@@ -53,6 +53,7 @@ import org.b3log.symphony.repository.UserRepository;
 import org.b3log.symphony.service.*;
 import org.b3log.symphony.util.*;
 import org.json.JSONObject;
+import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 
 import java.util.*;
 
@@ -405,6 +406,20 @@ public class SettingsProcessor {
             final String oldName = user.optString(User.USER_NAME);
             final String newName = requestJSONObject.optString(User.USER_NAME);
             user.put(User.USER_NAME, newName);
+
+            if (!updateProfilesLimiter.access(user.optString(Keys.OBJECT_ID))) {
+                context.renderMsg("操作频繁，请稍后重试。");
+                context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
+                return;
+            }
+
+            // 敏感词检测
+            JSONObject censorResult = QiniuTextCensor.censor(newName);
+            if (censorResult.optString("do").equals("block")) {
+                context.renderMsg("用户名含违规信息，请修改后重试。");
+                context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
+                return;
+            }
 
             userMgmtService.updateUserName(userId, user);
 
@@ -1000,6 +1015,8 @@ public class SettingsProcessor {
      *
      * @param context the specified context
      */
+    final private static SimpleCurrentLimiter updateProfilesLimiter = new SimpleCurrentLimiter(60 * 60, 5);
+
     public void updateProfiles(final RequestContext context) {
         context.renderJSON(StatusCodes.ERR);
         final JSONObject requestJSONObject = context.requestJSON();
@@ -1020,6 +1037,21 @@ public class SettingsProcessor {
         user.put(UserExt.USER_INTRO, userIntro);
         user.put(UserExt.USER_NICKNAME, userNickname);
         user.put(UserExt.USER_AVATAR_TYPE, UserExt.USER_AVATAR_TYPE_C_UPLOAD);
+
+        if (!updateProfilesLimiter.access(user.optString(Keys.OBJECT_ID))) {
+            context.renderMsg("操作频繁，请稍后重试。");
+            context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
+            return;
+        }
+
+        // 敏感词检测
+        String content = userTags + userURL + userQQ + userIntro + userNickname;
+        JSONObject censorResult = QiniuTextCensor.censor(content);
+        if (censorResult.optString("do").equals("block")) {
+            context.renderMsg("个人信息中含违规信息，请修改后重试。");
+            context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
+            return;
+        }
 
         try {
             userMgmtService.updateProfiles(user);

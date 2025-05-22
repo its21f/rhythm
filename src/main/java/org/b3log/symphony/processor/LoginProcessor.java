@@ -46,6 +46,7 @@ import org.b3log.symphony.processor.middleware.validate.UserForgetPwdValidationM
 import org.b3log.symphony.processor.middleware.validate.UserRegister2ValidationMidware;
 import org.b3log.symphony.processor.middleware.validate.UserRegisterValidationMidware;
 import org.b3log.symphony.service.*;
+import org.b3log.symphony.util.QiniuTextCensor;
 import org.b3log.symphony.util.Sessions;
 import org.b3log.symphony.util.StatusCodes;
 import org.b3log.symphony.util.Symphonys;
@@ -551,6 +552,13 @@ public class LoginProcessor {
         final String name = requestJSONObject.optString(User.USER_NAME);
         final String userPhone = requestJSONObject.optString("userPhone");
         if (verifySMSCodeLimiterOfIPLong.access(ip) && verifySMSCodeLimiterOfIP.access(ip) && verifySMSCodeLimiterOfName.access(name) && verifySMSCodeLimiterOfPhone.access(userPhone)) {
+            // 敏感词检测
+            JSONObject censorResult = QiniuTextCensor.censor(name);
+            if (censorResult.optString("do").equals("block")) {
+                context.renderMsg("用户名含违规信息，请修改后重试。");
+                return;
+            }
+
             final String invitecode = requestJSONObject.optString(Invitecode.INVITECODE);
 
             final JSONObject user = new JSONObject();
