@@ -212,6 +212,8 @@ public class SettingsProcessor {
     @Inject
     private UserRepository userRepository;
 
+    final private static SimpleCurrentLimiter updateProfilesLimiter = new SimpleCurrentLimiter(60 * 60, 5);
+
     /**
      * Register request handlers.
      */
@@ -1015,8 +1017,6 @@ public class SettingsProcessor {
      *
      * @param context the specified context
      */
-    final private static SimpleCurrentLimiter updateProfilesLimiter = new SimpleCurrentLimiter(60 * 60, 5);
-
     public void updateProfiles(final RequestContext context) {
         context.renderJSON(StatusCodes.ERR);
         final JSONObject requestJSONObject = context.requestJSON();
