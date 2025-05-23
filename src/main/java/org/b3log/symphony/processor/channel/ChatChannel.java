@@ -25,6 +25,7 @@ import org.b3log.latke.event.EventManager;
 import org.b3log.latke.http.Session;
 import org.b3log.latke.http.WebSocketChannel;
 import org.b3log.latke.http.WebSocketSession;
+import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.User;
@@ -257,6 +258,93 @@ public class ChatChannel implements WebSocketChannel {
             result.put("msg", "发送出错，" + e.getMessage());
             message.session.sendText(result.toString());
             AdminProcessor.manager.onMessageSent(3, result.toString().length());
+            return;
+        }
+
+        eventManager.fireEventAsynchronously(new Event<>(EventTypes.PRIVATE_CHAT, chatInfo));
+    }
+
+    public static void sendAdminMsg(String userName, String message) {
+        final BeanManager beanManager = BeanManager.getInstance();
+        final UserQueryService userQueryService = beanManager.getReference(UserQueryService.class);
+        final ChatChannel chatChannel = beanManager.getReference(ChatChannel.class);
+        chatChannel.sendMessageManual("1630398857287", userQueryService.getUserByName(userName).optString(Keys.OBJECT_ID), message);
+    }
+
+    public void sendMessageManual(String fromId, String toId, String content) {
+        String chatHex = Strings.uniqueId(new String[]{fromId, toId});
+        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        content = ReservedWords.processReservedWord(content);
+        content = StringUtils.trim(content);
+
+        // 存入数据库
+        JSONObject chatInfo = new JSONObject();
+        chatInfo.put("fromId", fromId);
+        chatInfo.put("toId", toId);
+        chatInfo.put("user_session", chatHex);
+        chatInfo.put("time", time);
+        chatInfo.put("content", content);
+        String chatInfoOId;
+        try {
+            Transaction transaction = chatInfoRepository.beginTransaction();
+            chatInfoOId = chatInfoRepository.add(chatInfo);
+            transaction.commit();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return;
+        }
+        JSONObject chatUnread = new JSONObject();
+        chatUnread.put("fromId", fromId);
+        chatUnread.put("toId", toId);
+        chatUnread.put("user_session", chatHex);
+        try {
+            Transaction transaction = chatUnreadRepository.beginTransaction();
+            chatUnreadRepository.add(chatUnread);
+            transaction.commit();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // 格式化并发送给WS用户
+        try {
+            JSONObject info = chatInfoRepository.get(chatInfoOId);
+            // 渲染 Markdown
+            String markdown = info.optString("content");
+            String html = ChatProcessor.processMarkdown(markdown);
+            info.put("content", html);
+            info.put("markdown", markdown);
+            info.put("preview", ChatProcessor.makePreview(markdown));
+            // 嵌入用户信息
+            JSONObject senderJSON = userQueryService.getUser(fromId);
+            info.put("senderUserName", senderJSON.optString(User.USER_NAME));
+            info.put("senderAvatar", senderJSON.optString(UserExt.USER_AVATAR_URL));
+            JSONObject receiverJSON = userQueryService.getUser(toId);
+            if (!toId.equals("1000000000086")) {
+                info.put("receiverUserName", receiverJSON.optString(User.USER_NAME));
+                info.put("receiverAvatar", receiverJSON.optString(UserExt.USER_AVATAR_URL));
+            } else {
+                info.put("receiverUserName", "文件传输助手");
+                info.put("receiverAvatar", "https://file.fishpi.cn/2022/06/e1541bfe4138c144285f11ea858b6bf6-ba777366.jpeg");
+            }
+            // 返回给发送者同样的拷贝
+            final Set<WebSocketSession> senderSessions = SESSIONS.get(chatHex);
+            if (senderSessions != null) {
+                for (final WebSocketSession session : senderSessions) {
+                    session.sendText(info.toString());
+                    AdminProcessor.manager.onMessageSent(3, info.toString().length());
+                }
+            }
+            // 给接收者发送通知
+            final JSONObject cmd = new JSONObject();
+            cmd.put(UserExt.USER_T_ID, toId);
+            cmd.put(Common.COMMAND, "newIdleChatMessage");
+            cmd.put("senderUserName", info.optString("senderUserName"));
+            cmd.put("senderAvatar", info.optString("senderAvatar"));
+            cmd.put("preview", info.optString("preview"));
+            UserChannel.sendCmd(cmd);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
             return;
         }
 

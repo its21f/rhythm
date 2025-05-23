@@ -47,6 +47,7 @@ import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.Crypts;
 import org.b3log.symphony.model.*;
 import org.b3log.symphony.processor.bot.ChatRoomBot;
+import org.b3log.symphony.processor.channel.ChatChannel;
 import org.b3log.symphony.processor.middleware.CSRFMidware;
 import org.b3log.symphony.processor.middleware.LoginCheckMidware;
 import org.b3log.symphony.repository.UploadRepository;
@@ -116,6 +117,9 @@ public class ApiProcessor {
 
     @Inject
     private UploadRepository uploadRepository;
+
+    @Inject
+    private ChatChannel chatChannel;
 
     /**
      * Register request handlers.
@@ -205,6 +209,8 @@ public class ApiProcessor {
                 } catch (Exception f) {
                     LOGGER.error(f);
                 }
+            } else {
+                LOGGER.log(Level.INFO, "Normal avatar file " + fileURL);
             }
         }
 
@@ -219,7 +225,7 @@ public class ApiProcessor {
                         CdnResult.RefreshResult result = c.refreshUrls(urls);
                         LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
                         LOGGER.log(Level.WARN, "Block file " + fileURL);
-                        ChatRoomBot.sendBotMsg("[AI审查] 犯罪嫌疑人 @" + userName + "  由于上传违规文件/图片，被处以 100 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
+                        ChatChannel.sendAdminMsg(userName, "【AI审查】您由于上传违规文件/图片，被处以 100 积分的处罚，请引以为戒。  如误报请在此处回复我，审核后找回积分并获得补偿！  文件URL：" + fileURL);
                         ChatRoomBot.abusePoint(userId, 100, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规文件");
                         LogsService.censorLog(context, userName, "用户：" + userName + " 上传违规图片：" + fileURL);
                     } catch (Exception e) {
@@ -233,7 +239,7 @@ public class ApiProcessor {
                         CdnResult.RefreshResult result = c.refreshUrls(urls);
                         LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
                         LOGGER.log(Level.WARN, "Review file " + fileURL);
-                        ChatRoomBot.sendBotMsg("[AI审查] 用户 @" + userName + "  由于上传疑似违规文件/图片，被处以 50 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
+                        ChatChannel.sendAdminMsg(userName, "【AI审查】您疑似上传违规文件/图片，被处以 50 积分的处罚，请引以为戒。  如误报请在此处回复我，审核后找回积分并获得补偿！  文件URL：" + fileURL);
                         ChatRoomBot.abusePoint(userId, 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传疑似违规文件");
                         LogsService.censorLog(context, userName, "用户：" + userName + " 上传疑似违规图片：" + fileURL);
                     } catch (Exception e) {

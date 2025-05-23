@@ -37,6 +37,7 @@ import org.b3log.symphony.model.Breezemoon;
 import org.b3log.symphony.model.Common;
 import org.b3log.symphony.model.UserExt;
 import org.b3log.symphony.processor.bot.ChatRoomBot;
+import org.b3log.symphony.processor.channel.ChatChannel;
 import org.b3log.symphony.processor.channel.UserChannel;
 import org.b3log.symphony.processor.middleware.AnonymousViewCheckMidware;
 import org.b3log.symphony.processor.middleware.CSRFMidware;
@@ -235,12 +236,12 @@ public class BreezemoonProcessor {
         JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
         if (censorResult.optString("do").equals("block")) {
             // 违规内容，不予显示
-            ChatRoomBot.sendBotMsg("[AI审查] 犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 50 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
+            ChatChannel.sendAdminMsg(user.optString(User.USER_NAME), "【AI审查】您由于上传违规清风明月，被处以 50 积分的处罚，请引以为戒。  如误报请在此处回复我，审核后找回积分并获得补偿！");
             ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规内容（清风明月）");
             // 记录日志
             LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
             System.out.println("用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
-            context.renderMsg("您的内容存在严重违规内容，内容已被记录，管理员将会复审，请修改内容后重试。");
+            context.renderMsg("您的内容存在违规内容，内容已被记录，管理员将会复审，请修改内容后重试。");
             context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
             return;
         }
@@ -324,12 +325,12 @@ public class BreezemoonProcessor {
             JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
             if (censorResult.optString("do").equals("block")) {
                 // 违规内容，不予显示
-                ChatRoomBot.sendBotMsg("[AI审查] 犯罪嫌疑人 @" + user.optString(User.USER_NAME) + "  由于上传违规内容（清风明月），被处以 50 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
+                ChatChannel.sendAdminMsg(user.optString(User.USER_NAME), "【AI审查】您由于上传违规清风明月，被处以 50 积分的处罚，请引以为戒。  如误报请在此处回复我，审核后找回积分并获得补偿！");
                 ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规内容（清风明月）");
                 // 记录日志
                 LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
                 System.out.println("用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
-                context.renderMsg("您的内容存在严重违规内容，内容已被记录，管理员将会复审，请修改内容后重试。");
+                context.renderMsg("您的内容存在违规内容，内容已被记录，管理员将会复审，请修改内容后重试。");
                 context.renderJSONValue(Keys.CODE, StatusCodes.ERR);
                 return;
             }
