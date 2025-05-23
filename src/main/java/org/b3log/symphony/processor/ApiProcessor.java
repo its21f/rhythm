@@ -182,6 +182,8 @@ public class ApiProcessor {
     }
 
     public void callbackFromQiNiu(final RequestContext context) {
+        Auth auth = Auth.create(Symphonys.UPLOAD_QINIU_AK, Symphonys.UPLOAD_QINIU_SK);
+
         JSONObject jsonObject = context.requestJSON();
         LOGGER.log(Level.INFO, jsonObject.toString());
 
@@ -195,7 +197,6 @@ public class ApiProcessor {
             String suggestion = jsonObject.optJSONArray("items").optJSONObject(0).optJSONObject("result").optJSONObject("result").optString("suggestion");
             if (suggestion.equals("block") || suggestion.equals("review")) {
                 try {
-                    Auth auth = Auth.create(Symphonys.UPLOAD_QINIU_AK, Symphonys.UPLOAD_QINIU_SK);
                     String[] urls = new String[]{fileURL};
                     CdnManager c = new CdnManager(auth);
                     CdnResult.RefreshResult result = c.refreshUrls(urls);
@@ -213,14 +214,13 @@ public class ApiProcessor {
             switch (suggestion) {
                 case "block":
                     try {
-                        Auth auth = Auth.create(Symphonys.UPLOAD_QINIU_AK, Symphonys.UPLOAD_QINIU_SK);
                         String[] urls = new String[]{fileURL};
                         CdnManager c = new CdnManager(auth);
                         CdnResult.RefreshResult result = c.refreshUrls(urls);
                         LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
                         LOGGER.log(Level.WARN, "Block file " + fileURL);
-                        ChatRoomBot.sendBotMsg("[AI审查] 犯罪嫌疑人 @" + userName + "  由于上传违法文件/图片，被处以 50 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
-                        ChatRoomBot.abusePoint(userId, 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违法文件");
+                        ChatRoomBot.sendBotMsg("[AI审查] 犯罪嫌疑人 @" + userName + "  由于上传违规文件/图片，被处以 100 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
+                        ChatRoomBot.abusePoint(userId, 100, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规文件");
                         LogsService.censorLog(context, userName, "用户：" + userName + " 上传违规图片：" + fileURL);
                     } catch (Exception e) {
                         LOGGER.error(e);
@@ -228,14 +228,13 @@ public class ApiProcessor {
                     break;
                 case "review":
                     try {
-                        Auth auth = Auth.create(Symphonys.UPLOAD_QINIU_AK, Symphonys.UPLOAD_QINIU_SK);
                         String[] urls = new String[]{fileURL};
                         CdnManager c = new CdnManager(auth);
                         CdnResult.RefreshResult result = c.refreshUrls(urls);
                         LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
                         LOGGER.log(Level.WARN, "Review file " + fileURL);
-                        ChatRoomBot.sendBotMsg("[AI审查] 用户 @" + userName + "  由于上传疑似违规文件/图片，被处以 20 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
-                        ChatRoomBot.abusePoint(userId, 20, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传疑似违规文件");
+                        ChatRoomBot.sendBotMsg("[AI审查] 用户 @" + userName + "  由于上传疑似违规文件/图片，被处以 50 积分的处罚，请引以为戒。如误报请联系管理员找回积分！\n@adlered  留档");
+                        ChatRoomBot.abusePoint(userId, 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传疑似违规文件");
                         LogsService.censorLog(context, userName, "用户：" + userName + " 上传疑似违规图片：" + fileURL);
                     } catch (Exception e) {
                         LOGGER.error(e);
