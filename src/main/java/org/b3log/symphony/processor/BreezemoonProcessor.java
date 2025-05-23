@@ -236,7 +236,7 @@ public class BreezemoonProcessor {
         JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
         if (censorResult.optString("do").equals("block")) {
             // 违规内容，不予显示
-            ChatChannel.sendAdminMsg(user.optString(User.USER_NAME), "【AI审查】您由于上传违规清风明月，被处以 50 积分的处罚，请引以为戒。  如误报请在此处回复我，审核后找回积分并获得补偿！");
+            ChatChannel.sendAdminMsg(user.optString(User.USER_NAME), "【AI审查】您由于上传违规清风明月，被处以 50 积分的处罚，请引以为戒。\n如误报请在此处回复我，审核后找回积分并获得补偿！");
             ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规内容（清风明月）");
             // 记录日志
             LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);
@@ -325,7 +325,7 @@ public class BreezemoonProcessor {
             JSONObject censorResult = QiniuTextCensor.censor(breezemoonContent);
             if (censorResult.optString("do").equals("block")) {
                 // 违规内容，不予显示
-                ChatChannel.sendAdminMsg(user.optString(User.USER_NAME), "【AI审查】您由于上传违规清风明月，被处以 50 积分的处罚，请引以为戒。  如误报请在此处回复我，审核后找回积分并获得补偿！");
+                ChatChannel.sendAdminMsg(user.optString(User.USER_NAME), "【AI审查】您由于上传违规清风明月，被处以 50 积分的处罚，请引以为戒。\n如误报请在此处回复我，审核后找回积分并获得补偿！");
                 ChatRoomBot.abusePoint(user.optString(Keys.OBJECT_ID), 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规内容（清风明月）");
                 // 记录日志
                 LogsService.censorLog(context, user.optString(Keys.OBJECT_ID), "用户：" + user.optString(User.USER_NAME) + " 违规上传清风明月：" + breezemoonContent + " 违规判定：" + censorResult);

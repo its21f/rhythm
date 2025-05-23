@@ -124,7 +124,7 @@ public class CommentUpdateValidationMidware {
         if (censorResult.optString("do").equals("block")) {
             // 违规内容，不予显示
             context.renderJSON(exception.put(Keys.MSG, "您的评论存在违规内容，内容已被记录，管理员将会复审，请修改内容后重试。"));
-            ChatChannel.sendAdminMsg(currentUser.optString(User.USER_NAME), "【AI审查】您由于上传违规评论，被处以 50 积分的处罚，请引以为戒。  如误报请在此处回复我，审核后找回积分并获得补偿！");
+            ChatChannel.sendAdminMsg(currentUser.optString(User.USER_NAME), "【AI审查】您由于上传违规评论，被处以 50 积分的处罚，请引以为戒。\n如误报请在此处回复我，审核后找回积分并获得补偿！");
             ChatRoomBot.abusePoint(currentUser.optString(Keys.OBJECT_ID), 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规内容（评论）");
             // 记录日志
             LogsService.censorLog(context, currentUser.optString(Keys.OBJECT_ID), "用户：" + currentUser.optString(User.USER_NAME) + " 违规评论：" + commentContent + " 违规判定：" + censorResult);
