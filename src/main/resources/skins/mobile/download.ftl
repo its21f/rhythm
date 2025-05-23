@@ -102,6 +102,14 @@
         </div>
         <div class="item">
             <img src="${staticServePath}/images/clients/android.png">
+            <h3 class="item__title">Android客户端(推荐)</h3>
+            <div style="flex:1">Author:&nbsp;<a href="${staticServePath}/member/otis1026">@otis1026</a></div>
+            <div class="fn__flex">
+                <a class="download__link" href="${staticServePath}/article/1745833503658" target="_blank">详细地址</a>
+            </div>
+        </div>
+        <div class="item">
+            <img src="${staticServePath}/images/clients/android.png">
             <h3 class="item__title">Android 客户端</h3>
             <div style="flex:1">Author:<a href="${staticServePath}/member/Yui">@Yui</a>&nbsp;<a href="${staticServePath}/member/iwpz">@iwpz</a></div>
             <div class="fn__flex">

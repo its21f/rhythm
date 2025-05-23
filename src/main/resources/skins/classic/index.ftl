@@ -147,7 +147,7 @@
                             </div>
                         </div>
                         <#elseif TGIF == '-1'>
-                            <div class="TGIF__item">
+                            <div class="TGIF__item" style="margin-bottom: 20px; margin-top: 5px">
                                 <div style="float: left">
                                     <svg style="width: 35px; height: 35px;"><use xlink:href="#logo"></use></svg>
                                 </div>
@@ -160,7 +160,7 @@
                                 </div>
                             </div>
                         <#else>
-                        <div class="TGIF__item">
+                        <div class="TGIF__item" style="margin-bottom: 20px; margin-top: 5px">
                             <div style="float: left">
                                 <svg style="width: 30px; height: 30px;"><use xlink:href="#tadaIcon"></use></svg>
                             </div>
@@ -174,100 +174,66 @@
             </div>
 
             <div class="index-head-title">
-                <div style="float:left;font-size:13px;margin:5px 0 10px 0; font-weight:bold;">今日连签排行</div>
-                <div style="float:right;font-size:13px;margin:5px 0 0 0;"><a href="${servePath}/top/checkin">更多</a>
-                </div>
-                <div style="clear:both;"></div>
+                <div style="float:left;font-size:13px;margin:10px 0 10px 0; font-weight:bold;cursor: pointer">最新注册</div>
+                <#list recentRegUsers as user>
+                    <#if user_index = 0>
+                        <a target="_blank" href="${servePath}/member/${user.userName}"
+                           style="float: right; margin: 10px 0 10px 0; color: #646464; text-decoration: none">
+                            🎉 欢迎新人 <b>${user.userName}</b>
+                        </a>                    <div style="clear:both;"></div>
+                    </#if>
+                </#list>
             </div>
-            <div class="module-panel">
-                <ul class="module-list">
-                    <#list topCheckinUsers as user>
-                        <#if user_index < 7>
-                            <li class="fn-flex rank topCheckInUsersElement">
-                                <#if user_index == 0 || user_index == 1 || user_index == 2>
-                                <span
-                                        <#if user_index == 0>
-                                            style="border-color: #ffab10 transparent transparent #ffab10;"
-                                        <#elseif user_index == 1>
-                                            style="border-color: #c0c0c0 transparent transparent #c0c0c0;"
-                                        <#elseif user_index == 2>
-                                            style="border-color: #d9822b transparent transparent #d9822b;"
-                                        </#if>
-                                        class="cb-stick" aria-label="第${user_index + 1}名">
-                                    <span class="icon-pin-rank">${user_index + 1}</span>
-                                    </#if>
-                                </span>
-                                <a rel="nofollow" href="${servePath}/member/${user.userName}">
-                                    <span class="avatar-small slogan"
+
+            <div class="index-user">
+                <#list recentRegUsers as user>
+                    <a rel="nofollow"
+                       href="${servePath}/member/${user.userName}">
+                                    <span class="avatar-middle slogan"
                                           aria-label="${user.userName}"
-                                          style="background-image:url('${user.userAvatarURL48}')"></span>
-                                </a>
-                                <a rel="nofollow" class="title fn-flex-1"
-                                   aria-label="${pointLabel} ${user.userPoint?c}"
-                                   href="${servePath}/member/${user.userName}">${user.userName}</a>
-                                <a class="tooltipped tooltipped-s fn-right count ft-gray ft-smaller"
-                                   aria-label="${checkinStreakPart0Label}${user.userLongestCheckinStreak}${checkinStreakPart1Label}${user.userCurrentCheckinStreak}${checkinStreakPart2Label}"
-                                   href="${servePath}/top/checkin">${user.userCurrentCheckinStreak}${checkinStreakPart2Label}</a>
-                            </li>
-                        </#if>
-                    </#list>
-                </ul>
+                                          style="background-image:url('${user.userAvatarURL48}');height:30px;width:30px;margin: 0px 10px 10px 0px"></span>
+                    </a>
+                </#list>
             </div>
 
             <div class="index-head-title">
-                <div style="float:left;font-size:13px;margin:15px 0 10px 0; font-weight:bold;">在线时间排行</div>
-                <div style="float:right;font-size:13px;margin:15px 0 0 0;"><a href="${servePath}/top/online">更多</a>
-                </div>
+                <div style="float:left;font-size:13px;margin:5px 0 10px 0; font-weight:bold;cursor: pointer" onclick="location.href='${servePath}/breezemoons'">清风明月</div>
+                <a href="${servePath}/article/1630938317106" title="清风明月是什么？"
+                   style="float: right; margin: 5px 0 10px 0">
+                    <svg>
+                        <use xlink:href="#iconQuestion"></use>
+                    </svg>
+                </a>
                 <div style="clear:both;"></div>
             </div>
             <div class="module-panel">
-                <ul class="module-list">
-                    <#list onlineTopUsers as user>
-                        <#if user_index < 6>
-                            <li class="fn-flex rank topCheckInUsersElement">
-                                <#if user_index == 0 || user_index == 1 || user_index == 2>
-                                <span
-                                        <#if user_index == 0>
-                                            style="border-color: #ffab10 transparent transparent #ffab10;"
-                                        <#elseif user_index == 1>
-                                            style="border-color: #c0c0c0 transparent transparent #c0c0c0;"
-                                        <#elseif user_index == 2>
-                                            style="border-color: #d9822b transparent transparent #d9822b;"
-                                        </#if>
-                                        class="cb-stick" aria-label="第${user_index + 1}名">
-                                    <span class="icon-pin-rank">${user_index + 1}</span>
-                                    </#if>
-                                </span>
-                                <a rel="nofollow" href="${servePath}/member/${user.userName}">
-                                    <span class="avatar-small slogan"
-                                          aria-label="${user.userName}"
-                                          style="background-image:url('${user.userAvatarURL48}')"></span>
-                                </a>
-                                <a rel="nofollow" class="title fn-flex-1"
-                                   aria-label="${pointLabel} ${user.userPoint?c}"
-                                   href="${servePath}/member/${user.userName}">${user.userName}</a>
-                                <a class="fn-right count ft-gray ft-smaller"
-                                   aria-label="在线时长共计 ${user.onlineMinute} 分钟"
-                                   href="${servePath}/top/online">
-                                    <#assign x=(user.onlineMinute?c)>
-                                    <#if onlineTimeUnit??>
-                                        <#if onlineTimeUnit == 'h'>
-                                            <#assign t=(x?number/60)>
-                                            ${t} 小时
-                                        <#elseif onlineTimeUnit == 'd'>
-                                            <#assign t=(x?number/60/24)>
-                                            ${t} 天
-                                        <#else>
-                                            ${user.onlineMinute} 分钟
-                                        </#if>
-                                    <#else>
-                                        ${user.onlineMinute} 分钟
-                                    </#if>
-                                </a>
-                            </li>
+                <div class="module-header form" style="border: none;">
+                    <input id="breezemoonInput"
+                           type="text"
+                           class="comment__text breezemoon__input"
+                           placeholder="${breezemoonLabel}"/>
+                    <span id="breezemoonPostBtn" class="btn breezemoon__btn"
+                          data-csrf="${csrfToken}">${postLabel}</span>
+                </div>
+                <div class="module-panel">
+                    <ul class="module-list active-bz-list">
+                        <#list sideBreezemoons as item>
+                            <#if item_index <= 10>
+                                <li>
+                                    <a href="${servePath}/member/${item.breezemoonAuthorName}">
+                    <span class="avatar-small slogan" aria-label="${item.breezemoonAuthorName}"
+                          style="background-image: url(${item.breezemoonAuthorThumbnailURL48})"></span>
+                                    </a>
+                                    <a href="${servePath}/member/${item.breezemoonAuthorName}/breezemoons/${item.oId}"
+                                       class="title">${item.breezemoonContent}</a>
+                                </li>
+                            </#if>
+                        </#list>
+                        <#if sideBreezemoons?size == 0>
+                            <li class="ft-center ft-gray">${chickenEggLabel}</li>
                         </#if>
-                    </#list>
-                </ul>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -311,17 +277,17 @@
                         </a>
                     </div>
                     <div class="metro-item">
+                        <a class="preview" href="${servePath}/shop">
+                            <img style="border-radius: 0"
+                                 src="https://file.fishpi.cn/2025/05/Shoppingnor-d26831a5.png">
+                            <b>系统商店</b>
+                        </a>
+                    </div>
+                    <div class="metro-item">
                         <a class="preview" href="${servePath}/activities">
                             <img style="border-radius: 10px"
                                  src="https://file.fishpi.cn/2021/10/psp-game-1a94ae64.png">
                             <b>摸鱼派在线游戏</b>
-                        </a>
-                    </div>
-                    <div class="metro-item">
-                        <a class="preview" href="${servePath}/shop">
-                            <img style="border-radius: 0"
-                                 src="https://file.fishpi.cn/2022/03/ss-61cf1b96.png">
-                            <b>系统商店</b>
                         </a>
                     </div>
                 </div>
@@ -437,15 +403,15 @@
                 </div>
 
                 <div class="index-head-title">
-                    <div style="float:left;font-size:13px;margin:5px 0 10px 0; font-weight:bold;">问答</div>
-                    <div style="float:right;font-size:13px;margin:5px 0 0 0;"><a href="${servePath}/qna">更多</a>
+                    <div style="float:left;font-size:13px;margin:10px 0 10px 0; font-weight:bold;">问答</div>
+                    <div style="float:right;font-size:13px;margin:10px 0 0 0;"><a href="${servePath}/qna">更多</a>
                     </div>
                     <div style="clear:both;"></div>
                 </div>
                 <div class="module-panel">
                     <ul class="module-list">
                         <#list qna as article>
-                            <#if article_index <= 8>
+                            <#if article_index <= 9>
                                 <li class="fn-flex">
                                     <a rel="nofollow" href="${servePath}/member/${article.articleAuthorName}">
                                     <span class="avatar-small slogan"
@@ -466,66 +432,97 @@
                 </div>
             </div>
             <div class="index-recent fn-flex-1">
-                <div class="index-head-title">
-                    <div style="float:left;font-size:13px;margin:5px 0 10px 0; font-weight:bold;cursor: pointer">最新注册</div>
-                    <#list recentRegUsers as user>
-                        <#if user_index = 0>
-                            <a target="_blank" href="${servePath}/member/${user.userName}"
-                               style="float: right; margin: 5px 0 10px 0; color: #646464; text-decoration: none">
-                                🎉 欢迎新人 <b>${user.userName}</b>
-                            </a>                    <div style="clear:both;"></div>
-                        </#if>
-                    </#list>
-                </div>
                 <div class="module-panel">
-                    <div class="index-user">
-                        <#list recentRegUsers as user>
-                            <a rel="nofollow"
-                               href="${servePath}/member/${user.userName}">
-                                    <span class="avatar-middle slogan"
-                                          aria-label="${user.userName}"
-                                          style="background-image:url('${user.userAvatarURL48}');height:30px;width:30px;margin: 0px 10px 10px 0px"></span>
-                            </a>
-                        </#list>
-                    </div>
-                </div>
-
-                <div class="index-head-title">
-                    <div style="float:left;font-size:13px;margin:5px 0 10px 0; font-weight:bold;cursor: pointer" onclick="location.href='${servePath}/breezemoons'">清风明月</div>
-                    <a href="${servePath}/article/1630938317106" title="清风明月是什么？"
-                       style="float: right; margin: 5px 0 10px 0">
-                        <svg>
-                            <use xlink:href="#iconQuestion"></use>
-                        </svg>
-                    </a>
-                    <div style="clear:both;"></div>
-                </div>
-                <div class="module-panel">
-                    <div class="module-header form" style="border: none;">
-                        <input id="breezemoonInput"
-                               type="text"
-                               class="comment__text breezemoon__input"
-                               placeholder="${breezemoonLabel}"/>
-                        <span id="breezemoonPostBtn" class="btn breezemoon__btn"
-                              data-csrf="${csrfToken}">${postLabel}</span>
+                    <div class="index-head-title">
+                        <div style="float:left;font-size:13px;margin:5px 0 10px 0; font-weight:bold;">今日连签排行</div>
+                        <div style="float:right;font-size:13px;margin:5px 0 0 0;"><a href="${servePath}/top/checkin">更多</a>
+                        </div>
+                        <div style="clear:both;"></div>
                     </div>
                     <div class="module-panel">
-                        <ul class="module-list active-bz-list">
-                            <#list sideBreezemoons as item>
-                                <#if item_index <= 10>
-                                    <li>
-                                        <a href="${servePath}/member/${item.breezemoonAuthorName}">
-                    <span class="avatar-small slogan" aria-label="${item.breezemoonAuthorName}"
-                          style="background-image: url(${item.breezemoonAuthorThumbnailURL48})"></span>
-                                        </a>
-                                        <a href="${servePath}/member/${item.breezemoonAuthorName}/breezemoons/${item.oId}"
-                                           class="title">${item.breezemoonContent}</a>
-                                    </li>
-                                </#if>
+                        <ul class="module-list">
+                            <#list topCheckinUsers as user>
+                                <li class="fn-flex rank topCheckInUsersElement">
+                                    <#if user_index == 0 || user_index == 1 || user_index == 2>
+                                    <span
+                                        <#if user_index == 0>
+                                            style="border-color: #ffab10 transparent transparent #ffab10;"
+                                        <#elseif user_index == 1>
+                                            style="border-color: #c0c0c0 transparent transparent #c0c0c0;"
+                                        <#elseif user_index == 2>
+                                            style="border-color: #d9822b transparent transparent #d9822b;"
+                                        </#if>
+                                        class="cb-stick" aria-label="第${user_index + 1}名">
+                                    <span class="icon-pin-rank">${user_index + 1}</span>
+                                    </#if>
+                                </span>
+                                    <a rel="nofollow" href="${servePath}/member/${user.userName}">
+                                    <span class="avatar-small slogan"
+                                          aria-label="${user.userName}"
+                                          style="background-image:url('${user.userAvatarURL48}')"></span>
+                                    </a>
+                                    <a rel="nofollow" class="title fn-flex-1"
+                                       aria-label="${pointLabel} ${user.userPoint?c}"
+                                       href="${servePath}/member/${user.userName}">${user.userName}</a>
+                                    <a class="tooltipped tooltipped-s fn-right count ft-gray ft-smaller"
+                                       aria-label="${checkinStreakPart0Label}${user.userLongestCheckinStreak}${checkinStreakPart1Label}${user.userCurrentCheckinStreak}${checkinStreakPart2Label}"
+                                       href="${servePath}/top/checkin">${user.userCurrentCheckinStreak}${checkinStreakPart2Label}</a>
+                                </li>
                             </#list>
-                            <#if sideBreezemoons?size == 0>
-                                <li class="ft-center ft-gray">${chickenEggLabel}</li>
-                            </#if>
+                        </ul>
+                    </div>
+
+                    <div class="index-head-title">
+                        <div style="float:left;font-size:13px;margin:15px 0 10px 0; font-weight:bold;">在线时间排行</div>
+                        <div style="float:right;font-size:13px;margin:15px 0 0 0;"><a href="${servePath}/top/online">更多</a>
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <div class="module-panel">
+                        <ul class="module-list">
+                            <#list onlineTopUsers as user>
+                                <li class="fn-flex rank topCheckInUsersElement">
+                                    <#if user_index == 0 || user_index == 1 || user_index == 2>
+                                    <span
+                                        <#if user_index == 0>
+                                            style="border-color: #ffab10 transparent transparent #ffab10;"
+                                        <#elseif user_index == 1>
+                                            style="border-color: #c0c0c0 transparent transparent #c0c0c0;"
+                                        <#elseif user_index == 2>
+                                            style="border-color: #d9822b transparent transparent #d9822b;"
+                                        </#if>
+                                        class="cb-stick" aria-label="第${user_index + 1}名">
+                                    <span class="icon-pin-rank">${user_index + 1}</span>
+                                    </#if>
+                                </span>
+                                    <a rel="nofollow" href="${servePath}/member/${user.userName}">
+                                    <span class="avatar-small slogan"
+                                          aria-label="${user.userName}"
+                                          style="background-image:url('${user.userAvatarURL48}')"></span>
+                                    </a>
+                                    <a rel="nofollow" class="title fn-flex-1"
+                                       aria-label="${pointLabel} ${user.userPoint?c}"
+                                       href="${servePath}/member/${user.userName}">${user.userName}</a>
+                                    <a class="fn-right count ft-gray ft-smaller"
+                                       aria-label="在线时长共计 ${user.onlineMinute} 分钟"
+                                       href="${servePath}/top/online">
+                                        <#assign x=(user.onlineMinute?c)>
+                                        <#if onlineTimeUnit??>
+                                            <#if onlineTimeUnit == 'h'>
+                                                <#assign t=(x?number/60)>
+                                                ${t} 小时
+                                            <#elseif onlineTimeUnit == 'd'>
+                                                <#assign t=(x?number/60/24)>
+                                                ${t} 天
+                                            <#else>
+                                                ${user.onlineMinute} 分钟
+                                            </#if>
+                                        <#else>
+                                            ${user.onlineMinute} 分钟
+                                        </#if>
+                                    </a>
+                                </li>
+                            </#list>
                         </ul>
                     </div>
                 </div>
@@ -727,7 +724,7 @@
                 }
                 setTimeout(function () {
                     if (result.sum === -1) {
-                        $("#yesterday").html("<img style='border-radius: 0' src='https://file.fishpi.cn/2021/09/embarrassed-4112bd37.png'><b>暂时没有昨日奖励可领取呦！明天再来试试吧</b>");
+                        $("#yesterday").html("<img style='border-radius: 0' src='https://file.fishpi.cn/2021/09/embarrassed-4112bd37.png'><b>暂时没有昨日奖励可领取呦！<br>明天再来试试吧</b>");
                         Util.fadeIn(yesterdayBtn, function () {
                             setTimeout(function () {
                                 Util.fadeOut(yesterdayBtn, function () {
@@ -737,7 +734,7 @@
                             }, 2000);
                         });
                     } else {
-                        $("#yesterday").html("<img style='border-radius: 0' src='https://file.fishpi.cn/2021/09/correct-1f5e3258.png'><b>昨日奖励已领取！积分 +" + result.sum + "</b>");
+                        $("#yesterday").html("<img style='border-radius: 0' src='https://file.fishpi.cn/2021/09/correct-1f5e3258.png'><b>昨日奖励已领取！<br>积分 +" + result.sum + "</b>");
                         Util.fadeIn(yesterdayBtn, function () {
                             setTimeout(function () {
                                 Util.fadeOut(yesterdayBtn, function () {
@@ -852,11 +849,11 @@
                 setTimeout(function () {
                     $("#sp2").html(i + "%");
                     if (i < 10) {
-                        $("#sp1").css("background", "linear-gradient(to left, #f11616, #d71212)").css("box-shadow", "0 3px 3px -5px #c72222, 0 2px 5px #c72222");
+                        $("#sp1").css("background", "linear-gradient(to left, #f11616, #d71212)");
                     } else if (i >= 10 && i < 100) {
-                        $("#sp1").css("background", "linear-gradient(to left, #24b0b7, #1dacb3)").css("box-shadow", "0 3px 3px -5px #22bfc7, 0 2px 5px #22bfc7");
+                        $("#sp1").css("background", "linear-gradient(to left, #24b0b7, #1dacb3)");
                     } else if (i == 100) {
-                        $("#sp1").css("background", "linear-gradient(to left, #29d120, #3caf36)").css("box-shadow", "#3caf36 0px 3px 3px -5px, #3caf36 0px 2px 5px");
+                        $("#sp1").css("background", "linear-gradient(to left, #29d120, #3caf36)");
                     }
                 }, j * 10);
                 j++;
@@ -869,7 +866,7 @@
         } else if (liveness >= 10 && !checkedIn) {
             $("#activityDesc").html("已提交自动签到至系统<br>请稍候查看签到状态");
         } else if (liveness < 100) {
-            $("#activityDesc").html("今日活跃度到达 100% 后<br>可获得神秘礼物及明日天降红包资格");
+            $("#activityDesc").html("今日活跃度到达 100%<br>可获免签卡&明日天降红包资格");
         } else {
             $("#activityDesc").html("礼物已放入背包，并获得明日天降红包资格！明天在线时如有新人注册，将获得天降红包");
         }
