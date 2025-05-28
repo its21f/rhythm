@@ -293,6 +293,10 @@ public class ApiProcessor {
                 return null;
             }
 
+            if (ret.optInt(UserExt.USER_STATUS) != UserExt.USER_STATUS_C_VALID) {
+                return null;
+            }
+
             final String userPassword = ret.optString(User.USER_PASSWORD);
             final String token = cookieJSONObject.optString(Keys.TOKEN);
             final String password = StringUtils.substringBeforeLast(token, COOKIE_ITEM_SEPARATOR);

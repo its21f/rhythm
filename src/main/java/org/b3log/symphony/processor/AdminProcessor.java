@@ -35,10 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
-import org.b3log.latke.http.Dispatcher;
-import org.b3log.latke.http.Request;
-import org.b3log.latke.http.RequestContext;
-import org.b3log.latke.http.Response;
+import org.b3log.latke.http.*;
 import org.b3log.latke.http.function.Handler;
 import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
 import org.b3log.latke.ioc.BeanManager;
@@ -50,6 +47,7 @@ import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.repository.SortDirection;
 import org.b3log.latke.repository.Transaction;
+import org.b3log.latke.repository.jdbc.JdbcRepository;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.CollectionUtils;
@@ -69,6 +67,7 @@ import org.b3log.symphony.repository.SystemSettingsRepository;
 import org.b3log.symphony.repository.UploadRepository;
 import org.b3log.symphony.service.*;
 import org.b3log.symphony.util.*;
+import org.b3log.symphony.util.Sessions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -1781,6 +1780,7 @@ public class AdminProcessor {
      */
     public void updateUser(final RequestContext context) {
         final String userId = context.pathVar("userId");
+
         final Request request = context.getRequest();
 
         final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "admin/user.ftl");
@@ -1810,6 +1810,32 @@ public class AdminProcessor {
                             editArticle.put(Article.ARTICLE_STATUS, Article.ARTICLE_STATUS_C_INVALID);
                             articleMgmtService.updateArticleByAdmin(articleId, editArticle);
                         }
+                    }
+                    if (!value.equals(String.valueOf(UserExt.USER_STATUS_C_VALID))) {
+                        System.out.println("Kicked user from chatroom and chat [userName=" + user.optString(User.USER_NAME) + "]");
+                        String disconnectUser = user.optString(User.USER_NAME);
+                        new Thread(() -> {
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            NodeUtil.sendKick(disconnectUser);
+                            List<WebSocketSession> senderSessions = new ArrayList<>();
+                            for (Map.Entry<WebSocketSession, JSONObject> entry : ChatroomChannel.onlineUsers.entrySet()) {
+                                try {
+                                    String tempUserName = entry.getValue().optString(User.USER_NAME);
+                                    if (tempUserName.equals(disconnectUser)) {
+                                        senderSessions.add(entry.getKey());
+                                    }
+                                } catch (Exception ignored) {
+                                }
+                            }
+                            for (WebSocketSession session : senderSessions) {
+                                ChatroomChannel.removeSession(session);
+                            }
+                            ChatChannel.kickUser(userId);
+                        }).start();
                     }
                 case UserExt.USER_POINT:
                 case UserExt.USER_APP_ROLE:

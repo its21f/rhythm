@@ -376,5 +376,15 @@ public class ChatChannel implements WebSocketChannel {
         userSessions.remove(session);
     }
 
-
+    // 将指定用户名从所有Chat频道中踢出去
+    public static void kickUser(String userId) {
+        for (String key : SESSIONS.keySet()) {
+            if (key.contains(userId)) {
+                Set<WebSocketSession> userSessions = SESSIONS.get(key);
+                for (WebSocketSession session : userSessions) {
+                    session.close();
+                }
+            }
+        }
+    }
 }
