@@ -1812,7 +1812,6 @@ public class AdminProcessor {
                         }
                     }
                     if (!value.equals(String.valueOf(UserExt.USER_STATUS_C_VALID))) {
-                        System.out.println("Kicked user from chatroom and chat [userName=" + user.optString(User.USER_NAME) + "]");
                         String disconnectUser = user.optString(User.USER_NAME);
                         new Thread(() -> {
                             try {
@@ -1836,6 +1835,7 @@ public class AdminProcessor {
                             }
                             ChatChannel.kickUser(userId);
                         }).start();
+                        LOGGER.log(Level.INFO, "Kicked user from chatroom and chat [userName=" + user.optString(User.USER_NAME) + "]");
                     }
                 case UserExt.USER_POINT:
                 case UserExt.USER_APP_ROLE:
