@@ -52,7 +52,7 @@ import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 @Singleton
 public class CommentAddValidationMidware {
 
-    final private static SimpleCurrentLimiter addCommentLimiter = new SimpleCurrentLimiter(60 * 30, 10);
+    final private static SimpleCurrentLimiter addCommentLimiter = new SimpleCurrentLimiter(60 * 10, 5);
 
     public void handle(final RequestContext context) {
         final Request request = context.getRequest();
