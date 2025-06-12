@@ -53,6 +53,7 @@
                 <a href="https://zhuanlan.zhihu.com/p/445372463" target="_blank" title="VSCode 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-vscode"></use></svg></a>&nbsp;
                 <a href="https://fishpi.cn/article/1641135630423" target="_blank" title="Python 客户端"><svg style="vertical-align: -2px;"><use xlink:href="#ic-python"></use></svg></a>&nbsp;
                 <a href="https://fishpi.cn/article/1641661864119" target="_blank" title="Golang 客户端"><svg style="vertical-align: -2px;"><use xlink:href="#ic-golang"></use></svg></a>
+                <a href="https://fishpi.cn/article/1748939764736" target="_blank" title="uTools 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-utools"></use></svg></a>
             </div>
         </div>
         <div class="fn-hr5"></div>

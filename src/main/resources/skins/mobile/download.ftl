@@ -160,6 +160,14 @@
             </div>
         </div>
         <div class="item">
+            <img src="${staticServePath}/images/clients/utools.png">
+            <h3 class="item__title">uTools 插件</h3>
+            <div style="flex:1">Author:<a href="${staticServePath}/member/otis1026">@otis1026</a></div>
+            <div class="fn__flex">
+                <a class="download__link" href="https://fishpi.cn/article/1748939764736" target="_blank">立刻尝鲜</a>
+            </div>
+        </div>
+        <div class="item">
             <img src="${staticServePath}/images/clients/chrome.png">
             <h3 class="item__title">Chrome 插件</h3>
             <div style="flex:1">Author:<a href="${staticServePath}/member/lemon">@Lemon</a></div>
