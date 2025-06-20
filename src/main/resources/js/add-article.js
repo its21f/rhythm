@@ -310,14 +310,15 @@ var AddArticle = {
         mode: 'both',
       },
       resize: {
-        enable: false,
+        enable: true,
+        position: 'bottom'
       },
       after: function () {
         if ($('#articleContent').next().val() !== '') {
           AddArticle.editor.setValue($('#articleContent').next().val())
         }
       },
-      height: 360,
+      height: 500,
       placeholder: $('#articleContent').data('placeholder'),
       input: function () {
         if (Label.articleType === 3) {
