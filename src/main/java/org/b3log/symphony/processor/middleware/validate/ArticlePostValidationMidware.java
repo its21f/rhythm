@@ -37,6 +37,7 @@ import org.b3log.symphony.service.LogsService;
 import org.b3log.symphony.service.OptionQueryService;
 import org.b3log.symphony.service.TagQueryService;
 import org.b3log.symphony.util.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 
@@ -255,9 +256,13 @@ public class ArticlePostValidationMidware {
         // 敏感词检测
         JSONObject titleCensorResult = QiniuTextCensor.censor(articleTitle + " 标签：" + articleTags);
         JSONObject articleCensorResult = QiniuTextCensor.censor(articleContent);
+        // 组合标题和文章的bannedWords数组（如果标题或文章没有则不显示额外字符），组成用于显示的字符串
+        String titleBannedWords = "标题" + QiniuTextCensor.showBannedWords(titleCensorResult) + "；";
+        String articleBannedWords = "内容和标签" + QiniuTextCensor.showBannedWords(articleCensorResult);
+        String bannedWords = titleBannedWords + articleBannedWords;
         if (titleCensorResult.optString("do").equals("block") || articleCensorResult.optString("do").equals("block")) {
             // 违规内容，不予显示
-            context.renderJSON(exception.put(Keys.MSG, "您的文章存在违规内容，内容已被记录，管理员将会复审，请修改内容后重试。"));
+            context.renderJSON(exception.put(Keys.MSG, "您的文章存在违规内容，内容已被记录，管理员将会复审，请修改内容后重试。" + bannedWords));
             ChatChannel.sendAdminMsg(currentUser.optString(User.USER_NAME), "【AI审查】您由于上传违规帖子，被处以 50 积分的处罚，请引以为戒。\n如误报请在此处回复我，审核后找回积分并获得补偿！");
             ChatRoomBot.abusePoint(currentUser.optString(Keys.OBJECT_ID), 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传违规内容（帖子）");
             // 记录日志

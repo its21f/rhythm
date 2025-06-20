@@ -23,13 +23,12 @@ import com.qiniu.http.Client;
 import com.qiniu.http.Response;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class QiniuTextCensor {
 
@@ -39,6 +38,21 @@ public class QiniuTextCensor {
             return size() > 2000;
         }
     });
+
+    public static String showBannedWords(JSONObject censorResult) {
+        String bannedWords = "";
+        JSONArray bannedWordsArr = censorResult.optJSONArray("bannedWords");
+        if (bannedWordsArr.isEmpty()) {
+            bannedWords += "无违规";
+        } else {
+            bannedWords += "违规：";
+            for (int i = 0; i < bannedWordsArr.length(); i++) {
+                bannedWords += bannedWordsArr.getString(i) + "、";
+            }
+            bannedWords = bannedWords.substring(0, bannedWords.length() - 1);
+        }
+        return bannedWords;
+    }
 
     public static JSONObject censor(String text) {
         if (text.isEmpty()) {
@@ -102,6 +116,54 @@ public class QiniuTextCensor {
             } else {
                 retResult.put("do", "pass");
             }
+            List<String> bannedWords = new ArrayList<>();
+            JSONArray context = result.optJSONObject("result").optJSONObject("scenes").optJSONObject("antispam").optJSONArray("details");
+            /**
+             * {
+             *   "result" : {
+             *     "suggestion" : "review",
+             *     "scenes" : {
+             *       "antispam" : {
+             *         "suggestion" : "review",
+             *         "details" : [ {
+             *           "score" : 0.5,
+             *           "label" : "politics",
+             *           "contexts" : [ {
+             *             "context" : "xí jìn píng",
+             *             "positions" : [ {
+             *               "startPos" : 0,
+             *               "endPos" : 10
+             *             } ]
+             *           } ]
+             *         }, {
+             *           "score" : 0.5,
+             *           "label" : "politics",
+             *           "contexts" : [ {
+             *             "context" : "jiāng zé m",
+             *             "positions" : [ {
+             *               "startPos" : 13,
+             *               "endPos" : 22
+             *             } ]
+             *           } ]
+             *         } ]
+             *       }
+             *     }
+             *   },
+             *   "code" : 200,
+             *   "message" : ""
+             * }
+             * 接下来，遍历每个contexts中context的内容并追加到bannedWords
+             */
+            for (int i = 0; i < context.length(); i++) {
+                JSONArray contexts = context.getJSONObject(i).optJSONArray("contexts");
+                if (contexts != null) {
+                    for (int j = 0; j < contexts.length(); j++) {
+                        bannedWords.add(contexts.getJSONObject(j).optString("context"));
+                        System.out.println(contexts.getJSONObject(j).optString("context"));
+                    }
+                }
+            }
+            retResult.put("bannedWords", bannedWords);
             cache.put(md5, retResult);
             System.out.println(retResult);
             return retResult;
