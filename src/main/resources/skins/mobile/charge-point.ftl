@@ -50,8 +50,8 @@
                     let doNote = $("#doNote").val();
                     if (doMoney === "" || doNote === "") {
                         Util.alert("请填写捐助金额和捐助附言 :)");
-                    } else if (isNaN(doMoney)) {
-                        Util.alert("金额不合法！");
+                    } else if (isNaN(doMoney) || doMoney < 1) {
+                        Util.alert("金额不合法！捐助需要大于1元");
                     } else {
                         $.ajax({
                             url: "${servePath}/pay/wechat?total_amount=" + doMoney + "&note=" + doNote,

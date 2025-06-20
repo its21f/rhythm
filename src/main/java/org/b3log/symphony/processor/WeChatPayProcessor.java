@@ -190,6 +190,10 @@ public class WeChatPayProcessor {
         long time = System.currentTimeMillis() / 1000;
         String total_amount = context.param("total_amount");
         total_amount = String.format("%.2f", Double.parseDouble(total_amount));
+        if (Double.parseDouble(total_amount) < 1) {
+            context.renderJSON(StatusCodes.ERR);
+            return;
+        }
         String note = "没有备注 :)";
         if (context.param("note") != null) {
             note = context.param("note");
