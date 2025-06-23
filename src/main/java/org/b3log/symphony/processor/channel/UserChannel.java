@@ -120,6 +120,8 @@ public class UserChannel implements WebSocketChannel {
         final Set<WebSocketSession> userSessions = SESSIONS.getOrDefault(userId, Collections.newSetFromMap(new ConcurrentHashMap()));
         userSessions.add(session);
 
+        LOGGER.log(Level.INFO, userSessions.size() + " online > " + user.optString(User.USER_NAME));
+
         SESSIONS.put(userId, userSessions);
 
         final BeanManager beanManager = BeanManager.getInstance();
@@ -231,13 +233,25 @@ public class UserChannel implements WebSocketChannel {
      *
      * @param session the specified session
      */
+    String lastSession = "";
     private synchronized void removeSession(final WebSocketSession session) {
-        final Session httpSession = session.getHttpSession();
-        final String userStr = httpSession.getAttribute(User.USER);
-        if (null == userStr) {
+        if (lastSession.equals(session.getId())) {
             return;
         }
-        final JSONObject user = new JSONObject(userStr);
+        lastSession = session.getId();
+        final Session httpSession = session.getHttpSession();
+        JSONObject user = null;
+        try {
+            user = new JSONObject(httpSession.getAttribute(User.USER));
+        } catch (NullPointerException ignored) {
+        }
+        try {
+            user = ApiProcessor.getUserByKey(session.getParameter("apiKey"));
+        } catch (NullPointerException ignored) {
+        }
+        if (null == user) {
+            return;
+        }
         final String userId = user.optString(Keys.OBJECT_ID);
         final BeanManager beanManager = BeanManager.getInstance();
         final UserMgmtService userMgmtService = beanManager.getReference(UserMgmtService.class);
@@ -261,9 +275,11 @@ public class UserChannel implements WebSocketChannel {
                 onlineMinute = onlineMinute + calcOnlineMinutes;
                 userMgmtService.setOnlineMinute(userId, onlineMinute);
                 userOnline.remove(userId);
+                LOGGER.log(Level.INFO, "All offline (" + calcOnlineMinutes +  " min) > " + user.optString(User.USER_NAME));
             }
             userMgmtService.updateOnlineStatus(userId, ip, false, true);
-            return;
+        } else {
+            LOGGER.log(Level.INFO, "1 of " + (userSessions.size() + 1) + " offline > " + user.optString(User.USER_NAME));
         }
     }
 

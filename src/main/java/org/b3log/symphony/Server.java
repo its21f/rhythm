@@ -229,7 +229,7 @@ public final class Server extends BaseServer {
         final Server server = new Server();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             // 用户层 结算似乎不需要 暂时去掉
-//            UserChannel.settlement();
+            UserChannel.settlement();
             // 框架
             cronMgmtService.stop();
             server.shutdown();
