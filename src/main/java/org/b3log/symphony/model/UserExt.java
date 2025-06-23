@@ -664,6 +664,9 @@ public final class UserExt {
      * @return user link
      */
     public static String getUserLink(final JSONObject user) {
+        if (null == user) {
+            return "<a href=\"" + Latkes.getServePath() + "\" class=\"name-at\" aria-label=\"用户不存在\">用户不存在</a> ";
+        }
         return getUserLink(user.optString(User.USER_NAME));
     }
 
