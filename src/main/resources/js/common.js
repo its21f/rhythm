@@ -1253,10 +1253,14 @@ var Util = {
      * @description 跳转到登录界面
      */
     goLogin: function () {
-        if (-1 !== location.href.indexOf('/login')) {
-            return
+        // 因为openid登录也带login 所以改成path必须是/login
+        let path = location.pathname
+        if(path === "/login" ){
+             return
         }
-
+        // if (-1 !== location.href.indexOf('/login')) {
+        //     return
+        // }
         var gotoURL = location.href
         if (location.search.indexOf('?goto') === 0) {
             gotoURL = location.href.replace(location.search, '')
