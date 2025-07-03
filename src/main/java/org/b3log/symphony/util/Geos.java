@@ -70,7 +70,7 @@ public final class Geos {
      * }
      * </pre>, returns {@code null} if not found
      */
-    public static JSONObject getAddress(String ip) {
+    public static JSONObject getAddressByBaidu(String ip) {
         ip = IPUtils.getFirstIPv4(ip);
 
         if (ipLocatesCache.containsKey(ip)) {
@@ -130,6 +130,26 @@ public final class Geos {
                     LOGGER.log(Level.ERROR, "Close HTTP connection failed", e);
                 }
             }
+        }
+    }
+
+    public static JSONObject getAddressByGeoIP(String ip) {
+        ip = IPUtils.getFirstIPv4(ip);
+        if (ipLocatesCache.containsKey(ip)) {
+            return ipLocatesCache.get(ip);
+        }
+        try {
+            GeoIPLocator geoLocator = GeoIPLocator.getInstance("/root/GeoLite2-City.mmdb");
+            JSONObject ret = geoLocator.getLocation(ip);
+            if (ret != null) {
+                ipLocatesCache.put(ip, ret);
+            }
+            LOGGER.log(Level.INFO, "Geolocated [ip=" + ip + ", " + ret + "]");
+            return ret;
+        } catch (Exception e) {
+            // 日志
+            LOGGER.log(Level.ERROR, "Can't get location from GeoIP [ip=" + ip + "]", e);
+            return null;
         }
     }
 

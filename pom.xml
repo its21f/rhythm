@@ -303,6 +303,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/lib/gif4j_zuixin_pojie1.jar</systemPath>
         </dependency>
+
+        <dependency>
+            <groupId>com.maxmind.geoip2</groupId>
+            <artifactId>geoip2</artifactId>
+            <version>4.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -224,7 +224,7 @@ public class UserMgmtService {
             }
 
             if (StringUtils.isNotBlank(ip)) {
-                final JSONObject address = Geos.getAddress(ip);
+                final JSONObject address = Geos.getAddressByGeoIP(ip);
                 if (null != address) {
                     final String country = address.optString(Common.COUNTRY);
                     final String province = address.optString(Common.PROVINCE);

@@ -253,7 +253,7 @@ public class BreezemoonProcessor {
         breezemoon.put(Breezemoon.BREEZEMOON_IP, ip);
         final String ua = Headers.getHeader(request, Common.USER_AGENT, "");
         breezemoon.put(Breezemoon.BREEZEMOON_UA, ua);
-        final JSONObject address = Geos.getAddress(ip);
+        final JSONObject address = Geos.getAddressByGeoIP(ip);
         if (null != address) {
             breezemoon.put(Breezemoon.BREEZEMOON_CITY, address.optString(Common.CITY));
         }
