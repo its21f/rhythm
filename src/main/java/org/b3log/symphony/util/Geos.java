@@ -70,7 +70,9 @@ public final class Geos {
      * }
      * </pre>, returns {@code null} if not found
      */
-    public static JSONObject getAddress(final String ip) {
+    public static JSONObject getAddress(String ip) {
+        ip = IPUtils.getFirstIPv4(ip);
+
         if (ipLocatesCache.containsKey(ip)) {
             return ipLocatesCache.get(ip);
         }
@@ -112,6 +114,8 @@ public final class Geos {
             ret.put(Common.PROVINCE, province);
             ret.put(Common.CITY, city);
             ipLocatesCache.put(ip, ret);
+
+            LOGGER.log(Level.INFO, "Geolocated [ip=" + ip + ", " + ret + "]");
 
             return ret;
         } catch (final Exception e) {
