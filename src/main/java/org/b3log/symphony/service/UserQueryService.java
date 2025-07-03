@@ -581,10 +581,14 @@ public class UserQueryService {
         if (requestJSONObject.has(Common.QUERY)) {
             final String q = requestJSONObject.optString(Common.QUERY);
             final List<Filter> filters = new ArrayList<>();
-            filters.add(new PropertyFilter(User.USER_NAME, FilterOperator.EQUAL, q));
+            filters.add(new PropertyFilter(User.USER_NAME, FilterOperator.LIKE, "%" + q + "%"));
             filters.add(new PropertyFilter(User.USER_EMAIL, FilterOperator.EQUAL, q));
             filters.add(new PropertyFilter(Keys.OBJECT_ID, FilterOperator.EQUAL, q));
             filters.add(new PropertyFilter(UserExt.USER_NO, FilterOperator.EQUAL, q));
+            filters.add(new PropertyFilter(UserExt.USER_LATEST_LOGIN_IP, FilterOperator.LIKE, "%" + q + "%"));
+            filters.add(new PropertyFilter("userPhone", FilterOperator.EQUAL, q));
+            filters.add(new PropertyFilter(UserExt.USER_NICKNAME, FilterOperator.LIKE, "%" + q + "%"));
+
             query.setFilter(new CompositeFilter(CompositeFilterOperator.OR, filters));
         }
 

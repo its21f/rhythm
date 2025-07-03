@@ -24,7 +24,7 @@
 <div class="content admin">
     <div class="module list">
         <form method="GET" action="${servePath}/admin/users" class="form">
-            <input name="query" type="text" placeholder="${userNameLabel}/${userEmailLabel}/Id/编号"/>
+            <input name="query" type="text" placeholder="${userNameLabel}/${userEmailLabel}/Id/编号/手机号/IP地址/昵称"/>
             <button type="submit" class="green">${searchLabel}</button> &nbsp;
             <#if permissions["userAddUser"].permissionGrant>
             <button type="button" class="btn red" onclick="window.location = '${servePath}/admin/add-user'">${addUserLabel}</button>
@@ -36,7 +36,7 @@
                 <div class="fn-clear">
                     <div class="avatar-small tooltipped tooltipped-se" aria-label="${item.userName}"
                          style="background-image:url('${item.userAvatarURL48}')"></div> &nbsp;
-                    <a href="${servePath}/member/${item.userName}">${item.userName}</a>
+                    <a href="${servePath}/member/${item.userName}"><#if item.userNickname?? && item.userNickname != "">${item.userNickname} (${item.userName})<#else>${item.userName}</#if></a>
                     <a href="${servePath}/admin/user/${item.oId}" class="fn-right tooltipped tooltipped-w ft-a-title" aria-label="${editLabel}"><svg><use xlink:href="#edit"></use></svg></a> &nbsp;
                     <#if item.userStatus == 0>
                     <span class="ft-gray">${validLabel}</span>
