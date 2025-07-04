@@ -43,10 +43,7 @@ import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.model.User;
-import org.b3log.latke.repository.Query;
-import org.b3log.latke.repository.RepositoryException;
-import org.b3log.latke.repository.SortDirection;
-import org.b3log.latke.repository.Transaction;
+import org.b3log.latke.repository.*;
 import org.b3log.latke.repository.jdbc.JdbcRepository;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.ServiceException;
@@ -514,6 +511,13 @@ public class AdminProcessor {
         try {
             String type = context.param("type");
             String oId = context.param("oId");
+            Long month = System.currentTimeMillis() - 45L * 24 * 60 * 60 * 1000;
+            if (Long.parseLong(oId) < month) {
+                context.renderJSON(StatusCodes.ERR);
+                context.renderMsg("此图片已超过45天，无法审核！");
+                return;
+            }
+
             JSONObject picture = uploadRepository.get(oId);
             String path = picture.optString("path");
 
@@ -622,10 +626,14 @@ public class AdminProcessor {
         final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "admin/pic.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
         final int pageNum = Paginator.getPage(request);
-        final int pageSize = 27;
+        final int pageSize = 50;
         final int windowSize = WINDOW_SIZE;
-
-        final Query query = new Query().addSort(Keys.OBJECT_ID, SortDirection.DESCENDING).setPage(pageNum, pageSize);
+        String month = String.valueOf(System.currentTimeMillis() - 45L * 24 * 60 * 60 * 1000);
+        final List<Filter> filters = new ArrayList<>();
+        filters.add(new PropertyFilter(Keys.OBJECT_ID, FilterOperator.GREATER_THAN_OR_EQUAL, month));
+        filters.add(new PropertyFilter("public", FilterOperator.EQUAL, 1));
+        final Query query = new Query().addSort(Keys.OBJECT_ID, SortDirection.DESCENDING).setPage(pageNum, pageSize)
+                .setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
         JSONObject result = new JSONObject();
         try {
             result = uploadRepository.get(query);
