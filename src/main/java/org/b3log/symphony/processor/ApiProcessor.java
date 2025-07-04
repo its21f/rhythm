@@ -142,6 +142,12 @@ public class ApiProcessor {
 
         Dispatcher.get("/loginWebInApiKey", apiProcessor::loginWebInApiKey);
         Dispatcher.get("/getApiKeyInWeb", apiProcessor::getApiKeyInWeb, loginCheck::handle);
+
+        Dispatcher.get("/ping", apiProcessor::ping, loginCheck::handle);
+    }
+
+    public void ping(final RequestContext context) {
+        context.getResponse().sendString("pong");;
     }
 
     public void getApiKeyInWeb(final RequestContext context) {

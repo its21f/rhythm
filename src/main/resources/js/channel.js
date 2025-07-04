@@ -288,7 +288,7 @@ var IdleTalkChannel = {
             console.log("Disconnected to idle talk channel websocket.")
             setInterval(function () {
                 $.ajax({
-                    url: Label.servePath + "/shop",
+                    url: Label.servePath + "/ping",
                     method: "get",
                     success: function() {
                         location.reload();
@@ -301,7 +301,7 @@ var IdleTalkChannel = {
             console.log('ERROR', err)
             setInterval(function () {
                 $.ajax({
-                    url: Label.servePath + "/shop",
+                    url: Label.servePath + "/ping",
                     method: "get",
                     success: function() {
                         location.reload();
@@ -534,7 +534,7 @@ var ChatRoomChannel = {
             console.log("Disconnected to chat room channel websocket.")
             ChatRoomChannel.manual = setInterval(function () {
                 $.ajax({
-                    url: Label.servePath + "/shop",
+                    url: Label.servePath + "/ping",
                     method: "get",
                     success: function() {
                         location.reload();
@@ -547,7 +547,7 @@ var ChatRoomChannel = {
             console.log('ERROR', err)
             setInterval(function () {
                 $.ajax({
-                    url: Label.servePath + "/shop",
+                    url: Label.servePath + "/ping",
                     method: "get",
                     success: function() {
                         location.reload();
@@ -613,7 +613,7 @@ var GobangChannel = {
             console.log("Disconnected to gobang channel websocket.")
             setInterval(function () {
                 $.ajax({
-                    url: Label.servePath + "/shop",
+                    url: Label.servePath + "/ping",
                     method: "get",
                     success: function() {
                         location.reload();
@@ -626,7 +626,7 @@ var GobangChannel = {
             console.log('ERROR', err)
             setInterval(function () {
                 $.ajax({
-                    url: Label.servePath + "/shop",
+                    url: Label.servePath + "/ping",
                     method: "get",
                     success: function() {
                         location.reload();
