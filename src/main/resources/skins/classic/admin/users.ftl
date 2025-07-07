@@ -51,10 +51,6 @@
                     </#if>
                 </div>
                 <div class="fn-clear">
-                    <span class="tooltipped tooltipped-n" aria-label="${emailLabel}"><svg><use xlink:href="#email"></use></svg></span>
-                    ${item.userEmail} &nbsp;
-                    <span class="tooltipped tooltipped-n" aria-label="手机号"><svg><use xlink:href="#phone"></use></svg></span>
-                    ${item.userPhone} &nbsp;
                     <span class="tooltipped tooltipped-n" aria-label="${roleLabel}"><svg><use xlink:href="#userrole"></use></svg></span>
                     ${item.roleName}
                     <span class="fn-right ft-gray">

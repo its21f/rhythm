@@ -51,7 +51,7 @@
                     </#if>
                 </div>
                 <div class="fn-clear">
-                    ${item.userPhone} ${item.userEmail} ${item.roleName}
+                    ${item.roleName}
                     <span class="fn-right ft-gray">
                         ${articleCountLabel} ${item.userArticleCount} &nbsp;
                         ${commentCountLabel} ${item.userCommentCount} &nbsp;
