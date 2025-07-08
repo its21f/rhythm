@@ -615,9 +615,18 @@ var ChatRoom = {
             }
         });
     },
+    times: 0,
     reloadMessages: function () {
+        ChatRoom.times++;
         if (document.documentElement.scrollTop <= 2000) {
             ChatRoom.flashScreenQuiet();
+        } else if (ChatRoom.times > 20) {
+            ChatRoom.flashScreenQuiet();
+            ChatRoom.times = 0;
+        }
+
+        if (ChatRoom.times > 20) {
+            ChatRoom.times = 0;
         }
     },
     flashScreen: function () {
