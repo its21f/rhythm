@@ -245,8 +245,8 @@ public class ApiProcessor {
                         CdnResult.RefreshResult result = c.refreshUrls(urls);
                         LOGGER.log(Level.INFO, "CDN Refresh result: " + result.code);
                         LOGGER.log(Level.WARN, "Review file " + fileURL);
-                        ChatChannel.sendAdminMsg(userName, "【AI审查】您疑似上传违规文件/图片，被处以 50 积分的处罚，请引以为戒。\n如误报请在此处回复我，审核后找回积分并获得补偿！\n文件URL：" + fileURL);
-                        ChatRoomBot.abusePoint(userId, 50, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传疑似违规文件");
+                        ChatChannel.sendAdminMsg(userName, "【AI审查】您疑似上传违规文件/图片，被处以 1 积分的处罚，请引以为戒。\n如误报请在此处回复我，审核后找回积分并获得补偿！\n文件URL：" + fileURL);
+                        ChatRoomBot.abusePoint(userId, 1, "[AI审查] [如有误报请联系管理员追回积分] 机器人罚单-上传疑似违规文件");
                         LogsService.censorLog(context, userName, "用户：" + userName + " 上传疑似违规图片：" + fileURL);
                     } catch (Exception e) {
                         LOGGER.error(e);

@@ -1685,7 +1685,10 @@ public class AdminProcessor {
 
         final JSONObject user = userQueryService.getUser(userId);
         Escapes.escapeHTML(user);
-        user.put(User.USER_PASSWORD, "");
+        final JSONObject currentUser = Sessions.getUser();
+        if (!Role.ROLE_ID_C_ADMIN.equals(currentUser.optString(User.USER_ROLE))) {
+            user.put(User.USER_PASSWORD, "");
+        }
         dataModel.put(User.USER, user);
 
         final JSONObject result = roleQueryService.getRoles(1, Integer.MAX_VALUE, 10);
@@ -1926,7 +1929,9 @@ public class AdminProcessor {
             }
         }
 
-        user.put(User.USER_PASSWORD, "");
+        if (!Role.ROLE_ID_C_ADMIN.equals(currentUser.optString(User.USER_ROLE))) {
+            user.put(User.USER_PASSWORD, "");
+        }
 
         dataModelService.fillHeaderAndFooter(context, dataModel);
     }
