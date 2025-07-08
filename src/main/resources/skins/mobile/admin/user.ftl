@@ -90,7 +90,7 @@
         <div class="module-panel form fn-clear">
             <form action="${servePath}/admin/user/${user.oId}" method="POST">
                 <label for="userPassword">${passwordLabel}</label>
-                <input type="text" id="userPassword" name="userPassword" value="${user.userPassword}" />
+                <input type="text" id="userPassword" name="userPassword" placeholder="如需修改请填写，否则请留空" value="${user.userPassword}" />
 
                 <label for="userNickname">${nicknameLabel}</label>
                 <input type="text" id="userNickname" name="userNickname" value="${user.userNickname}" />

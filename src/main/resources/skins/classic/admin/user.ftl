@@ -131,7 +131,7 @@
                 <div class="fn__flex">
                     <label>
                         <div>${passwordLabel}</div>
-                        <input type="text" id="userPassword" name="userPassword" value="${user.userPassword}"/>
+                        <input type="text" id="userPassword" name="userPassword" placeholder="如需修改请填写，否则请留空" value="${user.userPassword}"/>
                     </label>
                     <label class="mid">
                         <div>${nicknameLabel}</div>
