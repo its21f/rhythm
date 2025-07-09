@@ -275,7 +275,7 @@ public class ChatroomProcessor {
                     .toLowerCase();
         } else if ("backcolor".equals(type)) {
             return value.replaceAll("[^0-9a-fA-F,]", "")
-                    .substring(0, Math.min(13, value.length()))
+                    .substring(0, Math.min(6, value.length()))
                     .toLowerCase();
         }
         return value;
