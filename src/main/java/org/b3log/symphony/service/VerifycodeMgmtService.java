@@ -23,6 +23,8 @@ import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import com.tencentcloudapi.sms.v20210111.SmsClient;
 import com.tencentcloudapi.sms.v20210111.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20210111.models.SendSmsResponse;
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -194,32 +196,59 @@ public class VerifycodeMgmtService {
     }
 
     public boolean sendVerifyCodeSMS(String phone, String code) {
-        return sendMsg(new String[]{phone}, new String[]{code});
-    }
-
-    public boolean sendMsg(String[] phoneNumber, String[] templateParam) {
         if (Latkes.getRuntimeMode().equals(Latkes.RuntimeMode.DEVELOPMENT)) {
-            LOGGER.log(Level.INFO, "开发模式不真正发送短信，发送的手机号为：{}，当前短信验证码为：{}", phoneNumber, templateParam);
+            LOGGER.log(Level.INFO, "开发模式不真正发送短信，发送的手机号为：{}，当前短信验证码为：{}", phone, code);
             return true;
         } else {
-            Credential cred = new Credential(Symphonys.TEN_SMS_SECRET_ID, Symphonys.TEN_SMS_SECRET_KEY);
-            SmsClient client = new SmsClient(cred, Symphonys.TEN_SMS_DIYU);
-            SendSmsRequest req = new SendSmsRequest();
-            req.setSmsSdkAppId(Symphonys.TEN_SMS_SDK_APPID);
-            req.setSignName(Symphonys.TEN_SMS_SIGN_NAME);
-            req.setTemplateId(Symphonys.TEN_SMS_TEMPLATE_ID);
-            req.setPhoneNumberSet(phoneNumber);
-            req.setTemplateParamSet(templateParam);
-            SendSmsResponse res = null;
-            try {
-                res = client.SendSms(req);
-            } catch (TencentCloudSDKException e) {
-                LOGGER.log(Level.ERROR, "Unable send SMS [phoneNumber={}, templateParam={}]", phoneNumber, templateParam);
-                return false;
+            switch (Symphonys.SMS_ENABLE) {
+                case "tencent":
+                    return sendMsgTencentCloud(new String[]{phone}, new String[]{code});
+                case "bao":
+                    return sendMsgSmsBao(phone, code);
+                default:
+                    LOGGER.log(Level.ERROR, "短信服务未配置");
+                    return false;
             }
-            assert res != null;
-            LOGGER.log(Level.INFO, SendSmsResponse.toJsonString(res));
-            return true;
         }
+    }
+
+    public boolean sendMsgSmsBao(String phone, String code) {
+        StringBuilder url = new StringBuilder();
+        url.append("https://api.smsbao.com/sms");
+        url.append("?u=").append(Symphonys.BAO_SMS_U);
+        url.append("&p=").append(Symphonys.BAO_SMS_P);
+        url.append("&m=").append(phone);
+        url.append("&c=").append("【北京白与画科技】您的验证码是" + code + "。如非本人操作，请忽略本短信");
+        final HttpResponse response = HttpRequest.get(url.toString())
+                .connectionTimeout(30000).timeout(70000).header(Common.USER_AGENT, Symphonys.USER_AGENT_BOT)
+                .send();
+        if (200 == response.statusCode() && "0".equals(response.bodyText())) {
+            LOGGER.log(Level.INFO, "SEND OK: " + response.bodyText());
+            return true;
+        } else {
+            LOGGER.log(Level.ERROR, "Unable send SMS [phone={}, code={}, response={}]", phone, code, response.bodyText());
+            return false;
+        }
+    }
+
+    public boolean sendMsgTencentCloud(String[] phoneNumber, String[] templateParam) {
+        Credential cred = new Credential(Symphonys.TEN_SMS_SECRET_ID, Symphonys.TEN_SMS_SECRET_KEY);
+        SmsClient client = new SmsClient(cred, Symphonys.TEN_SMS_DIYU);
+        SendSmsRequest req = new SendSmsRequest();
+        req.setSmsSdkAppId(Symphonys.TEN_SMS_SDK_APPID);
+        req.setSignName(Symphonys.TEN_SMS_SIGN_NAME);
+        req.setTemplateId(Symphonys.TEN_SMS_TEMPLATE_ID);
+        req.setPhoneNumberSet(phoneNumber);
+        req.setTemplateParamSet(templateParam);
+        SendSmsResponse res = null;
+        try {
+            res = client.SendSms(req);
+        } catch (TencentCloudSDKException e) {
+            LOGGER.log(Level.ERROR, "Unable send SMS [phoneNumber={}, templateParam={}]", phoneNumber, templateParam);
+            return false;
+        }
+        assert res != null;
+        LOGGER.log(Level.INFO, SendSmsResponse.toJsonString(res));
+        return true;
     }
 }

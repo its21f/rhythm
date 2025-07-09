@@ -868,6 +868,8 @@ public final class Symphonys {
      */
     public static final Map<String, Set<String>> URL_PERMISSION_RULES = new HashMap<>();
 
+    public static final String SMS_ENABLE = get("sms.enable");
+
     /**
      * 腾讯云SMS相关
      */
@@ -877,6 +879,12 @@ public final class Symphonys {
     public static final String TEN_SMS_SDK_APPID = get("ten.sms.sdkAppId");
     public static final String TEN_SMS_SIGN_NAME = get("ten.sms.signName");
     public static final String TEN_SMS_TEMPLATE_ID = get("ten.sms.templateId");
+
+    /**
+     * 短信宝
+     */
+    public static final String BAO_SMS_U = get("bao.sms.u");
+    public static final String BAO_SMS_P = get("bao.sms.p");
 
     static {
         // Loads permission URL rules
