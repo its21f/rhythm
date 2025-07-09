@@ -58,6 +58,7 @@ import org.jsoup.select.Elements;
 import pers.adlered.simplecurrentlimiter.cache.pair.CachePair;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 
+import java.lang.Character;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1207,11 +1208,9 @@ public class ChatroomProcessor {
                     return;
                 }
                 String setdiscussString = content.replaceAll("^\\[setdiscuss\\]", "").replaceAll("\\[/setdiscuss\\]$", "");
-                setdiscussString = setdiscussString.replaceAll(
-                        "[^0-9a-zA-Z\\u4e00-\\u9fa5,，.。！!\\?？《》：“”；；‘’“”\\(\\)（）【】\\[\\]『』——…\\-_@#\\$%\\^&\\*<>+=|~/]", ""
-                );
-                if (setdiscussString.length() > 30) {
-                    setdiscussString = setdiscussString.substring(0, 30);
+                setdiscussString = filterDiscussString(setdiscussString);
+                if (setdiscussString.length() > 64) {
+                    setdiscussString = setdiscussString.substring(0, 64);
                 }
                 if (setdiscussString.isEmpty()) {
                     context.renderJSON(StatusCodes.ERR).renderMsg("这样不好玩哦～");
@@ -1309,6 +1308,51 @@ public class ChatroomProcessor {
             }
         }
     }
+
+    public static String filterDiscussString(String input) {
+        StringBuilder sb = new StringBuilder();
+        int len = input.length();
+        for (int i = 0; i < len; ) {
+            int codePoint = input.codePointAt(i);
+            String ch = new String(Character.toChars(codePoint));
+
+            // 判断：允许“数字、字母、汉字”
+            if ((codePoint >= '0' && codePoint <= '9') ||
+                    (codePoint >= 'a' && codePoint <= 'z') ||
+                    (codePoint >= 'A' && codePoint <= 'Z') ||
+                    (codePoint >= 0x4E00 && codePoint <= 0x9FFF)) {
+                sb.append(ch);
+            }
+            // 常见中英文标点
+            else if (" ,，.。！!?？《》：“”；；‘’“”()（）【】[]『』——…-_@#$%^&*<>+=|~/".contains(ch)) {
+                sb.append(ch);
+            }
+            // emoji广泛区间匹配（可按需扩展）
+            else if (isEmoji(codePoint)) {
+                sb.append(ch);
+            }
+            // 其他字符不保留
+
+            i += Character.charCount(codePoint);
+        }
+        return sb.toString();
+    }
+
+    // 判断是否常见emoji的代码点
+    public static boolean isEmoji(int codePoint) {
+        // 这里只覆盖了常见区间，也可以自行补充
+        return (codePoint >= 0x1F300 && codePoint <= 0x1F5FF) || // Misc Symbols and Pictographs
+                (codePoint >= 0x1F600 && codePoint <= 0x1F64F) || // Emoticons
+                (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport & Map
+                (codePoint >= 0x1F700 && codePoint <= 0x1F77F) || // Alchemical Symbols
+                (codePoint >= 0x2600 && codePoint <= 0x26FF)   || // Misc symbols
+                (codePoint >= 0x2700 && codePoint <= 0x27BF)   || // Dingbats
+                (codePoint >= 0xFE00 && codePoint <= 0xFE0F)   || // Variation Selectors
+                (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols & Pictographs
+                (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols & Pictographs Extended-A
+                (codePoint >= 0x200D); // Zero Width Joiner（部分emoji组合用）
+    }
+
 
     private void incLiveness(String userId) {
         int start = 1930;
