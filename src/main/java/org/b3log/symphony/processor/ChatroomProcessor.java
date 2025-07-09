@@ -1207,9 +1207,11 @@ public class ChatroomProcessor {
                     return;
                 }
                 String setdiscussString = content.replaceAll("^\\[setdiscuss\\]", "").replaceAll("\\[/setdiscuss\\]$", "");
-                setdiscussString = setdiscussString.replaceAll("[^0-9a-zA-Z\\u4e00-\\u9fa5,，.。！!?？《》]", "");
-                if (setdiscussString.length() > 16) {
-                    setdiscussString = setdiscussString.substring(0, 16);
+                setdiscussString = setdiscussString.replaceAll(
+                        "[^0-9a-zA-Z\\u4e00-\\u9fa5,，.。！!\\?？《》：“”；；‘’“”\\(\\)（）【】\\[\\]『』——…\\-_@#\\$%\\^&\\*<>+=|~/]", ""
+                );
+                if (setdiscussString.length() > 30) {
+                    setdiscussString = setdiscussString.substring(0, 30);
                 }
                 if (setdiscussString.isEmpty()) {
                     context.renderJSON(StatusCodes.ERR).renderMsg("这样不好玩哦～");
