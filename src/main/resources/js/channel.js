@@ -48,7 +48,7 @@ var ArticleChannel = {
 
         setInterval(function () {
             ArticleChannel.ws.send('ping');
-        }, 30000)
+        }, 5000)
 
         ArticleChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
@@ -170,7 +170,7 @@ var ArticleListChannel = {
 
         setInterval(function () {
             ArticleListChannel.ws.send('ping');
-        }, 30000)
+        }, 5000)
 
         ArticleListChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
@@ -227,7 +227,7 @@ var IdleTalkChannel = {
 
         setInterval(function () {
             IdleTalkChannel.ws.send('ping');
-        }, 30000)
+        }, 5000)
 
         IdleTalkChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data);

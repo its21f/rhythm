@@ -1730,7 +1730,7 @@ var Util = {
         // 发心跳包
         setInterval(function () {
             userChannel.send('ping');
-        }, 30000)
+        }, 5000)
 
         userChannel.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
