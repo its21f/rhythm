@@ -156,6 +156,10 @@ public class ChatChannel implements WebSocketChannel {
      */
     @Override
     public void onMessage(final Message message) {
+        if (message.text.equals("ping")) {
+            return;
+        }
+
         JSONObject result = new JSONObject();
         result.put("code", 0);
         result.put("msg", "");
