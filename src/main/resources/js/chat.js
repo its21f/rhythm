@@ -170,7 +170,7 @@ var Chat = {
                     }
                     // 发心跳包
                     setInterval(function () {
-                        Chat.ws.send('ping');
+                        Chat.ws.send('p');
                     }, 5000)
                     Chat.ws.onmessage = function (evt) {
                         var data = JSON.parse(evt.data)
