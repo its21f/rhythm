@@ -1171,6 +1171,11 @@ public class ChatroomProcessor {
                 String musicString = content.replaceAll("^\\[music\\]", "").replaceAll("\\[/music\\]$", "");
                 JSONObject music = new JSONObject(musicString);
                 music.put("msgType","music");
+                String title = music.getString("title");
+                if (title != null) {
+                    // 将HTML标签全部替换为空
+                    music.put("title", title.replaceAll("<[^>]*>", ""));
+                }
                 // 加活跃
                 incLiveness(userId);
                 // 聊天室内容保存到数据库
