@@ -156,7 +156,7 @@ public class ChatChannel implements WebSocketChannel {
      */
     @Override
     public void onMessage(final Message message) {
-        if (message.text.equals("ping")) {
+        if (message.text.equals("p")) {
             return;
         }
 
