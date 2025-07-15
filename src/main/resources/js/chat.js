@@ -168,6 +168,10 @@ var Chat = {
                     Chat.ws.onopen = function () {
                         console.log("Connected to chat channel websocket.")
                     }
+                    // 发心跳包
+                    setInterval(function () {
+                        Chat.ws.send('ping');
+                    }, 30000)
                     Chat.ws.onmessage = function (evt) {
                         var data = JSON.parse(evt.data)
                         if (data.type === 'revoke') {

@@ -46,6 +46,10 @@ var ArticleChannel = {
             console.log("Connected to article channel websocket.")
         }
 
+        setInterval(function () {
+            ArticleChannel.ws.send('ping');
+        }, 30000)
+
         ArticleChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
 
@@ -164,6 +168,10 @@ var ArticleListChannel = {
             console.log("Connected to article list channel websocket.")
         }
 
+        setInterval(function () {
+            ArticleListChannel.ws.send('ping');
+        }, 30000)
+
         ArticleListChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
             $('.article-list h2 > a[rel=bookmark]').each(function () {
@@ -216,6 +224,10 @@ var IdleTalkChannel = {
         IdleTalkChannel.ws.onopen = function () {
             console.log("Connected to idle talk channel websocket.")
         }
+
+        setInterval(function () {
+            IdleTalkChannel.ws.send('ping');
+        }, 30000)
 
         IdleTalkChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data);

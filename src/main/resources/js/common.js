@@ -1727,6 +1727,11 @@ var Util = {
             console.log("Connected to user channel websocket.")
         }
 
+        // 发心跳包
+        setInterval(function () {
+            userChannel.send('ping');
+        }, 30000)
+
         userChannel.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
 
