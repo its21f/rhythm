@@ -39,16 +39,22 @@
 
     </div>
     <div style="height: 74px;width: 1px;" ></div>
-        <div class="main">
+        <div class="main" style="padding: 0;margin: 0px;">
                 <div class="content fn-clear">
                     <#list allDomains as domain>
                     <div class="module" style="margin-bottom: 0px;">
-                        <div class="module-header">
-                            <h2>${domain.domainTitle}</h2>
+                        <div class="module-header fn-flex">
+                            <a class="ft-gray fn-flex fn__flex-1" rel="nofollow" href="${servePath}/domain/${domain.domainURI}" style="align-items: center">
+                                <img src="${domain.domainIconPath}"  style="width: 14px; height: 14px;">
+                                &nbsp;${domain.domainTitle}
+                            </a>
                             <a class="ft-gray fn-right" rel="nofollow" href="${servePath}/domain/${domain.domainURI}">${domain.domainTags?size} Tags</a>
                         </div>
-                        <div class="module-panel">
-                            <ul class="tags fn-clear" style="margin: 0px">
+                        <div class="module-panel  fn-clear">
+                            <div class="ft__smaller ft__fade" style="padding: 10px 10px 0 10px">
+                                <p>${domain.domainDescription}</p>
+                            </div>
+                            <ul class=" tags fn-clear" style="margin: 0px; padding-top: 0px" >
                                 <#list domain.domainTags as tag>
                                 <li>
                                     <a class="tag" rel="nofollow" href="${servePath}/tag/${tag.tagURI}">${tag.tagTitle}</a>
@@ -56,6 +62,7 @@
                                 </#list>
                             </ul>
                         </div>
+                        <div style="width: 100%;height: 2px;background-color: #f7f7f7"></div>
                     </div>
                     </#list>
                 </div>

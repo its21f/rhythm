@@ -33,45 +33,59 @@
         <div class="main">
             <div class="wrapper">
                 <div class="content fn-clear">
+                    <div class="fn-flex module-header ft-domain-header"  >
+                        领域
+                        <span class="fn-right ft-fade fn-flex-1 fn-flex ft-domain-head">
+                            <a  class="ft-gray" href="${servePath}/domians">${domainCnt} 领域</a>
+                            <span style="width: 20px"></span>
+                            <a  class="ft-gray" href="${servePath}/tags">${tagCnt} 标签</a>
+                        </span>
+                    </div>
+
+
                     <#list allDomains as domain>
-                    <div class="module">
-                        <div class="module-header">
-                            <h2>${domain.domainTitle}</h2>
-                            <a class="ft-gray fn-right" rel="nofollow" href="${servePath}/domain/${domain.domainURI}">${domain.domainTags?size} Tags</a>
-                        </div>
-                        <div class="module-panel">
-                            <ul class="tags fn-clear">
+                    <div class="module" style="padding: 15px">
+                        <div class="fn__flex">
+                            <a class="fn__flex-inline" href="${servePath}/domain/${domain.domainURI}">
+                                <img src="${domain.domainIconPath}" style="width: 55px;height: 56px;margin-right: 15px" />
+                            </a>
+                            <div class="fn-flex-1">
+                                <div class="title" style="font-size: 16px; font-weight: 400;line-height: 20px; ">
+                                    <a  style="color: #000;" href="${servePath}/domain/${domain.domainURI}">${domain.domainTitle}</a>
+                                </div>
+                                <div class="ft__fade ft__smaller">
+                                    <p>${domain.domainDescription}</p>
+                                </div>
+
+                            <ul class="tag-desc fn-clear" style="margin: 10px 0 0 0;">
                                 <#list domain.domainTags as tag>
-                                <li>
-                                    <a class="ft-gray ft-13" rel="nofollow" href="${servePath}/tag/${tag.tagURI}">${tag.tagTitle}</a> &nbsp;
-                                </li>
+                                    <li style="margin-bottom: 10px;">
+                                        <a rel="nofollow" href="${servePath}/tag/${tag.tagURI}">
+                                            <#if tag.tagIconPath!="">
+                                                <img src="${tag.tagIconPath}" alt="${tag.tagTitle}" /></#if>
+                                            ${tag.tagTitle}
+                                        </a>
+                                        <div<#if tag.tagDescription == ''> style="width:auto"</#if>>
+                                            <div>${tag.tagDescription}</div>
+                                            <span class="fn-right">
+                                            <span class="ft-gray">${referenceLabel}</span>
+                                            ${tag.tagReferenceCount} &nbsp;
+                                            <span class="ft-gray">${cmtLabel}</span>
+                                             ${tag.tagCommentCount}&nbsp;
+                                            </span>
+
+                                        </div>
+                                    </li>
                                 </#list>
                             </ul>
+                            </div>
                         </div>
                     </div>
                     </#list>
                 </div>
+
                 <div class="side">
-                    <div class='domains-count'>
-                        领域: <b>${domainCnt}</b><br/>
-                        标签: <b>${tagCnt}</b>
-                    </div>
-                    <#include "common/person-info.ftl">
-                    <#if showSideAd>
-                    <#if ADLabel!="">
-                    <div class="module">
-                        <div class="module-header">
-                            <h2>
-                                ${sponsorLabel}
-                                <a href="${servePath}/settings/system" class="fn-right ft-13 ft-gray" target="_blank">${wantPutOnLabel}</a>
-                            </h2>
-                        </div>
-                        <div class="module-panel ad fn-clear">
-                            ${ADLabel}
-                        </div>
-                    </div>
-                    </#if>
-                    </#if>
+                    <#include "side.ftl">
                 </div>
             </div>
         </div>

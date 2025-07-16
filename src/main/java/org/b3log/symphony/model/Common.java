@@ -855,6 +855,8 @@ public final class Common {
 
     public static final String NICE_USERS = "niceUsers";
 
+    public static final String DOMAINS = "domains";
+
     /**
      * Private constructor.
      */

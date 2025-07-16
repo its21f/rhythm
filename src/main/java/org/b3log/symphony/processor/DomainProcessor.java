@@ -18,6 +18,7 @@
  */
 package org.b3log.symphony.processor;
 
+import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.http.Request;
@@ -140,6 +141,7 @@ public class DomainProcessor {
         dataModelService.fillSideHotArticles(dataModel);
         dataModelService.fillSideTags(dataModel);
         dataModelService.fillLatestCmts(dataModel);
+        dataModel.put(Common.SELECTED, Common.DOMAINS);
     }
 
     /**
@@ -162,5 +164,9 @@ public class DomainProcessor {
         dataModel.put(Common.ALL_DOMAINS, domains);
 
         dataModelService.fillHeaderAndFooter(context, dataModel);
+        dataModelService.fillSideHotArticles(dataModel);
+        dataModelService.fillSideTags(dataModel);
+        dataModelService.fillRandomArticles(dataModel);
+        dataModel.put(Common.SELECTED, Common.DOMAINS);
     }
 }

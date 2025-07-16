@@ -60,6 +60,11 @@
             <svg>
                 <use xlink:href="#chat"></use>
             </svg> ${chatRoomLabel}</a>
+        <a pjax-title="${domainLabel} - ${symphonyLabel}"
+           href="${servePath}/domains"<#if selected?? && 'domains' == selected> class="current"</#if>>
+            <svg>
+                <use xlink:href="#domain"></use>
+            </svg> ${domainLabel}</a>
         <a pjax-title="${breezemoonLabel} - ${symphonyLabel}"
            href="${servePath}/breezemoons"<#if selected?? && 'breezemoons' == selected> class="current"</#if>>
             <svg>
