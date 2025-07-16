@@ -71,7 +71,7 @@ public final class Geos {
      * </pre>, returns {@code null} if not found
      */
     public static JSONObject getAddressByBaidu(String ip) {
-        ip = IPUtils.getFirstIPv4(ip);
+        ip = IPUtils.getFirstIP(ip);
 
         if (ipLocatesCache.containsKey(ip)) {
             return ipLocatesCache.get(ip);
@@ -134,7 +134,7 @@ public final class Geos {
     }
 
     public static JSONObject getAddressByGeoIP(String ip) {
-        ip = IPUtils.getFirstIPv4(ip);
+        ip = IPUtils.getFirstIP(ip);
         if (ipLocatesCache.containsKey(ip)) {
             return ipLocatesCache.get(ip);
         }

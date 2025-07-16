@@ -24,6 +24,35 @@ public class IPUtils {
     private static final Pattern IPV4_PATTERN = Pattern.compile(
             "^(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d{2}|[1-9]?\\d)){3}$"
     );
+    private static final Pattern IPV6_PATTERN = Pattern.compile(
+            "([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|"
+                    + "(([0-9A-Fa-f]{1,4}:){1,7}:)|"
+                    + "(([0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4})|"
+                    + "(([0-9A-Fa-f]{1,4}:){1,5}(:[0-9A-Fa-f]{1,4}){1,2})|"
+                    + "(([0-9A-Fa-f]{1,4}:){1,4}(:[0-9A-Fa-f]{1,4}){1,3})|"
+                    + "(([0-9A-Fa-f]{1,4}:){1,3}(:[0-9A-Fa-f]{1,4}){1,4})|"
+                    + "(([0-9A-Fa-f]{1,4}:){1,2}(:[0-9A-Fa-f]{1,4}){1,5})|"
+                    + "([0-9A-Fa-f]{1,4}:((:[0-9A-Fa-f]{1,4}){1,6}))|"
+                    + "(:((:[0-9A-Fa-f]{1,4}){1,7}|:))" // 支持简写 ::
+    );
+
+    public static String getFirstIP(String ipStr) {
+        if (ipStr == null || ipStr.isEmpty()) {
+            return ipStr;
+        }
+        String[] ips = ipStr.split(",");
+        String firstIp = ips[0].trim();
+        if (isIPv4(firstIp) || isIPv6(firstIp)) {
+            return firstIp;
+        } else {
+            return ipStr;
+        }
+    }
+
+    // 新增IPv6判断方法
+    private static boolean isIPv6(String ip) {
+        return IPV6_PATTERN.matcher(ip).matches();
+    }
 
     public static String getFirstIPv4(String ipStr) {
         if (ipStr == null || ipStr.isEmpty()) {
