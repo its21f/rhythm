@@ -59,6 +59,8 @@
                 <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://bbs.tampermonkey.net.cn/">油猴中文网</a>
                 &nbsp;｜&nbsp;
                 <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.redian.me/">摸鱼热点</a>
+                &nbsp;｜&nbsp;
+                <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.lundao.pub/">论道社区</a>
             </div>
             <div class="fn-clear ft-smaller">
                 <div style="margin-top: 5px; font-weight: 500">探索</div>

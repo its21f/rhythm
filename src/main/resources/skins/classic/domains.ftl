@@ -44,7 +44,7 @@
 
 
                     <#list allDomains as domain>
-                    <div class="module" style="padding: 15px">
+                    <div class="module" style="padding: 15px;margin-bottom: 1px;">
                         <div class="fn__flex">
                             <a class="fn__flex-inline" href="${servePath}/domain/${domain.domainURI}">
                                 <img src="${domain.domainIconPath}" style="width: 55px;height: 56px;margin-right: 15px" />
