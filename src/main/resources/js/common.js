@@ -1721,7 +1721,7 @@ var Util = {
      * @static
      */
     initUserChannel: function (channelServer) {
-        var userChannel = new WebSocket(channelServer)
+        var userChannel = new ReconnectingWebSocket(channelServer)
 
         userChannel.onopen = function () {
             console.log("Connected to user channel websocket.")
@@ -1857,15 +1857,6 @@ var Util = {
 
         userChannel.onclose = function () {
             console.log("Disconnected to user channel websocket.")
-            setInterval(function () {
-                $.ajax({
-                    url: Label.servePath + "/ping",
-                    method: "get",
-                    success: function() {
-                        location.reload();
-                    }
-                })
-            }, 10000);
         }
 
         userChannel.onerror = function (err) {

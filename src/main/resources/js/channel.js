@@ -40,7 +40,7 @@ var ArticleChannel = {
      * @description Initializes message channel
      */
     init: function (channelServer) {
-        ArticleChannel.ws = new WebSocket(channelServer)
+        ArticleChannel.ws = new ReconnectingWebSocket(channelServer)
 
         ArticleChannel.ws.onopen = function () {
             console.log("Connected to article channel websocket.")
@@ -162,7 +162,7 @@ var ArticleListChannel = {
      * @description Initializes message channel
      */
     init: function (channelServer) {
-        ArticleListChannel.ws = new WebSocket(channelServer)
+        ArticleListChannel.ws = new ReconnectingWebSocket(channelServer)
 
         ArticleListChannel.ws.onopen = function () {
             console.log("Connected to article list channel websocket.")
@@ -219,7 +219,7 @@ var IdleTalkChannel = {
      * @description Initializes message channel
      */
     init: function (channelServer) {
-        IdleTalkChannel.ws = new WebSocket(channelServer)
+        IdleTalkChannel.ws = new ReconnectingWebSocket(channelServer)
 
         IdleTalkChannel.ws.onopen = function () {
             console.log("Connected to idle talk channel websocket.")
@@ -298,28 +298,10 @@ var IdleTalkChannel = {
 
         IdleTalkChannel.ws.onclose = function () {
             console.log("Disconnected to idle talk channel websocket.")
-            setInterval(function () {
-                $.ajax({
-                    url: Label.servePath + "/ping",
-                    method: "get",
-                    success: function() {
-                        location.reload();
-                    }
-                })
-            }, 10000);
         }
 
         IdleTalkChannel.ws.onerror = function (err) {
             console.log('ERROR', err)
-            setInterval(function () {
-                $.ajax({
-                    url: Label.servePath + "/ping",
-                    method: "get",
-                    success: function() {
-                        location.reload();
-                    }
-                })
-            }, 10000);
         }
     },
 }
@@ -357,7 +339,7 @@ var ChatRoomChannel = {
      * @description Initializes message channel
      */
     init: function (channelServer) {
-        ChatRoomChannel.ws = new WebSocket(channelServer)
+        ChatRoomChannel.ws = new ReconnectingWebSocket(channelServer)
 
         ChatRoomChannel.ws.onopen = function () {
             console.log("Connected to chatroom channel websocket.")
@@ -544,28 +526,10 @@ var ChatRoomChannel = {
 
         ChatRoomChannel.ws.onclose = function () {
             console.log("Disconnected to chat room channel websocket.")
-            ChatRoomChannel.manual = setInterval(function () {
-                $.ajax({
-                    url: Label.servePath + "/ping",
-                    method: "get",
-                    success: function() {
-                        location.reload();
-                    }
-                })
-            }, 10000);
         }
 
         ChatRoomChannel.ws.onerror = function (err) {
             console.log('ERROR', err)
-            setInterval(function () {
-                $.ajax({
-                    url: Label.servePath + "/ping",
-                    method: "get",
-                    success: function() {
-                        location.reload();
-                    }
-                })
-            }, 10000);
         }
     },
     /**
@@ -599,13 +563,13 @@ var GobangChannel = {
      * @description Initializes message channel
      */
     init: function (channelServer) {
-        GobangChannel.ws = new WebSocket(channelServer)
+        GobangChannel.ws = new ReconnectingWebSocket(channelServer)
 
         GobangChannel.ws.onopen = function () {
             console.log("Connected to gobang channel websocket.")
             setInterval(function () {
                 GobangChannel.ws.send('zephyr test')
-            }, 1000 * 55)
+            }, 1000 * 5)
         }
 
         GobangChannel.ws.onmessage = function (evt) {
@@ -623,28 +587,10 @@ var GobangChannel = {
 
         GobangChannel.ws.onclose = function () {
             console.log("Disconnected to gobang channel websocket.")
-            setInterval(function () {
-                $.ajax({
-                    url: Label.servePath + "/ping",
-                    method: "get",
-                    success: function() {
-                        location.reload();
-                    }
-                })
-            }, 10000);
         }
 
         GobangChannel.ws.onerror = function (err) {
             console.log('ERROR', err)
-            setInterval(function () {
-                $.ajax({
-                    url: Label.servePath + "/ping",
-                    method: "get",
-                    success: function() {
-                        location.reload();
-                    }
-                })
-            }, 10000);
         }
     },
 }

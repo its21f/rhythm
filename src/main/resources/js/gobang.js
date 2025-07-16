@@ -196,13 +196,13 @@ var GobangChannel = {
      * @description Initializes message channel
      */
     init: function (channelServer) {
-        GobangChannel.ws = new WebSocket(channelServer);
+        GobangChannel.ws = new ReconnectingWebSocket(channelServer);
 
         GobangChannel.ws.onopen = function () {
             console.log("Connected to gobang channel websocket.")
             setInterval(function () {
                 GobangChannel.ws.send('zephyr test')
-            }, 1000 * 55)
+            }, 1000 * 5)
         };
 
         GobangChannel.ws.onmessage = function (evt) {

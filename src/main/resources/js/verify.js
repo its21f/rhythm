@@ -443,13 +443,18 @@ var Verify = {
     loginSocket: null,
     initQrCodeLogin: function () {
 
-        this.loginSocket = new WebSocket(Label.loginChannelURL);
+        this.loginSocket = new ReconnectingWebSocket(Label.loginChannelURL);
         this.loginSocket.onopen = (event) => {
             console.log('连接打开');
             this.loginSocket.send(JSON.stringify({
                 type: 1,
             }))
         };
+
+        // 发心跳包
+        setInterval(function () {
+            this.loginSocket.send('p');
+        }, 5000)
 
         this.loginSocket.onmessage = function (event) {
             console.log('收到消息:', event.data);

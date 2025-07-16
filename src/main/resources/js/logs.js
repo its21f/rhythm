@@ -24,7 +24,7 @@ var Logs = {
 
   connectWS: function () {
     // 连接WS
-    Logs.ws = new WebSocket(logsChannelURL);
+    Logs.ws = new ReconnectingWebSocket(logsChannelURL);
     Logs.ws.onopen = function () {
       console.log("Connected to logs channel websocket.");
     };

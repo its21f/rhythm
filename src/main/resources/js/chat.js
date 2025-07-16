@@ -164,7 +164,7 @@ var Chat = {
                         }
                     });
                     // 连接WS
-                    Chat.ws = new WebSocket(chatChannelURL + toUser);
+                    Chat.ws = new ReconnectingWebSocket(chatChannelURL + toUser);
                     Chat.ws.onopen = function () {
                         console.log("Connected to chat channel websocket.")
                     }
