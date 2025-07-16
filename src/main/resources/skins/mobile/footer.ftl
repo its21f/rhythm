@@ -27,11 +27,14 @@
         </div>
         <br>
         <div>
+            <a href="https://ipw.cn/ipv6webcheck/?site=fishpi.cn" title="本站支持IPv6访问" target='_blank'><img style='display:inline-block;vertical-align:middle' alt="本站支持IPv6访问" src="https://static.ipw.cn/icon/ipv6-s1.svg"></a>
+        </div>
+        <br>
+        <div>
             摸鱼好站
         </div>
         <div>
             <a target="_blank" href="http://www.cxy521.com/">程序员导航</a><br>
-            <a target="_blank" href="https://www.lundao.pub/">论道社区</a><br>
             <a target="_blank" href="https://bbs.tampermonkey.net.cn/">油猴中文网</a><br>
             <a target="_blank" href="https://www.redian.me/">摸鱼热点</a>
         </div>
