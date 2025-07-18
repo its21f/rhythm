@@ -18,6 +18,8 @@
  */
 package org.b3log.symphony.util;
 
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -25,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.b3log.latke.util.Strings;
 import org.b3log.symphony.model.Common;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
@@ -139,8 +142,14 @@ public final class Geos {
             return ipLocatesCache.get(ip);
         }
         try {
-            GeoIPLocator geoLocator = GeoIPLocator.getInstance("/root/GeoLite2-City.mmdb");
+            GeoIPLocator geoLocator = GeoIPLocator.getInstance(Symphonys.get("geoip.config.mmdb"));
             JSONObject ret = geoLocator.getLocation(ip);
+            if (ret == null || ret.optString("city").isEmpty()) {
+                JSONObject ret2 = getIpByApi(ip);
+                if (ret2 != null && !ret2.optString("city").isEmpty()) {
+                    ret = ret2;
+                }
+            }
             if (ret != null) {
                 ipLocatesCache.put(ip, ret);
             }
@@ -151,6 +160,38 @@ public final class Geos {
             LOGGER.log(Level.ERROR, "Can't get location from GeoIP [ip=" + ip + "]", e);
             return null;
         }
+    }
+
+    public static JSONObject getIpByApi(String ip) {
+        String url = Symphonys.get("geoip.fallback.api.url").replaceAll("IPADDR", ip);
+        final HttpRequest req = HttpRequest.get(url).header(Common.USER_AGENT, Symphonys.USER_AGENT_BOT);
+        final HttpResponse res = req.connectionTimeout(3000).timeout(5000).send();
+        res.charset("UTF-8");
+        res.close();
+        if (200 != res.statusCode()) {
+            return null;
+        }
+        JSONObject src = new JSONObject(res.bodyText());
+        JSONObject result = new JSONObject();
+        JSONArray regions = src.optJSONArray("regions");
+        if (regions == null || regions.length() == 0) {
+            // regions为空或null
+            result.put("country", src.optJSONObject("country") != null ? src.getJSONObject("country").optString("name", "中国") : "中国");
+        } else if (regions.length() == 1) {
+            // 只有一个
+            result.put("country", src.optJSONObject("country") != null ? src.getJSONObject("country").optString("name", "中国") : "中国");
+        } else if (regions.length() == 2) {
+            // 两个字段
+            result.put("country", src.optJSONObject("country") != null ? src.getJSONObject("country").optString("name", "中国") : "中国");
+            result.put("province", regions.getString(0));
+            result.put("city", regions.getString(1));
+        } else {
+            // 有三个及以上
+            result.put("country", regions.getString(0));
+            result.put("province", regions.getString(1));
+            result.put("city", regions.getString(2));
+        }
+        return result;
     }
 
     /**
