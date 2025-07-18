@@ -39,7 +39,7 @@
                  <#if pjax><!---- pjax {#domain-pjax-container} start ----></#if>
                 <div class="side__domains">
                     <ul>
-                        <#list allDomains as sideDomain>
+                        <#list domains as sideDomain>
                             <li>
                                 <a class="domains__first <#if sideDomain.domainURI == domain.domainURI >domains__first--current</#if> "  href="${servePath}/domain/${sideDomain.domainURI}">
                                     <img class="domain__icon" src="${sideDomain.domainIconPath}" />

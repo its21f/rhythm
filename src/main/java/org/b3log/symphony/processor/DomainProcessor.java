@@ -152,7 +152,7 @@ public class DomainProcessor {
         dataModel.put(Pagination.PAGINATION_PAGE_NUMS, pageNums);
 
         final List<JSONObject> domains = domainQueryService.getAllDomains();
-        dataModel.put(Common.ALL_DOMAINS, domains);;
+//        dataModel.put(Common.ALL_DOMAINS, domains);;
 
         dataModelService.fillHeaderAndFooter(context, dataModel);
         dataModelService.fillRandomArticles(dataModel);
