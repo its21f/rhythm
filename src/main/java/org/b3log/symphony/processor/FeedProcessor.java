@@ -151,7 +151,7 @@ public class FeedProcessor {
 
             final RSSChannel channel = new RSSChannel();
             final String domainId = domain.optString(Keys.OBJECT_ID);
-            final JSONObject result = articleQueryService.getDomainArticles(domainId, "",1, Symphonys.ARTICLE_LIST_CNT);
+            final JSONObject result = articleQueryService.getDomainArticles(domainId, null,1, Symphonys.ARTICLE_LIST_CNT);
             final List<JSONObject> articles = (List<JSONObject>) result.get(Article.ARTICLES);
             for (int i = 0; i < articles.size(); i++) {
                 RSSItem item = getItem(articles, i);

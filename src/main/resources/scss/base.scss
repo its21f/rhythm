@@ -2276,6 +2276,7 @@ a[class*=" icon-"]:hover {
 }
 
 .side__domains{
+  margin-top: 35px;
   ul{
     position: sticky;
     top: 58px;
@@ -2311,6 +2312,27 @@ a[class*=" icon-"]:hover {
   height: 14px;
   margin-right: 5px;
 }
+
+.domain-sub-tags{
+  background-color: #f6f6f6;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  border: #f6f6f6 solid 0px ;
+}
+
+.tabs-sub__item.tabs-sub__item--link{
+  flex: unset;
+  padding: 0 13px;
+}
+
+.tabs-sub__item--current{
+  background-color: #999999!important;
+  color: var(--layer-hover-color)!important
+}
+
+
 
 /*@keyframes swim {
   0% {

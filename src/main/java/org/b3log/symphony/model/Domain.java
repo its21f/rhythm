@@ -58,6 +58,11 @@ public final class Domain {
     public static final String DOMAIN_TYPE = "domainType";
 
     /**
+     * Key of domain current tag.
+     */
+    public static final String DOMAIN_CURRENT_TAG = "domainCurrentTag";
+
+    /**
      * Key of domain sort.
      */
     public static final String DOMAIN_SORT = "domainSort";

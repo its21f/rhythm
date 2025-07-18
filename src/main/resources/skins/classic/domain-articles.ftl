@@ -34,6 +34,9 @@
         <#include "header.ftl">
         <div class="main">
             <div class="wrapper">
+             <div class="fn-flex fn__flex-1" id="domain-pjax-container">
+
+                 <#if pjax><!---- pjax {#domain-pjax-container} start ----></#if>
                 <div class="side__domains">
                     <ul>
                         <#list allDomains as sideDomain>
@@ -46,20 +49,21 @@
                         </#list>
                     </ul>
                 </div>
-
-
-                <div class="content" id="domain-pjax-container">
-                    <#if pjax><!---- pjax {#domain-pjax-container} start ----></#if><div class="module">
+                <div class="content" >
+                    <div class="module" style="box-shadow: unset">
                     ${domain.domainCSS}
-                    <div class="tabs-sub fn-clear">
+                    <div class="tabs-sub fn-clear domain-sub-tags">
                         <#list domains as navDomain>
                         <#if navDomain.domainURI == domain.domainURI>
                             <#if navDomain.domainTags?size gt 0>
                                 <#list navDomain.domainTags as tag>
-                                <a rel="nofollow" href="${servePath}/tag/${tag.tagURI}">${tag.tagTitle}</a>
+                                <a class="tabs-sub__item tabs-sub__item--link <#if  tag.tagTitle == domainCurrentTag>tabs-sub__item--current</#if>" rel="nofollow" href="${servePath}/domain/${domain.domainURI}?tag=${tag.tagTitle}">${tag.tagTitle}</a>
                                 </#list>
-                            <a class="domain-rss" href="${servePath}/rss/domain/${domain.domainURI}.xml">
-                                <svg><use xlink:href="#iconRss"></use></svg>  RSS
+                            <a  class="tabs-sub__item tabs-sub__item--link ft-fade see-all-domains" href="${servePath}/domains"  style="display: flex;flex-direction: row;align-items: center">
+                                <svg style="margin-right: 5px"><use xlink:href="#domain"></use></svg>查看所有领域
+                            </a>
+                            <a  class="domain-rss tabs-sub__item tabs-sub__item--link" href="${servePath}/rss/domain/${domain.domainURI}.xml">
+                                <svg><use xlink:href="#iconRss"></use></svg>
                             </a>
                             <#else>
                                 <div class="no-list fn-flex-1">${chickenEggLabel}</div>
@@ -74,9 +78,9 @@
                             <div class="no-list"> ${systemEmptyLabel}</div>
                         </#if>
                     </div>
-
-                    <#if pjax><!---- pjax {#domain-pjax-container} end ----></#if>
                 </div>
+                 <#if pjax><!---- pjax {#domain-pjax-container} end ----></#if>
+             </div>
                 <div class="side">
                     <#include "side.ftl">
                 </div>

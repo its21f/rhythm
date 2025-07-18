@@ -673,7 +673,7 @@ public class ArticleProcessor {
         dataModel.put(Domain.DOMAIN, domain);
         final String domainId = domain.optString(Keys.OBJECT_ID);
 
-        final JSONObject result = articleQueryService.getDomainArticles(domainId,"", pageNum, pageSize);
+        final JSONObject result = articleQueryService.getDomainArticles(domainId,null, pageNum, pageSize);
         final List<JSONObject> allArticles = (List<JSONObject>) result.get(Article.ARTICLES);
 
         final JSONObject pagination = result.getJSONObject(Pagination.PAGINATION);

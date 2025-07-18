@@ -544,7 +544,7 @@ public class ArticleQueryService {
      * @param pageSize       the specified page size
      * @return result
      */
-    public JSONObject getDomainArticles(final String domainId,final String tag, final int currentPageNum, final int pageSize) {
+    public JSONObject getDomainArticles(final String domainId,final JSONObject tag, final int currentPageNum, final int pageSize) {
         final JSONObject ret = new JSONObject();
         ret.put(Article.ARTICLES, (Object) Collections.emptyList());
 
@@ -559,8 +559,9 @@ public class ArticleQueryService {
                 return ret;
             }
             final List<String> tagIds = new ArrayList<>();
-            if(StringUtils.isNotBlank(tag)){
-                JSONObject tagJSON = domainTags.stream().filter(tagObj -> tagObj.optString(Tag.TAG_TITLE).equals(tag)).findFirst().orElse(null);;
+            if(tag!=null){
+                JSONObject tagJSON = domainTags.stream().filter(tagObj -> tagObj.optString(Tag.TAG + "_" + Keys.OBJECT_ID).equals(tag.optString(Keys.OBJECT_ID))).findFirst().orElse(null);;
+
                 if(tagJSON!=null){
                     tagIds.add(tagJSON.optString(Tag.TAG + "_" + Keys.OBJECT_ID));
                 }else{

@@ -19,6 +19,9 @@
 package org.b3log.symphony.processor;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.http.Request;
@@ -50,6 +53,8 @@ import java.util.Map;
  */
 @Singleton
 public class DomainProcessor {
+
+    private static final Logger LOGGER = LogManager.getLogger(ActivityMgmtService.class);
 
     /**
      * Article query service.
@@ -91,6 +96,7 @@ public class DomainProcessor {
         final Request request = context.getRequest();
         final String tag = request.getParameter(Tag.TAG);
 
+
         final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "domain-articles.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
         final int pageNum = Paginator.getPage(request);
@@ -115,12 +121,20 @@ public class DomainProcessor {
         final List<JSONObject> tags = domainQueryService.getTags(domain.optString(Keys.OBJECT_ID));
         domain.put(Domain.DOMAIN_T_TAGS, (Object) tags);
 
+        JSONObject selectTag = tags.stream().filter(tagObj -> tagObj.optString(Tag.TAG_TITLE).equals(tag)).findFirst().orElse(null);
+
         dataModel.put(Domain.DOMAIN, domain);
         dataModel.put(Common.SELECTED, domain.optString(Domain.DOMAIN_URI));
+        if(StringUtils.isNotBlank(tag)){
+            dataModel.put(Domain.DOMAIN_CURRENT_TAG,tag);
+        }else {
+            dataModel.put(Domain.DOMAIN_CURRENT_TAG,"");
+        }
+
 
         final String domainId = domain.optString(Keys.OBJECT_ID);
 
-        final JSONObject result = articleQueryService.getDomainArticles(domainId, tag,pageNum, pageSize);
+        final JSONObject result = articleQueryService.getDomainArticles(domainId, selectTag,pageNum, pageSize);
         final List<JSONObject> latestArticles = (List<JSONObject>) result.opt(Article.ARTICLES);
         dataModel.put(Common.LATEST_ARTICLES, latestArticles);
 
@@ -138,8 +152,7 @@ public class DomainProcessor {
         dataModel.put(Pagination.PAGINATION_PAGE_NUMS, pageNums);
 
         final List<JSONObject> domains = domainQueryService.getAllDomains();
-        dataModel.put(Common.ALL_DOMAINS, domains);
-        dataModel.put(Tag.TAG,tag);
+        dataModel.put(Common.ALL_DOMAINS, domains);;
 
         dataModelService.fillHeaderAndFooter(context, dataModel);
         dataModelService.fillRandomArticles(dataModel);
