@@ -34,6 +34,20 @@
         <#include "header.ftl">
         <div class="main">
             <div class="wrapper">
+                <div class="side__domains">
+                    <ul>
+                        <#list allDomains as sideDomain>
+                            <li>
+                                <a class="domains__first <#if sideDomain.domainURI == domain.domainURI >domains__first--current</#if> "  href="${servePath}/domain/${sideDomain.domainURI}">
+                                    <img class="domain__icon" src="${sideDomain.domainIconPath}" />
+                                    ${sideDomain.domainTitle}
+                                </a>
+                            </li>
+                        </#list>
+                    </ul>
+                </div>
+
+
                 <div class="content" id="domain-pjax-container">
                     <#if pjax><!---- pjax {#domain-pjax-container} start ----></#if><div class="module">
                     ${domain.domainCSS}

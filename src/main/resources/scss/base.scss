@@ -2275,6 +2275,43 @@ a[class*=" icon-"]:hover {
   justify-content: flex-end;
 }
 
+.side__domains{
+  ul{
+    position: sticky;
+    top: 58px;
+    z-index: 1;
+  }
+  li{
+    list-style: none;
+  }
+  li:hover{
+    background: var(--background-color);
+    .domains__first{
+      box-shadow: 0 1px 2px rgba(0,0,0,.2);
+      color: var(--text-color)
+    }
+  }
+
+}
+.domains__first{
+  align-items: center;
+  color: var(--layer-color);
+  display: flex;
+  line-height: 16px;
+  padding: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.domains__first--current{
+  color: var(--text-color)
+}
+.domain__icon{
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+}
+
 /*@keyframes swim {
   0% {
     transform: translate(0,0) rotateY(0deg);

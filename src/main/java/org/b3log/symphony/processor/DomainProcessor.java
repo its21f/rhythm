@@ -89,6 +89,7 @@ public class DomainProcessor {
     public void showDomainArticles(final RequestContext context) {
         final String domainURI = context.pathVar("domainURI");
         final Request request = context.getRequest();
+        final String tag = request.getParameter(Tag.TAG);
 
         final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "domain-articles.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
@@ -119,7 +120,7 @@ public class DomainProcessor {
 
         final String domainId = domain.optString(Keys.OBJECT_ID);
 
-        final JSONObject result = articleQueryService.getDomainArticles(domainId, pageNum, pageSize);
+        final JSONObject result = articleQueryService.getDomainArticles(domainId, tag,pageNum, pageSize);
         final List<JSONObject> latestArticles = (List<JSONObject>) result.opt(Article.ARTICLES);
         dataModel.put(Common.LATEST_ARTICLES, latestArticles);
 
@@ -135,6 +136,10 @@ public class DomainProcessor {
         dataModel.put(Pagination.PAGINATION_CURRENT_PAGE_NUM, pageNum);
         dataModel.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
         dataModel.put(Pagination.PAGINATION_PAGE_NUMS, pageNums);
+
+        final List<JSONObject> domains = domainQueryService.getAllDomains();
+        dataModel.put(Common.ALL_DOMAINS, domains);
+        dataModel.put(Tag.TAG,tag);
 
         dataModelService.fillHeaderAndFooter(context, dataModel);
         dataModelService.fillRandomArticles(dataModel);
