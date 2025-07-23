@@ -218,8 +218,15 @@ public class ChatroomProcessor {
 
         Dispatcher.get("/chat-room/node/get", chatroomProcessor::getNode, loginCheck::handle);
         Dispatcher.post("/chat-room/node/push", chatroomProcessor::nodePush);
+        Dispatcher.get("/chat-room/barrager/get", chatroomProcessor::getBarragerCost, loginCheck::handle);
 
         Dispatcher.get("/gen", chatroomProcessor::genMetal, loginCheck::handle);
+    }
+
+    public void getBarragerCost(final RequestContext context) {
+        String result = barragerCost + barragerUnit;
+        context.renderJSON(StatusCodes.SUCC);
+        context.renderData(result);
     }
 
     public static Map<String, String> metalCache = Collections.synchronizedMap(new LinkedHashMap<String, String>() {
