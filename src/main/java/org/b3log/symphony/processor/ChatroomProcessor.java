@@ -954,7 +954,7 @@ public class ChatroomProcessor {
                 // 是否收税
                 Boolean collectTaxes = false;
                 // 税率
-                BigDecimal taxRate = new BigDecimal("0.05");
+                BigDecimal taxRate = new BigDecimal("0.1");
                 try {
                     String redpacketString = content.replaceAll("^\\[redpacket\\]", "").replaceAll("\\[/redpacket\\]$", "");
                     JSONObject redpacket = new JSONObject(redpacketString);
