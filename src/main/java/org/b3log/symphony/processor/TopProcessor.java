@@ -153,7 +153,7 @@ public class TopProcessor {
         Dispatcher.get("/api/top/xiaoice", topProcessor::getXiaoice, anonymousViewCheckMidware::handle);
         Dispatcher.get("/top/invite", topProcessor::showInvite, anonymousViewCheckMidware::handle);
         Dispatcher.get("/api/top/invite", topProcessor::getInvite, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/top/donate", topProcessor::showDonate, anonymousViewCheckMidware::handle);
+        //Dispatcher.get("/top/donate", topProcessor::showDonate, anonymousViewCheckMidware::handle);
         Dispatcher.get("/api/top/donate", topProcessor::getDonate, anonymousViewCheckMidware::handle);
         Dispatcher.get("/top/perfect", topProcessor::showPerfect, anonymousViewCheckMidware::handle);
         Dispatcher.get("/api/top/perfect", topProcessor::getPerfect, anonymousViewCheckMidware::handle);

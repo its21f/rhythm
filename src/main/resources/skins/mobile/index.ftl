@@ -138,8 +138,6 @@
 <ul class="menu">
     <li class="menu__item"><a class="title" href="${servePath}/breezemoons">🌕 清风明月</a></li>
     <li class="menu__item"><a class="title" href="${servePath}/cr">💬 聊天室</a></li>
-    <li class="menu__item"><a class="title" href="${servePath}/charge/point"><span
-                    class="ft-red">❤</span>️ ${chargePointLabel}</a></li>
     <li class="menu__item"><a class="title" href="${servePath}/top">🔥 排行榜</a></li>
     <li class="menu__item"><a class="title" href="${servePath}/shop">🏪 系统商店</a></li>
 </ul>

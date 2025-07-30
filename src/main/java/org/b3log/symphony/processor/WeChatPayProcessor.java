@@ -78,8 +78,8 @@ public class WeChatPayProcessor {
         final LoginCheckMidware loginCheck = beanManager.getReference(LoginCheckMidware.class);
 
         final WeChatPayProcessor weChatPayProcessor = beanManager.getReference(WeChatPayProcessor.class);
-        Dispatcher.get("/pay/wechat", weChatPayProcessor::pay, loginCheck::handle);
-        Dispatcher.post("/pay/wechatCall", weChatPayProcessor::wechatCall);
+        //Dispatcher.get("/pay/wechat", weChatPayProcessor::pay, loginCheck::handle);
+        //Dispatcher.post("/pay/wechatCall", weChatPayProcessor::wechatCall);
     }
 
     synchronized public void wechatCall(final RequestContext context) {

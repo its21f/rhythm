@@ -180,7 +180,7 @@ public class IndexProcessor {
         Dispatcher.get("/kill-browser", indexProcessor::showKillBrowser);
         Dispatcher.get("/hot", indexProcessor::showHotArticles, anonymousViewCheckMidware::handle);
         Dispatcher.get("/perfect", indexProcessor::showPerfectArticles, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/charge/point", indexProcessor::showChargePoint, anonymousViewCheckMidware::handle);
+        //Dispatcher.get("/charge/point", indexProcessor::showChargePoint, anonymousViewCheckMidware::handle);
         Dispatcher.get("/games/handle/", indexProcessor::showHandle, loginCheck::handle);
         Dispatcher.get("/games/adarkroom/", indexProcessor::showADarkRoom, loginCheck::handle);
         Dispatcher.get("/games/lifeRestart/view/", indexProcessor::showLifeRestart, loginCheck::handle);

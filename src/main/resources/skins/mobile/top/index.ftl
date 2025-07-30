@@ -48,7 +48,7 @@
                                 <div class="fn-flex-1">
                                     <h2>
                                         <a class="title"
-                                           href="${servePath}/top/balance">财富排行</a>
+                                           href="${servePath}/top/balance">积分财富排行</a>
                                     </h2>
                                     <div class="ft-fade ft-smaller">有钱人的世界我不懂</div>
                                 </div>
@@ -58,7 +58,7 @@
                                 <div class="fn-flex-1">
                                     <h2>
                                         <a class="title"
-                                           href="${servePath}/top/consumption">消费排行</a>
+                                           href="${servePath}/top/consumption">积分支出排行</a>
                                     </h2>
                                     <div class="ft-fade ft-smaller">今晚的消费，由陈公子买单</div>
                                 </div>
@@ -102,17 +102,6 @@
                                            href="${servePath}/top/perfect">优选排行</a>
                                     </h2>
                                     <div class="ft-fade ft-smaller">摸鱼派大佬排名，抱紧大腿！</div>
-                                </div>
-                            </li>
-                            <li class="fn__flex">
-                                <div class="avatar" style=" font-size: 2rem; margin-bottom: 0.5rem;display: flex;
-                                            justify-content: center;align-items: center;">💰</div>
-                                <div class="fn-flex-1">
-                                    <h2>
-                                        <a class="title"
-                                           href="${servePath}/top/donate">捐助排行</a>
-                                    </h2>
-                                    <div class="ft-fade ft-smaller">摸鱼派金主爸爸排名，谢谢老板！</div>
                                 </div>
                             </li>
                             <li class="fn__flex">
