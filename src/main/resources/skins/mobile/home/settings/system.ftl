@@ -69,8 +69,7 @@
         <div class="module-header">社区广告</div>
         <div class="module-panel form fn-clear">
             <label>
-                摸鱼派社区❤️用爱发电；如果你喜欢这里的氛围，可以通过开启社区广告来支持我们。<br>
-                广告收入将全部用于社区项目维护支出。
+                摸鱼派社区❤️用爱发电；如果你喜欢这里的氛围，可以通过开启社区广告来支持我们。
             </label>
             <div class="fn-clear settings-secret">
                 <div>
