@@ -1721,6 +1721,8 @@ var Util = {
      * @static
      */
     initUserChannel: function (channelServer) {
+        return;
+
         var userChannel = new ReconnectingWebSocket(channelServer)
 
         userChannel.onopen = function () {
@@ -1729,7 +1731,7 @@ var Util = {
 
         // 发心跳包
         setInterval(function () {
-            userChannel.send('p');
+            //userChannel.send('p');
         }, 1000 * 5)
 
         userChannel.onmessage = function (evt) {
