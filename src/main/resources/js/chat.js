@@ -171,7 +171,7 @@ var Chat = {
                     // 发心跳包
                     setInterval(function () {
                         Chat.ws.send('p');
-                    }, 5000)
+                    }, 1000 * 30)
                     Chat.ws.onmessage = function (evt) {
                         var data = JSON.parse(evt.data)
                         if (data.type === 'revoke') {

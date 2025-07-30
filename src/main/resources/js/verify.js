@@ -454,7 +454,7 @@ var Verify = {
         // 发心跳包
         setInterval(function () {
             this.loginSocket.send('p');
-        }, 5000)
+        }, 1000 * 30)
 
         this.loginSocket.onmessage = function (event) {
             console.log('收到消息:', event.data);

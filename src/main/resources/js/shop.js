@@ -191,7 +191,7 @@ var ShopChannel = {
         // 发心跳包
         setInterval(function () {
             ShopChannel.ws.send('p');
-        }, 5000)
+        }, 1000 * 30)
 
         ShopChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data);

@@ -48,7 +48,7 @@ var ArticleChannel = {
 
         setInterval(function () {
             ArticleChannel.ws.send('p');
-        }, 5000)
+        }, 1000 * 30)
 
         ArticleChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
@@ -170,7 +170,7 @@ var ArticleListChannel = {
 
         setInterval(function () {
             ArticleListChannel.ws.send('p');
-        }, 5000)
+        }, 1000 * 30)
 
         ArticleListChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data)
@@ -227,7 +227,7 @@ var IdleTalkChannel = {
 
         setInterval(function () {
             IdleTalkChannel.ws.send('p');
-        }, 5000)
+        }, 1000 * 30)
 
         IdleTalkChannel.ws.onmessage = function (evt) {
             var data = JSON.parse(evt.data);
@@ -569,7 +569,7 @@ var GobangChannel = {
             console.log("Connected to gobang channel websocket.")
             setInterval(function () {
                 GobangChannel.ws.send('zephyr test')
-            }, 1000 * 5)
+            }, 1000 * 30)
         }
 
         GobangChannel.ws.onmessage = function (evt) {

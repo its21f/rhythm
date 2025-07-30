@@ -31,7 +31,7 @@ var Logs = {
     // 发心跳包
     setInterval(function () {
       Logs.ws.send('p');
-    }, 5000)
+    }, 1000 * 30)
     Logs.ws.onmessage = function (evt) {
       var data = JSON.parse(evt.data);
       switch (data.type) {
