@@ -1721,8 +1721,6 @@ var Util = {
      * @static
      */
     initUserChannel: function (channelServer) {
-        return;
-
         var userChannel = new ReconnectingWebSocket(channelServer)
 
         userChannel.onopen = function () {
