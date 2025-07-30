@@ -1,14 +1,6 @@
-/*
- * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
- * Digest Algorithm, as defined in RFC 1321.
- * Copyright (C) Paul Johnston 1999 - 2000.
- * Updated by Greg Holt 2000 - 2001.
- * See http://pajhome.org.uk/site/legal.html for details.
- */
+
  
-/*
- * Convert a 32-bit number to a hex string with ls-byte first
- */
+
 var hex_chr = "0123456789abcdef";
 function rhex(num)
 {
@@ -19,10 +11,7 @@ function rhex(num)
     return str;
 }
  
-/*
- * Convert a string to a sequence of 16-word blocks, stored as an array.
- * Append padding bits and the length, as described in the MD5 standard.
- */
+
 function str2blks_MD5(str)
 {
     nblk = ((str.length + 8) >> 6) + 1;
@@ -35,10 +24,7 @@ function str2blks_MD5(str)
     return blks;
 }
  
-/*
- * Add integers, wrapping at 2^32. This uses 16-bit operations internally
- * to work around bugs in some JS interpreters.
- */
+
 function add(x, y)
 {
     var lsw = (x & 0xFFFF) + (y & 0xFFFF);
@@ -46,18 +32,13 @@ function add(x, y)
     return (msw << 16) | (lsw & 0xFFFF);
 }
  
-/*
- * Bitwise rotate a 32-bit number to the left
- */
+
 function rol(num, cnt)
 {
     return (num << cnt) | (num >>> (32 - cnt));
 }
  
-/*
- * These functions implement the basic operation for each round of the
- * algorithm.
- */
+
 function cmn(q, a, b, x, s, t)
 {
     return add(rol(add(add(a, q), add(x, t)), s), b);
@@ -79,9 +60,7 @@ function ii(a, b, c, d, x, s, t)
     return cmn(c ^ (b | (~d)), a, b, x, s, t);
 }
  
-/*
- * Take a string and return the hex representation of its MD5.
- */
+
 function calcMD5(str)
 {
     x = str2blks_MD5(str);

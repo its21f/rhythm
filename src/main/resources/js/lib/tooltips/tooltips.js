@@ -1,17 +1,4 @@
-/*!
- * @name $.tooltips 信息提示
- * @author M.J
- * @date 2017-6-23
- *
- * $.tooltips('tooltips')
- * $.tooltips('tooltips', 5000);
- * $.tooltips('tooltips', {
- *     type: 'danger',
- *     duration: 3000,
- *     callback: function() {}
- * });
- *
- */
+
 (function($) {
 
     if (!$) {
