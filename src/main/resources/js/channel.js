@@ -47,7 +47,7 @@ var ArticleChannel = {
         }
 
         setInterval(function () {
-            ArticleChannel.ws.send('p');
+            //ArticleChannel.ws.send('p');
         }, 1000 * 30)
 
         ArticleChannel.ws.onmessage = function (evt) {
@@ -169,7 +169,7 @@ var ArticleListChannel = {
         }
 
         setInterval(function () {
-            ArticleListChannel.ws.send('p');
+            //ArticleListChannel.ws.send('p');
         }, 1000 * 30)
 
         ArticleListChannel.ws.onmessage = function (evt) {
@@ -226,7 +226,7 @@ var IdleTalkChannel = {
         }
 
         setInterval(function () {
-            IdleTalkChannel.ws.send('p');
+            //IdleTalkChannel.ws.send('p');
         }, 1000 * 30)
 
         IdleTalkChannel.ws.onmessage = function (evt) {
