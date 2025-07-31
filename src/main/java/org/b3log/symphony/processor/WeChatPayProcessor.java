@@ -175,6 +175,59 @@ public class WeChatPayProcessor {
         response.sendString("SUCCESS");
     }
 
+    // 手动捐助
+    public static void manual(String userId, String total_amount, String memo) {
+        final BeanManager beanManager = BeanManager.getInstance();
+        PointtransferMgmtService pointtransferMgmtService = beanManager.getReference(PointtransferMgmtService.class);
+        NotificationMgmtService notificationMgmtService = beanManager.getReference(NotificationMgmtService.class);
+        SponsorService sponsorService = beanManager.getReference(SponsorService.class);
+        CloudService cloudService = beanManager.getReference(CloudService.class);
+
+        int point;
+        double total = Double.parseDouble(total_amount);
+        point = ((int) total) * 80;
+        if (point == 0) {
+            point = 1;
+        }
+
+        // 打积分
+        final String transferId = pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS, userId,
+                Pointtransfer.TRANSFER_TYPE_C_CHARGE, point, total_amount, System.currentTimeMillis(), "");
+        // 通知
+        try {
+            final JSONObject notification = new JSONObject();
+            notification.put(Notification.NOTIFICATION_USER_ID, userId);
+            notification.put(Notification.NOTIFICATION_DATA_ID, transferId);
+            notificationMgmtService.addPointChargeNotification(notification);
+        } catch (ServiceException e) {
+            LOGGER.error(e.getMessage());
+        }
+        // 保存捐赠记录
+        final JSONObject record = new JSONObject();
+        record.put(UserExt.USER_T_ID, userId);
+        record.put("time", System.currentTimeMillis());
+        record.put(Sponsor.SPONSOR_MESSAGE, memo);
+        record.put(Sponsor.AMOUNT, total);
+        sponsorService.add(record);
+        // 统计用户总积分
+        double sum = sponsorService.getSum(userId);
+        // 三清
+        cloudService.removeMetal(userId, L1_NAME);
+        cloudService.removeMetal(userId, L2_NAME);
+        cloudService.removeMetal(userId, L3_NAME);
+        // 赋予勋章
+        if (sum >= 1024) {
+            cloudService.giveMetal(userId, L3_NAME, L3_DESC + getNo(userId, 3), L3_ATTR, "");
+            cloudService.giveMetal(userId, L2_NAME, L2_DESC + getNo(userId, 2), L2_ATTR, "");
+            cloudService.giveMetal(userId, L1_NAME, L1_DESC + getNo(userId, 1), L1_ATTR, "");
+        } else if (sum >= 256) {
+            cloudService.giveMetal(userId, L2_NAME, L2_DESC + getNo(userId, 2), L2_ATTR, "");
+            cloudService.giveMetal(userId, L1_NAME, L1_DESC + getNo(userId, 1), L1_ATTR, "");
+        } else if (sum >= 16) {
+            cloudService.giveMetal(userId, L1_NAME, L1_DESC + getNo(userId, 1), L1_ATTR, "");
+        }
+    }
+
     public void pay(final RequestContext context) {
         JSONObject currentUser = Sessions.getUser();
         try {

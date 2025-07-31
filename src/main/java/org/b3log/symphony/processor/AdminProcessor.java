@@ -2048,46 +2048,17 @@ public class AdminProcessor {
      */
     public void chargePoint(final RequestContext context) {
         final String userId = context.pathVar("userId");
-        final Request request = context.getRequest();
-
         final String pointStr = context.param(Common.POINT);
         final String memo = context.param("memo");
-        if (StringUtils.isBlank(pointStr) || StringUtils.isBlank(memo) || !Strings.isNumeric(memo.split("-")[0])) {
+
+        if (StringUtils.isBlank(pointStr) || StringUtils.isBlank(memo)) {
             LOGGER.warn("Charge point memo format error");
 
             context.sendRedirect(Latkes.getServePath() + "/admin/user/" + userId);
             return;
         }
 
-        try {
-            final int point = Integer.valueOf(pointStr);
-
-            final String transferId = pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS, userId,
-                    Pointtransfer.TRANSFER_TYPE_C_CHARGE, point, memo, System.currentTimeMillis(), "");
-            operationMgmtService.addOperation(Operation.newOperation(request, Operation.OPERATION_CODE_C_CHARGE_POINT, transferId));
-
-            final JSONObject notification = new JSONObject();
-            notification.put(Notification.NOTIFICATION_USER_ID, userId);
-            notification.put(Notification.NOTIFICATION_DATA_ID, transferId);
-            notificationMgmtService.addPointChargeNotification(notification);
-            // 保存捐赠记录
-            final JSONObject record = new JSONObject();
-            record.put(UserExt.USER_T_ID, userId);
-            record.put("time", System.currentTimeMillis());
-            final String[] memos = memo.split("-");
-            final String message = memos.length < 2 || StringUtils.isBlank(memos[1]) ? "没有填写捐助信息 :)" : memo.split("-")[1];
-            record.put(Sponsor.SPONSOR_MESSAGE, message);
-            record.put(Sponsor.AMOUNT, Double.parseDouble(memos[0]));
-            sponsorService.add(record);
-        } catch (final NumberFormatException | ServiceException e) {
-            final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "admin/error.ftl");
-            final Map<String, Object> dataModel = renderer.getDataModel();
-
-            dataModel.put(Keys.MSG, e.getMessage());
-            dataModelService.fillHeaderAndFooter(context, dataModel);
-            return;
-        }
-
+        WeChatPayProcessor.manual(userId, pointStr, memo);
         context.sendRedirect(Latkes.getServePath() + "/admin/user/" + userId);
     }
 

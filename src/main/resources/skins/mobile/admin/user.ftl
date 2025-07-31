@@ -305,11 +305,11 @@
                 <label>${userNameLabel}</label>
                 <input type="text" name="userName" value="${user.userName}" readonly="readonly" />
 
-                <label>${pointLabel}</label>
+                <label>金额</label>
                 <input type="text" name="point" value="" />
 
                 <label>${memoLabel}</label>
-                <input type="text" name="memo" value="" placeholder="${chargePointPlaceholderLabel}" />
+                <input type="text" name="memo" value="" />
 
                 <br/><br/>
                 <button type="submit" class="green fn-right">${submitLabel}</button>

@@ -425,12 +425,12 @@
                                readonly />
                     </label>
                     <label class="mid">
-                        <div>${pointLabel}</div>
+                        <div>金额</div>
                         <input type="text" name="point" value=""/>
                     </label>
                     <label>
                         <div>${memoLabel}</div>
-                        <input type="text" name="memo" value="" placeholder="${chargePointPlaceholderLabel}"/>
+                        <input type="text" name="memo" value=""/>
                     </label>
                 </div>
                 <br/>
