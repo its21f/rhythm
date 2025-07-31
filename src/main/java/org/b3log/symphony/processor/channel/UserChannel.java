@@ -148,6 +148,7 @@ public class UserChannel implements WebSocketChannel {
      */
     @Override
     public void onMessage(final Message message) {
+        AdminProcessor.manager.onMessageSent(8, message.text.length());
         final Session session = message.session.getHttpSession();
         JSONObject user = null;
         try {
