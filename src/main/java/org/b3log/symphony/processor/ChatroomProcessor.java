@@ -261,6 +261,7 @@ public class ChatroomProcessor {
         }
 
         context.getResponse().setContentType("image/svg+xml");
+        context.getResponse().setHeader("Cache-Control", "max-age=604800");
         context.getResponse().sendBytes(body.getBytes());
     }
 
