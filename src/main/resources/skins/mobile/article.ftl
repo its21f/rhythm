@@ -349,6 +349,7 @@
                 </#if>
             </div>
             <div>
+                <#if pjax><!---- pjax {#comments} start ----></#if>
                 <div class="fn-clear" id="comments">
                     <div class="list comments">
                             <span id="replyUseName" class="fn-none"></span>
@@ -372,6 +373,7 @@
                         </div>
                     <@pagination url=article.articlePermalink query="m=${userCommentViewMode}" />
                 </div>
+                <#if pjax><!---- pjax {#comments} end ----></#if>
                 <#if article.articleComments?size == 0>
                     <#if 1 == userCommentViewMode>
                         <#if isLoggedIn>
