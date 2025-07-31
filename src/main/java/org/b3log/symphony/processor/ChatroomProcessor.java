@@ -361,7 +361,7 @@ public class ChatroomProcessor {
         cookieJSONObject.put(Keys.OBJECT_ID, userId);
         final String random = RandomStringUtils.randomAlphanumeric(16);
         cookieJSONObject.put(Keys.TOKEN, userPassword + ApiProcessor.COOKIE_ITEM_SEPARATOR + random);
-        final String key = Crypts.encryptByAES(cookieJSONObject.toString(), Symphonys.COOKIE_SECRET);
+        final String key = Crypts.encryptByAES(cookieJSONObject.toString(), Symphonys.COOKIE_SECRET_API);
 
         JSONObject ret = new JSONObject();
         ret.put(Keys.CODE, StatusCodes.SUCC);

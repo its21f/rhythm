@@ -105,11 +105,6 @@
     </#if>
     <div class="user-nav">
         <#if isLoggedIn>
-            <a href="${servePath}/pre-post" class="tooltipped tooltipped-w" aria-label="${postArticleLabel}">
-                <svg>
-                    <use xlink:href="#addpost"></use>
-                </svg>
-            </a>
             <#if permissions["menuAdmin"].permissionGrant>
             <a href="${servePath}/admin" aria-label="${adminLabel}" class="tooltipped tooltipped-w">
                 <svg>
@@ -145,6 +140,13 @@
                     }
                 </script>
             </#if>
+            <a href="${servePath}/pre-post" class="pre-post">
+                <svg style="height: 16px">
+                    <use xlink:href="#addpost"></use>
+                    &nbsp;
+                    <span>发帖</span>
+                </svg>
+            </a>
             <a href="javascript:void(0)" id="aPersonListPanel" class="tooltipped tooltipped-w"
                aria-label="${viewHomeAndProfileLabel}"
                data-url="${servePath}/member/${currentUser.userName}">

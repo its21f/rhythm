@@ -828,6 +828,7 @@ public final class Symphonys {
      * Cookie 加密密钥，<b>生产环境必须修改</b>.
      */
     public static final String COOKIE_SECRET = get("cookie.secret");
+    public static final String COOKIE_SECRET_API = get("cookie.secret.api");
 
     /**
      * 积分超过该值才能使用匿名发布帖子或者回帖.

@@ -164,7 +164,7 @@ public class ApiProcessor {
 
         final String random = RandomStringUtils.randomAlphanumeric(16);
         cookieJSONObject.put(Keys.TOKEN, userPassword + COOKIE_ITEM_SEPARATOR + random);
-        final String key = Crypts.encryptByAES(cookieJSONObject.toString(), Symphonys.COOKIE_SECRET);
+        final String key = Crypts.encryptByAES(cookieJSONObject.toString(), Symphonys.COOKIE_SECRET_API);
 
         context.renderJSON(StatusCodes.SUCC).renderJSON(new JSONObject().put("apiKey", key));
     }
@@ -284,7 +284,7 @@ public class ApiProcessor {
      */
     private static JSONObject tryLogInWithApiKey(String apiKey) {
         try {
-            final String value = Crypts.decryptByAES(apiKey, Symphonys.COOKIE_SECRET);
+            final String value = Crypts.decryptByAES(apiKey, Symphonys.COOKIE_SECRET_API);
             final JSONObject cookieJSONObject = new JSONObject(value);
             final BeanManager beanManager = BeanManager.getInstance();
             final UserRepository userRepository = beanManager.getReference(UserRepository.class);
@@ -376,7 +376,7 @@ public class ApiProcessor {
 
                 final String random = RandomStringUtils.randomAlphanumeric(16);
                 cookieJSONObject.put(Keys.TOKEN, userPassword + COOKIE_ITEM_SEPARATOR + random);
-                final String key = Crypts.encryptByAES(cookieJSONObject.toString(), Symphonys.COOKIE_SECRET);
+                final String key = Crypts.encryptByAES(cookieJSONObject.toString(), Symphonys.COOKIE_SECRET_API);
 
                 context.renderCodeMsg(StatusCodes.SUCC, "");
                 context.renderJSONValue("Key", key);
