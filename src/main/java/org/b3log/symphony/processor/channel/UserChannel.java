@@ -102,7 +102,8 @@ public class UserChannel implements WebSocketChannel {
         } catch (NullPointerException ignored) {
         }
         if (null == user) {
-            session.close();
+            session.sendText("ApiKey错误，请手动断开后更换ApiKey重试");
+            LOGGER.log(Level.ERROR, "[UserChannel] ApiKey错误，Session ID=" + httpSession.getId());
             return;
         }
 
@@ -147,18 +148,6 @@ public class UserChannel implements WebSocketChannel {
      */
     @Override
     public void onMessage(final Message message) {
-        final Session session = message.session.getHttpSession();
-        final String userStr = session.getAttribute(User.USER);
-        if (null == userStr) {
-            return;
-        }
-        final JSONObject user = new JSONObject(userStr);
-
-        final String userId = user.optString(Keys.OBJECT_ID);
-        final BeanManager beanManager = BeanManager.getInstance();
-        final UserMgmtService userMgmtService = beanManager.getReference(UserMgmtService.class);
-        final String ip = session.getAttribute(Common.IP);
-        userMgmtService.updateOnlineStatus(userId, ip, true, true);
     }
 
     /**
