@@ -91,6 +91,7 @@ public class UserChannel implements WebSocketChannel {
      */
     @Override
     public void onConnect(final WebSocketSession session) {
+        System.out.println("Channel Join > User");
         final Session httpSession = session.getHttpSession();
         JSONObject user = null;
         try {
