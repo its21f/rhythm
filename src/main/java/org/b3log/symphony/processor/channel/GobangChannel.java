@@ -98,6 +98,7 @@ public class GobangChannel implements WebSocketChannel {
      */
     @Override
     public void onConnect(final WebSocketSession session) {
+        System.out.println("Channel Join > Gobang");
         final String userStr = session.getHttpSession().getAttribute(User.USER);
         if (null == userStr) {
             session.close();

@@ -46,10 +46,6 @@ public final class Router {
         // 注册 WebSocket 处理器
         final ArticleChannel articleChannel = beanManager.getReference(ArticleChannel.class);
         Dispatcher.webSocket("/article-channel", articleChannel);
-        final ArticleListChannel articleListChannel = beanManager.getReference(ArticleListChannel.class);
-        Dispatcher.webSocket("/article-list-channel", articleListChannel);
-        final ChatroomChannel chatroomChannel = beanManager.getReference(ChatroomChannel.class);
-        Dispatcher.webSocket("/chat-room-channel", chatroomChannel);
         final GobangChannel gobangChannel = beanManager.getReference(GobangChannel.class);
         Dispatcher.webSocket("/gobang-game-channel", gobangChannel);
         final UserChannel userChannel = beanManager.getReference(UserChannel.class);
@@ -58,11 +54,14 @@ public final class Router {
         Dispatcher.webSocket("/chat-channel", chatChannel);
         final ShopChannel shopChannel = beanManager.getReference(ShopChannel.class);
         Dispatcher.webSocket("/shop-channel", shopChannel);
-        final LogsChannel logsChannel = beanManager.getReference(LogsChannel.class);
-        Dispatcher.webSocket("/logs-channel", logsChannel);
-
         final LoginChannel loginChannel = beanManager.getReference(LoginChannel.class);
         Dispatcher.webSocket("/login-channel", loginChannel);
+        //final LogsChannel logsChannel = beanManager.getReference(LogsChannel.class);
+        //Dispatcher.webSocket("/logs-channel", logsChannel);
+        //final ArticleListChannel articleListChannel = beanManager.getReference(ArticleListChannel.class);
+        //Dispatcher.webSocket("/article-list-channel", articleListChannel);
+        //final ChatroomChannel chatroomChannel = beanManager.getReference(ChatroomChannel.class);
+        //Dispatcher.webSocket("/chat-room-channel", chatroomChannel);
 
         // 注册 HTTP 错误处理
         final ErrorProcessor errorProcessor = beanManager.getReference(ErrorProcessor.class);

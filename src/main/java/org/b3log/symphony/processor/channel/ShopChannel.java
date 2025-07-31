@@ -56,6 +56,7 @@ public class ShopChannel implements WebSocketChannel {
      */
     @Override
     public void onConnect(final WebSocketSession session) {
+        System.out.println("Channel Join > Shop");
         JSONObject user = null;
         try {
             user = new JSONObject(session.getHttpSession().getAttribute(User.USER));

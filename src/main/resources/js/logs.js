@@ -18,7 +18,7 @@
  */
 var Logs = {
   init: function () {
-    Logs.connectWS();
+    //Logs.connectWS();
     Logs.more();
   },
 
