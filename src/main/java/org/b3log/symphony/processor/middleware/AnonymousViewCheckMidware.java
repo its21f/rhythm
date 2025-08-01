@@ -112,6 +112,15 @@ public class AnonymousViewCheckMidware {
         final Request request = context.getRequest();
         final String requestURI = context.requestURI();
 
+        if (requestURI.startsWith(Latkes.getContextPath() + "/member/")) {
+            final JSONObject currentUser = Sessions.getUser();
+            if (null == currentUser) {
+                context.sendError(401);
+                context.abort();
+                return;
+            }
+        }
+
         final String[] skips = Symphonys.ANONYMOUS_VIEW_SKIPS.split(",");
         for (final String skip : skips) {
             if (AntPathMatcher.match(Latkes.getContextPath() + skip, requestURI)) {
