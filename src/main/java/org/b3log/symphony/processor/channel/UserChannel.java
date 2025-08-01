@@ -160,12 +160,11 @@ public class UserChannel implements WebSocketChannel {
             user = ApiProcessor.getUserByKey(message.session.getParameter("apiKey"));
         } catch (NullPointerException ignored) {
         }
-        String ip = session.getAttribute(Common.IP);
         if (null == user) {
-            LOGGER.log(Level.INFO, "Received message from UserChannel: IP=" + ip + ", Message=" + message.text);
+            LOGGER.log(Level.INFO, "Received message from UserChannel: Message=" + message.text);
             return;
         }
-        LOGGER.log(Level.INFO, "Received message from UserChannel: IP=" + ip + ", UserName=" + user.optString(User.USER_NAME) + ", Message=" + message.text);
+        LOGGER.log(Level.INFO, "Received message from UserChannel: UserName=" + user.optString(User.USER_NAME) + ", Message=" + message.text);
     }
 
     /**
