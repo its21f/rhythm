@@ -310,7 +310,7 @@ public class ApiProcessor {
                 return ret;
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.WARN, "Parses apikey failed, clears apikey");
+            LOGGER.log(Level.DEBUG, "Parses apikey failed, clears apikey");
         }
         return null;
     }

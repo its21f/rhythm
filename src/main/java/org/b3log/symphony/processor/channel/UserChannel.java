@@ -149,7 +149,7 @@ public class UserChannel implements WebSocketChannel {
      */
     @Override
     public void onMessage(final Message message) {
-        AdminProcessor.manager.onMessageSent(8, message.text.length());
+        AdminProcessor.manager.onMessageSent(8, message.text.length() + 350);
         final Session session = message.session.getHttpSession();
         JSONObject user = null;
         try {
@@ -160,11 +160,12 @@ public class UserChannel implements WebSocketChannel {
             user = ApiProcessor.getUserByKey(message.session.getParameter("apiKey"));
         } catch (NullPointerException ignored) {
         }
+        String ip = session.getAttribute(Common.IP);
         if (null == user) {
-            LOGGER.log(Level.INFO, "Received message from UserChannel: UserName=Unknown, Message=" + message.text);
+            LOGGER.log(Level.INFO, "Received message from UserChannel: IP=" + ip + ", Message=" + message.text);
             return;
         }
-        LOGGER.log(Level.INFO, "Received message from UserChannel: UserName=" + user.optString(User.USER_NAME) + ", Message=" + message.text);
+        LOGGER.log(Level.INFO, "Received message from UserChannel: IP=" + ip + ", UserName=" + user.optString(User.USER_NAME) + ", Message=" + message.text);
     }
 
     /**
