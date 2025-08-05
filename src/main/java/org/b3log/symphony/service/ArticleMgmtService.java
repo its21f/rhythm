@@ -623,6 +623,11 @@ public class ArticleMgmtService {
             if (Article.ARTICLE_TYPE_C_THOUGHT != articleType) {
                 articleContent = Runes.removeControlChars(articleContent);
             }
+            if (HandouPostDetector.isHandouPost(articleContent)) {
+                article.put(Article.ARTICLE_SHOW_IN_LIST, Article.ARTICLE_SHOW_IN_LIST_C_NOT);
+            } else {
+                article.put(Article.ARTICLE_SHOW_IN_LIST, requestJSONObject.optInt(Article.ARTICLE_SHOW_IN_LIST, Article.ARTICLE_SHOW_IN_LIST_C_YES));
+            }
             article.put(Article.ARTICLE_CONTENT, articleContent);
 
             String rewardContent = requestJSONObject.optString(Article.ARTICLE_REWARD_CONTENT);
@@ -691,7 +696,6 @@ public class ArticleMgmtService {
             article.put(Article.ARTICLE_UA, ua);
 
             article.put(Article.ARTICLE_STICK, 0L);
-            article.put(Article.ARTICLE_SHOW_IN_LIST, requestJSONObject.optInt(Article.ARTICLE_SHOW_IN_LIST, Article.ARTICLE_SHOW_IN_LIST_C_YES));
             final JSONObject articleCntOption = optionRepository.get(Option.ID_C_STATISTIC_ARTICLE_COUNT);
             final int articleCnt = articleCntOption.optInt(Option.OPTION_VALUE);
             articleCntOption.put(Option.OPTION_VALUE, articleCnt + 1);

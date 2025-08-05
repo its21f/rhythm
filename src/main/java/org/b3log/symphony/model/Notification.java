@@ -228,6 +228,11 @@ public final class Notification {
      */
     public static final int DATA_TYPE_C_RED_PACKET_FROM_SKY = 40;
 
+    /**
+     * Data type - 定制系统通知
+     */
+    public static final int DATA_TYPE_C_CUSTOM_SYS = 41;
+
     //// Transient ////
     /**
      * Key of unread notification count.

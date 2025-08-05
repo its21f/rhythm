@@ -35,9 +35,11 @@ import org.b3log.latke.service.annotation.Service;
 import org.b3log.latke.util.Ids;
 import org.b3log.symphony.event.EventTypes;
 import org.b3log.symphony.model.*;
+import org.b3log.symphony.processor.channel.UserChannel;
 import org.b3log.symphony.repository.*;
 import org.b3log.symphony.util.Emotions;
 import org.b3log.symphony.util.Runes;
+import org.b3log.symphony.util.ShuiTieDetector;
 import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
 
@@ -584,8 +586,12 @@ public class CommentMgmtService {
                             Pointtransfer.TRANSFER_TYPE_C_ONLY_AUTHOR_VISIBLE_COMMENT, Pointtransfer.TRANSFER_SUM_C_ADD_ONLY_AUTHOR_VISIBLE_ARTICLE_COMMENT,
                             commentId, System.currentTimeMillis(), "");
                 }
-
-                livenessMgmtService.incLiveness(commentAuthorId, Liveness.LIVENESS_COMMENT);
+                // 检测是否水贴
+                if (ShuiTieDetector.isShuiTie(content)){
+                    notificationMgmtService.addSysAnnounceCustomNotification("1", commentAuthorId);
+                } else {
+                    livenessMgmtService.incLiveness(commentAuthorId, Liveness.LIVENESS_COMMENT);
+                }
             }
 
             final JSONObject eventData = new JSONObject();

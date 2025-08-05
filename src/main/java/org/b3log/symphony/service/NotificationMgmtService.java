@@ -429,6 +429,23 @@ public class NotificationMgmtService {
         }
     }
 
+    @Transactional
+    public void addSysAnnounceCustomNotification(String notification, String uid) throws ServiceException {
+        try {
+            JSONObject requestJSONObject = new JSONObject();
+            requestJSONObject.put(Notification.NOTIFICATION_USER_ID, uid);
+            requestJSONObject.put(Notification.NOTIFICATION_DATA_ID, notification);
+            requestJSONObject.put(Notification.NOTIFICATION_DATA_TYPE, Notification.DATA_TYPE_C_CUSTOM_SYS);
+
+            addNotification(requestJSONObject);
+        } catch (final RepositoryException e) {
+            final String msg = "Adds a notification [type=sys_announce_custom] failed";
+            LOGGER.log(Level.ERROR, msg, e);
+
+            throw new ServiceException(msg);
+        }
+    }
+
     /**
      * Adds a 'sys announce - new user' type notification with the specified request json object.
      *
