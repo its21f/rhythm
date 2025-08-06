@@ -704,7 +704,7 @@ public class UserProcessor {
         }
         String userId = currentUser.optString(Keys.OBJECT_ID);
         if (context.param("apiKey") == null || !livenessApiQueryCurrentLimiter.access(userId)) {
-            context.sendStatus(503);
+            context.sendStatus(500);
             return;
         }
         context.renderJSON(StatusCodes.SUCC).renderJSON(new JSONObject().put("liveness", getLiveness(userId)));
