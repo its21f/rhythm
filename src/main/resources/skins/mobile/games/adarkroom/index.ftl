@@ -71,7 +71,7 @@
 	<script src="https://file.fishpi.cn/adarkroom/script/Button.js"></script>
 	<script src="https://file.fishpi.cn/adarkroom/script/audioLibrary.js"></script>
 	<script src="https://file.fishpi.cn/adarkroom/script/audio.js"></script>
-	<script src="https://file.fishpi.cn/adarkroom/script/engine.js"></script>
+	<script src="https://file.fishpi.cn/adarkroom/script/engine.js?v=100"></script>
 	<script src="https://file.fishpi.cn/adarkroom/script/state_manager.js"></script>
 	<script src="https://file.fishpi.cn/adarkroom/script/header.js"></script>
 	<script src="https://file.fishpi.cn/adarkroom/script/notifications.js"></script>

@@ -52,7 +52,7 @@
   </div>
   <script src="https://file.fishpi.cn/lifeRestart/lib/jquery-3.6.0.min.js"></script>
   <script src="https://file.fishpi.cn/lifeRestart/lib/dom-to-image.min.js"></script>
-  <script src="https://file.fishpi.cn/bundle.js"></script>
+  <script src="https://file.fishpi.cn/bundle.js?v=100"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
