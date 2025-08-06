@@ -73,26 +73,18 @@
     </div>
     <script>
         function getActivityStatus() {
-            $.ajax({
-                url: Label.servePath + "/user/liveness",
-                method: "get",
-                cache: false,
-                async: false,
-                success: function (result) {
-                    let percent = result.liveness;
-                    if (percent == 100) {
-                        Util._initActivity(percent, "#ff6515");
-                    } else if (percent > 80) {
-                        Util._initActivity(percent, "#ff930c");
-                    } else if (percent > 50) {
-                        Util._initActivity(percent, "#fdd802");
-                    } else if (percent > 15) {
-                        Util._initActivity(percent, "#587aff");
-                    } else {
-                        Util._initActivity(percent, "#5bde0f");
-                    }
-                }
-            });
+            let percent = ${liveness};
+            if (percent == 100) {
+                Util._initActivity(percent, "#ff6515");
+            } else if (percent > 80) {
+                Util._initActivity(percent, "#ff930c");
+            } else if (percent > 50) {
+                Util._initActivity(percent, "#fdd802");
+            } else if (percent > 15) {
+                Util._initActivity(percent, "#587aff");
+            } else {
+                Util._initActivity(percent, "#5bde0f");
+            }
         }
 
         <#--setTimeout(function () {-->
@@ -102,12 +94,8 @@
         <#--    document.getElementsByTagName("head")[0].appendChild(ccref)-->
         <#--    console.log("Circle Chart loaded.")-->
         <#--}, 1000);-->
-
         setTimeout(function () {
             getActivityStatus();
-            setInterval(function () {
-                getActivityStatus();
-            }, 1000 * 60 * 5);
         }, 2000);
     </script>
 </div>

@@ -311,16 +311,8 @@
 </script>
 <script type="text/javascript">
     function getActivityStatus() {
-        $.ajax({
-            url: Label.servePath + "/user/liveness",
-            method: "get",
-            cache: false,
-            async: false,
-            success: function (result) {
-                let liveness = result.liveness;
-                $('#liveliness').css("width", liveness + '%');
-            }
-        });
+        let liveness = ${liveness};
+        $('#liveliness').css("width", liveness + '%');
     }
     $(document).ready(function () {
         $(window).scroll(function () {
@@ -341,9 +333,6 @@
             return false;
         });
 
-        setInterval(function () {
-            getActivityStatus();
-        }, 30000);
         getActivityStatus();
     });
 </script>

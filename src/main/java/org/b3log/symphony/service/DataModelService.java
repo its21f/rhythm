@@ -39,7 +39,7 @@ import org.b3log.latke.util.Stopwatchs;
 import org.b3log.symphony.Server;
 import org.b3log.symphony.cache.DomainCache;
 import org.b3log.symphony.model.*;
-import org.b3log.symphony.processor.ChatProcessor;
+import org.b3log.symphony.processor.UserProcessor;
 import org.b3log.symphony.repository.ChatUnreadRepository;
 import org.b3log.symphony.util.Markdowns;
 import org.b3log.symphony.util.Sessions;
@@ -457,10 +457,7 @@ public class DataModelService {
 
             dataModel.put(Common.IS_DAILY_CHECKIN, activityQueryService.isCheckedinToday(userId));
 
-            final int livenessMax = Symphonys.ACTIVITY_YESTERDAY_REWARD_MAX;
-            final int currentLiveness = livenessQueryService.getCurrentLivenessPoint(userId);
-
-            dataModel.put(Liveness.LIVENESS, (float) (Math.round((float) currentLiveness / livenessMax * 100 * 100)) / 100);
+            dataModel.put(Liveness.LIVENESS, UserProcessor.getLiveness(userId));
         } finally {
             Stopwatchs.end();
         }

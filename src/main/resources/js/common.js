@@ -1332,22 +1332,6 @@ var Util = {
             $("#activityProcessor .percent").html(parseInt(now) + "%")
 
         },10)
-        // $("#activityProcessor .percent-wave-before").css("top",top);
-        // $("#activityProcessor .percent-wave-after").css("top",top);
-        // $("#activityProcessor .percent").html(percent + "%")
-        // $("#activityProcessor").circleChart({
-        //     value: percent,
-        //     text: percent + '%',
-        //     color: color,
-        //     backgroundColor: "#e6e6e6",
-        //     size: 50,
-        //     widthRatio: 0.1,
-        //     background: false,
-        //     startAngle: 50,
-        //     onDraw: function(el, circle) {
-        //         circle.text(Math.round(circle.value) + "%");
-        //     }
-        // });
     },
     /**
      * 初始化清风明月

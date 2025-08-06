@@ -695,29 +695,33 @@ public class UserProcessor {
      *
      * @param context
      */
-    SimpleCurrentLimiter livenessApiQueryCurrentLimiter = new SimpleCurrentLimiter(29, 1);
+    SimpleCurrentLimiter livenessApiQueryCurrentLimiter = new SimpleCurrentLimiter(60 * 9, 1);
     public void getLiveness(final RequestContext context) {
-        if (context.param("apiKey") != null) {
-            if (!livenessApiQueryCurrentLimiter.access(context.param("apiKey"))) {
-                context.sendStatus(500);
-                return;
-            }
-        }
         JSONObject currentUser = Sessions.getUser();
         try {
             currentUser = ApiProcessor.getUserByKey(context.param("apiKey"));
         } catch (NullPointerException ignored) {
         }
         String userId = currentUser.optString(Keys.OBJECT_ID);
+        if (context.param("apiKey") == null || !livenessApiQueryCurrentLimiter.access(userId)) {
+            context.sendStatus(503);
+            return;
+        }
+        context.renderJSON(StatusCodes.SUCC).renderJSON(new JSONObject().put("liveness", getLiveness(userId)));
+    }
+
+    public static float getLiveness(String userId) {
+        final BeanManager beanManager = BeanManager.getInstance();
+        final LivenessQueryService livenessQueryService = beanManager.getReference(LivenessQueryService.class);
         if (livenessCache.containsKey(userId)) {
             float liveness = livenessCache.get(userId);
-            context.renderJSON(StatusCodes.SUCC).renderJSON(new JSONObject().put("liveness", liveness));
+            return liveness;
         } else {
             final int livenessMax = Symphonys.ACTIVITY_YESTERDAY_REWARD_MAX;
             final int currentLiveness = livenessQueryService.getCurrentLivenessPoint(userId);
             float liveness = (float) (Math.round((float) currentLiveness / livenessMax * 100 * 100)) / 100;
             livenessCache.put(userId, liveness);
-            context.renderJSON(StatusCodes.SUCC).renderJSON(new JSONObject().put("liveness", liveness));
+            return liveness;
         }
     }
 

@@ -811,15 +811,7 @@
         });
     }
     function getActivityStatus() {
-        $.ajax({
-            url: Label.servePath + "/user/liveness",
-            method: "get",
-            cache: false,
-            async: false,
-            success: function (result) {
-                liveness = result.liveness;
-            }
-        });
+        liveness = ${liveness};
     }
     function refreshActivities() {
         <#if isLoggedIn>
@@ -875,9 +867,6 @@
         }
     }
     refreshActivities();
-    <#if isLoggedIn>
-    setInterval(refreshActivities, 30000);
-    </#if>
 </script>
 <script>
     $('#chatRoomIndex').on('click', '.vditor-reset img', function () {
