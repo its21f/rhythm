@@ -191,7 +191,7 @@ const Count = {
                 }
             }
             html = `
-            <div class="count-icons">🧑‍💻 💭</div>
+            <div class="count-icons">🧑‍💻💭</div>
             <div class="count-time">${leftTimeStr}</div>
             ${salary > 0 ? `<div class="count-salary">💰 ${passedSalary}</div>` : ''}
         `;
@@ -262,7 +262,7 @@ const Count = {
       <button onclick='Count.saveSettings()'>保存</button>
     </div>
   </div>
-`, "下班倒计时设定");
+`, "");
         setTimeout(function () {
             const time = Count.data.time.match(/\d{2}/g);
             document.getElementById("countSettingsTime").value = `${time[0]}:${time[1]}`;
@@ -311,9 +311,9 @@ function injectCountCSS() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 120px;
-  height: 72px;
-  background: rgba(248, 250, 252, 0.65);
+  width: 110px;
+  height: 80px;
+  background: rgba(248, 250, 252, 0.1);
   border-radius: 16px;
   box-shadow: 0 6px 24px rgba(60,80,120,0.12), 0 1.5px 6px rgba(60,80,120,0.08);
   font-family: 'Segoe UI', 'PingFang SC', 'Arial', sans-serif;
@@ -342,10 +342,10 @@ function injectCountCSS() {
   letter-spacing: 2px;
 }
 .count-time {
+  margin-top: 3px;
   font-size: 1.18em;
   font-weight: 600;
   margin-bottom: 0px;
-  letter-spacing: 0.5px;
   color: #222;
   text-shadow: 0 1px 2px rgba(60,80,120,0.08);
   line-height: 1.2;
@@ -354,7 +354,7 @@ function injectCountCSS() {
   font-size: 1.15em;
   color: #22c55e;
   font-weight: 600;
-  margin-top: 6px; /* 行间距加大 */
+  margin-top: 5px;
   text-shadow: 0 1px 2px rgba(34,197,94,0.08);
   line-height: 1.2;
 }
@@ -365,7 +365,7 @@ function injectCountCSS() {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   padding: 32px 24px;
-  max-width: 380px;
+  max-width: 400px;
   margin: 0 auto;
   font-family: 'Segoe UI', 'PingFang SC', 'Arial', sans-serif;
   animation: modalFadeIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);

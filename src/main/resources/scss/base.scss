@@ -808,7 +808,7 @@ a[class*=" icon-"]:hover {
 
 /* start dialog */
 .dialog-background {
-  background-color: #000000;
+  //background-color: #000000;
   display: none;
   height: 100%;
   left: 0;
@@ -823,21 +823,26 @@ a[class*=" icon-"]:hover {
   display: none;
   position: fixed;
   z-index: 201;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 5px;
-  box-shadow: 0 0 18px rgba(0, 0, 0, 0.4);
+  background: rgba(248, 250, 252, 0.10);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(60,80,120,0.12), 0 1.5px 6px rgba(60,80,120,0.08);
+  border: 1px solid #e0e7ef;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
+  min-width: 500px;
+  max-width: 90vw;
+  animation: dialog-pop-in 0.28s cubic-bezier(.4,0,.2,1);
+}
+
+.dialog-header-bg,
+.dialog-main {
+  background: rgba(248, 250, 252, 0.10);
+  color: #222;
 }
 
 .dialog-header-bg {
-  padding: 10px;
-  font-size: 18px;
-  font-weight: normal;
-  border-bottom: 1px solid #eee;
-  cursor: move;
-  user-select: none;
+  padding: 15px 10px 0 10px;
 }
 
 .dialog-header-bg .icon-close {
@@ -852,10 +857,23 @@ a[class*=" icon-"]:hover {
   color: $black-text;
 }
 
-.dialog-main {
-  min-width: 480px;
-  padding: 10px;
-  box-sizing: content-box;
+.dialog-panel button,
+.dialog-panel .btn {
+  background: rgba(248, 250, 252, 0.1);
+  border: 1px solid #e0e7ef;
+  color: #222;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(60,80,120,0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.18s, box-shadow 0.18s;
+}
+.dialog-panel button:hover,
+.dialog-panel .btn:hover {
+  box-shadow: 0 4px 16px rgba(60,80,120,0.15);
 }
 
 /* end dialog */
