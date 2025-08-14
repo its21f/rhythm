@@ -214,13 +214,6 @@ public class ArticlePostValidationMidware {
             return;
         }
 
-        // 频率检测
-        if (!addArticleLimiter.access(currentUser.optString(Keys.OBJECT_ID))) {
-            context.renderJSON(exception.put(Keys.MSG, "操作过于频繁，请稍候重试。"));
-            context.abort();
-            return;
-        }
-
         final int rewardPoint = requestJSONObject.optInt(Article.ARTICLE_REWARD_POINT, 0);
         if (rewardPoint < 0) {
             context.renderJSON(exception.put(Keys.MSG, langPropsService.get("invalidRewardPointLabel")));
@@ -268,6 +261,13 @@ public class ArticlePostValidationMidware {
             // 记录日志
             LogsService.censorLog(context, currentUser.optString(Keys.OBJECT_ID), "用户：" + currentUser.optString(User.USER_NAME) + " 违规上传文章：" + articleTitle + " 内容：" + articleContent + " 标题违规判定：" + titleCensorResult + " 内容违规判定：" + articleCensorResult);
             System.out.println("用户：" + currentUser.optString(User.USER_NAME) + " 违规上传文章：" + articleTitle + " 内容：" + articleContent + " 标题违规判定：" + titleCensorResult + " 内容违规判定：" + articleCensorResult);
+            context.abort();
+            return;
+        }
+
+        // 频率检测
+        if (!addArticleLimiter.access(currentUser.optString(Keys.OBJECT_ID))) {
+            context.renderJSON(exception.put(Keys.MSG, "操作过于频繁，请稍候重试。"));
             context.abort();
             return;
         }
