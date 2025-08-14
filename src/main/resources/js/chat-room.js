@@ -1685,7 +1685,7 @@ border-bottom: none;
                     if (result.info.gesture !== undefined) {
                         gesture = (Label.currentUser === result.info.userName ? "你" : result.info.userName) + "出拳:  " + ["石头", "剪刀", "布"][result.info.gesture]
                     }
-                    Util.alert(`<style>.dialog-header-bg {border-radius: 4px 4px 0 0; background-color: rgb(210, 63, 49); color: rgb(255, 255, 255);}.dialog-main {height: 456px;overflow: auto;}</style><div class="fn-hr5"></div>
+                    Util.alert(`<style>.dialog-header-bg {border-radius: 4px 4px 0 0; background-color: rgb(210, 63, 49, .8); color: rgb(255, 255, 255);}.dialog-main {height: 456px;overflow: auto;}</style><div class="fn-hr5"></div>
 <div class="ft__center">
     <div class="fn__flex-inline">
         <img class="avatar avatar--small" src="${result.info.userAvatarURL48}" style="background-image: none; background-color: transparent; width: 20px; height: 20px; margin-right: 0;">

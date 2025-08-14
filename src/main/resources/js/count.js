@@ -37,6 +37,9 @@ const Count = {
         data.startTime = data.startTime || "0900";
         this.data = data
         this.save()
+        // 移除旧的浮窗
+        const oldBox = document.getElementById("timeContent");
+        if (oldBox) oldBox.remove();
         if (data.status !== 'disabled') {
             // 初始化HTML
             this.initHtml();
@@ -46,9 +49,6 @@ const Count = {
     },
 
     initHtml: function () {
-        // 先移除旧的浮窗
-        const oldBox = document.getElementById("timeContent");
-        if (oldBox) oldBox.remove();
         const wrap = document.createElement("div"), data = this.data;
         wrap.id = "timeContent";
         if (data.left && data.top) {
@@ -235,7 +235,19 @@ const Count = {
     },
 
     settings: function () {
+        $('#personListPanel').removeClass('show');
         Util.alert(`
+<style>
+.dialog-header-bg {
+display: none;  
+}
+.dialog-panel {
+
+}
+.dialog-main {
+padding: 0 !important;
+}
+</style>
   <div class="count-settings-modal">
     <h2>下班倒计时设置</h2>
     <label>
@@ -370,7 +382,7 @@ function injectCountCSS() {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.18);
   padding: 32px 24px;
-  max-width: 400px;
+  max-width: 500px;
   margin: 0 auto;
   font-family: 'Segoe UI', 'PingFang SC', 'Arial', sans-serif;
   animation: modalFadeIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);

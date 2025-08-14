@@ -1099,14 +1099,14 @@ var Util = {
                         let posRight = window.innerWidth - e.pageX - ($('#notificationsPanel').width() /2);
                         console.log(posRight)
                         $('#notificationsPanel').css('right',posRight + 'px')
-                        $('#notificationsPanel').show()
+                        $('#notificationsPanel').toggleClass('show');
                     })
 
                     $('body').click(function (event) {
                         if (event.target.id !== 'aNotifications' &&
                             $(event.target).closest('.module').attr('id') !==
                             'notificationsPanel') {
-                            $('#notificationsPanel').hide()
+                            $('#notificationsPanel').removeClass('show');
                         }
                     })
                 } else {
@@ -1897,6 +1897,9 @@ var Util = {
         })
 
         $('.nav .avatar-small').parent().click(function (e) {
+            let posRight = window.innerWidth - e.pageX - ($('#personListPanel').width() /2);
+            console.log(posRight)
+            $('#personListPanel').css('right',posRight + 'px')
             $('#personListPanel').toggleClass('show');
             e.stopPropagation();
         });
