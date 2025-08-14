@@ -121,80 +121,102 @@ const Count = {
 
     generate: function () {
         // 生成设定时间为Date
-        const year = new Date().getFullYear();
-        const month = `0${new Date().getMonth() + 1}`.slice(-2);
-        const day = `0${new Date().getDate()}`.slice(-2);
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = `0${now.getMonth() + 1}`.slice(-2);
+        const day = `0${now.getDate()}`.slice(-2);
         const dateString = `${year}-${month}-${day}`;
-        const time = Count.data.time.match(/\d{2}/g);
-        const setDate = new Date(`${dateString} ${time[0]}:${time[1]}:00`);
-        // 计算倒计时
-        const nowDate = new Date();
-        const lunch = Count.data.lunch.match(/\d{2}/g);
-        const lunchDate = new Date(`${dateString} ${lunch[0]}:${lunch[1]}:00`);
-        let eatTime = lunchDate.getTime() - nowDate.getTime();
-        let eatHour = Math.floor(eatTime / (1000 * 60 * 60) % 24);
-        let eatMinute = Math.floor(eatTime / (1000 * 60) % 60);
-        let eatSecond = Math.floor(eatTime / 1000 % 60);
-        let showEat = false;
+
+        // 下班时间
+        const endTimeArr = Count.data.time.match(/\d{2}/g);
+        const endDate = new Date(`${dateString} ${endTimeArr[0]}:${endTimeArr[1]}:00`);
+
+        // 上班时间
+        const startTimeArr = Count.data.startTime.match(/\d{2}/g);
+        const startDate = new Date(`${dateString} ${startTimeArr[0]}:${startTimeArr[1]}:00`);
+
+        // 午饭时间
+        const lunchArr = Count.data.lunch.match(/\d{2}/g);
+        const lunchDate = new Date(`${dateString} ${lunchArr[0]}:${lunchArr[1]}:00`);
+
+        // 计算午饭倒计时
+        let eatTimeMs = lunchDate.getTime() - now.getTime();
+        let eatHour = Math.floor(eatTimeMs / (1000 * 60 * 60) % 24);
+        let eatMinute = Math.floor(eatTimeMs / (1000 * 60) % 60);
+        let eatSecond = Math.floor(eatTimeMs / 1000 % 60);
+
+        // 计算下班倒计时
+        let leftTimeMs = endDate.getTime() - now.getTime();
+        let leftHour = Math.floor(leftTimeMs / (1000 * 60 * 60) % 24);
+        let leftMinute = Math.floor(leftTimeMs / (1000 * 60) % 60);
+        let leftSecond = Math.floor(leftTimeMs / 1000 % 60);
+
+        // 计算薪资
+        let salary = parseFloat(Count.data.salary);
+        let allTimeMs = endDate.getTime() - startDate.getTime();
+        let allSeconds = Math.floor(allTimeMs / 1000);
+        let salaryPerMs = allSeconds > 0 ? (salary / allSeconds) / 1000 : 0;
+        let passedMs = now.getTime() - startDate.getTime();
+        let passedSalary = (passedMs * salaryPerMs).toFixed(3);
+
+        // 格式化时间
+        function formatTime(h, m, s) {
+            return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}:${`0${s}`.slice(-2)}`;
+        }
+
+        // 状态切换
+        let html = '';
+        // 午饭时间优先显示
         if (eatHour === 0 && eatMinute >= 0 && eatSecond >= 0) {
-            eatHour = `0${eatHour}`.slice(-2)
-            eatMinute = `0${eatMinute}`.slice(-2)
-            eatSecond = `0${eatSecond}`.slice(-2)
-            eatTime = eatHour + ":" + eatMinute + ":" + eatSecond;
-            if (eatHour === "00" && eatMinute === "00" && eatSecond === "00") {
+            let eatTimeStr = formatTime(eatHour, eatMinute, eatSecond);
+            html = `
+            <div class="count-icons">🍲</div>
+            <div class="count-time">${eatTimeStr}</div>
+        `;
+            if (eatHour === 0 && eatMinute === 0 && eatSecond === 0) {
                 Count.alarm(1);
             }
-            document.getElementById("countRemainBox").innerHTML = "午饭🍲<br><span id='countRemain'>" + eatTime + "</span>";
-            showEat = true;
         }
-        let leftTime = setDate.getTime() - nowDate.getTime();
-        let leftHour = Math.floor(leftTime / (1000 * 60 * 60) % 24);
-        let leftMinute = Math.floor(leftTime / (1000 * 60) % 60);
-        let leftSecond = Math.floor(leftTime / 1000 % 60);
-        if (leftHour >= 0 && leftMinute >= 0 && leftSecond >= 0 && !showEat) {
-            leftHour = `0${leftHour}`.slice(-2)
-            leftMinute = `0${leftMinute}`.slice(-2)
-            leftSecond = `0${leftSecond}`.slice(-2)
-            leftTime = leftHour + ":" + leftMinute + ":" + leftSecond;
-            if (leftHour === "00" && leftMinute === "02" && leftSecond === "00") {
+        // 正常工作时间
+        else if (leftHour >= 0 && leftMinute >= 0 && leftSecond >= 0) {
+            let leftTimeStr = formatTime(leftHour, leftMinute, leftSecond);
+            if (leftHour === 0 && leftMinute === 2 && leftSecond === 0) {
                 Count.alarm(2);
             }
-            if (leftHour === "00" && leftMinute === "00" && leftSecond === "00") {
-                if (Count.data.salary <= 0) {
+            if (leftHour === 0 && leftMinute === 0 && leftSecond === 0) {
+                if (salary <= 0) {
                     Count.alarm(3);
                 } else {
                     Count.alarm(4);
                 }
             }
-            // 计算薪水
-            let salary = Count.data.salary;
-            let startTime = Count.data.startTime.match(/\d{2}/g);
-            let endTime = Count.data.time.match(/\d{2}/g);
-            const startDate = new Date(`${dateString} ${startTime[0]}:${startTime[1]}:00`);
-            const endDate = new Date(`${dateString} ${endTime[0]}:${endTime[1]}:00`);
-            let allTime = endDate.getTime() - startDate.getTime();
-            let salaryHour = Math.floor(allTime / (1000 * 60 * 60) % 24);
-            let salaryMinute = Math.floor(allTime / (1000 * 60) % 60);
-            let salarySecond = Math.floor(allTime / 1000 % 60);
-            let allSecond = (salaryHour * 60 * 60) + (salaryMinute * 60) + salarySecond;
-            let salaryPerMilliSec = (salary / allSecond) / 1000;
-            let passedTime = new Date().getTime() - startDate.getTime();
-            let passedSalary = (passedTime * salaryPerMilliSec).toFixed(3);
-            if (salary <= 0) {
-                document.getElementById("countRemainBox").innerHTML = "下班🏠<br><span id='countRemain'>" + leftTime + "</span>";
-            } else {
-                document.getElementById("countRemainBox").innerHTML = "<span id='countRemain'>🧑‍💻💭<br>" + leftTime + "</span><span id='countSalary'>💰" + passedSalary + "</span>";
-            }
-        } else {
+            html = `
+            <div class="count-icons">🧑‍💻 💭</div>
+            <div class="count-time">${leftTimeStr}</div>
+            ${salary > 0 ? `<div class="count-salary">💰 ${passedSalary}</div>` : ''}
+        `;
+        }
+        // 下班后
+        else {
             if (eatHour < 0 && eatMinute < 0 && eatSecond < 0) {
-                if (Count.data.salary <= 0) {
-                    document.getElementById("countRemainBox").innerText = "下班\n时间到 🎉";
+                if (salary <= 0) {
+                    html = `
+                    <div class="count-icons">🎉</div>
+                    <div class="count-time">下班时间到</div>
+                `;
                 } else {
-                    document.getElementById("countRemainBox").innerText = "下班🎉\n今日收入\n￥" + Count.data.salary;
+                    html = `
+                    <div class="count-icons">🎉</div>
+                    <div class="count-time">今日收入</div>
+                    <div class="count-salary">￥${salary}</div>
+                `;
                 }
                 clearInterval(Count.generateInterval);
             }
         }
+
+        // 更新浮窗内容
+        document.getElementById("countRemainBox").innerHTML = html;
     },
 
     start: function () {
@@ -210,39 +232,37 @@ const Count = {
     },
 
     settings: function () {
-        Util.alert(`<div class="form fn__flex-column" style="width: 100%;border:none;box-shadow:none;background:none;">
-<label>
-  <div class="ft__smaller ft__fade" style="float: left">状态（关闭后可点击右上角头像找到下班倒计时设定）</div>
-  <div class="fn-hr5 fn__5"></div>
-  <select id="countSettingStatus">
-  <option value="enabled" selected>开启</option>  <option value="disabled">关闭</option>  </select>
-</label>
-<label>
-  <div class="ft__smaller ft__fade">上班时间 (用于计算日薪)</div>
-  <div class="fn-hr5 fn__5"></div>
-  <input id="countSettingsStartTime" type="time"/>
-</label>
-<label>
-  <div class="ft__smaller ft__fade">下班时间</div>
-  <div class="fn-hr5 fn__5"></div>
-  <input id="countSettingsTime" type="time"/>
-</label>
-<label>
-  <div class="ft__smaller ft__fade">午饭时间</div>
-  <div class="fn-hr5 fn__5"></div>
-  <input id="lunchSettingsTime" type="time"/>
-</label>
-<label>
-  <div class="ft__smaller ft__fade">你的日薪 (设置0为则不显示)</div>
-  <div class="fn-hr5 fn__5"></div>
-  <input id="salarySetting" type="text"/>
-</label>
-<div class="fn-hr5"></div>
-<div class="fn__flex" style="margin-top: 15px">
-<div class="fn__flex-1 fn__flex-center" style="text-align: left;"></div>
-  <button class="btn btn--confirm" onclick='Count.saveSettings()'>保存</button>
-</div>
-</div>`, "下班倒计时设定");
+        Util.alert(`
+  <div class="count-settings-modal">
+    <h2>下班倒计时设置</h2>
+    <label>
+      <span class="label-title">状态</span>
+      <select id="countSettingStatus">
+        <option value="enabled">开启</option>
+        <option value="disabled">关闭</option>
+      </select>
+    </label>
+    <label>
+      <span class="label-title">上班时间 (用于计算日薪)</span>
+      <input id="countSettingsStartTime" type="time"/>
+    </label>
+    <label>
+      <span class="label-title">下班时间</span>
+      <input id="countSettingsTime" type="time"/>
+    </label>
+    <label>
+      <span class="label-title">午饭时间</span>
+      <input id="lunchSettingsTime" type="time"/>
+    </label>
+    <label>
+      <span class="label-title">你的日薪 (设置为0则不显示)</span>
+      <input id="salarySetting" type="number" min="0" step="0.01"/>
+    </label>
+    <div class="modal-actions">
+      <button onclick='Count.saveSettings()'>保存</button>
+    </div>
+  </div>
+`, "下班倒计时设定");
         setTimeout(function () {
             const time = Count.data.time.match(/\d{2}/g);
             document.getElementById("countSettingsTime").value = `${time[0]}:${time[1]}`;
@@ -273,6 +293,152 @@ const Count = {
     }
 };
 
+function injectCountCSS() {
+    if (document.getElementById('count-plugin-style')) return;
+    const style = document.createElement('style');
+    style.id = 'count-plugin-style';
+    style.innerHTML = `
+/* 浮窗样式 */
+#timeContent {
+  position: fixed;
+  z-index: 9999;
+  left: 20px;
+  top: 20px;
+  pointer-events: auto;
+}
+#countRemainBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 72px;
+  background: rgba(248, 250, 252, 0.65);
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(60,80,120,0.12), 0 1.5px 6px rgba(60,80,120,0.08);
+  font-family: 'Segoe UI', 'PingFang SC', 'Arial', sans-serif;
+  color: #222;
+  transition: box-shadow 0.3s, transform 0.2s;
+  cursor: grab;
+  user-select: none;
+  overflow: hidden;
+  border: 1px solid #e0e7ef;
+  backdrop-filter: blur(8px);
+  position: relative;
+  text-decoration: none !important;
+}
+#countRemainBox:hover {
+  box-shadow: 0 12px 32px rgba(60,80,120,0.16), 0 2px 8px rgba(60,80,120,0.10);
+  transform: translateY(-2px) scale(1.04);
+  text-decoration: none !important;
+}
+#countRemainBox * {
+  text-decoration: none !important;
+}
+.count-icons {
+  font-size: 1em;
+  margin-bottom: 0px;
+  line-height: 1;
+  letter-spacing: 2px;
+}
+.count-time {
+  font-size: 1.18em;
+  font-weight: 600;
+  margin-bottom: 0px;
+  letter-spacing: 0.5px;
+  color: #222;
+  text-shadow: 0 1px 2px rgba(60,80,120,0.08);
+  line-height: 1.2;
+}
+.count-salary {
+  font-size: 1.15em;
+  color: #22c55e;
+  font-weight: 600;
+  margin-top: 6px; /* 行间距加大 */
+  text-shadow: 0 1px 2px rgba(34,197,94,0.08);
+  line-height: 1.2;
+}
+
+/* 设置弹窗样式 */
+.count-settings-modal {
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 32px 24px;
+  max-width: 380px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', 'PingFang SC', 'Arial', sans-serif;
+  animation: modalFadeIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+  box-sizing: border-box;
+  backdrop-filter: blur(12px);
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.95);}
+  to   { opacity: 1; transform: translateY(0) scale(1);}
+}
+.count-settings-modal h2 {
+  font-size: 1.3em;
+  font-weight: 600;
+  margin-bottom: 18px;
+  color: #222;
+  text-align: center;
+  letter-spacing: 1px;
+}
+.count-settings-modal label {
+  display: block;
+  margin-bottom: 18px;
+  font-size: 1em;
+  color: #555;
+}
+.count-settings-modal .label-title {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.98em;
+  color: #888;
+}
+.count-settings-modal input,
+.count-settings-modal select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #e0e7ef;
+  font-size: 1em;
+  background: #f8fafc;
+  transition: border-color 0.2s;
+  margin-bottom: 2px;
+}
+.count-settings-modal input:focus,
+.count-settings-modal select:focus {
+  border-color: #22c55e;
+  outline: none;
+}
+.count-settings-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+.count-settings-modal button {
+    background: #22c55e;
+    color: #fff;
+    border: 1px solid #22c55e;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    box-shadow: 0 2px 8px rgba(34,197,94,0.08);
+}
+.count-settings-modal button:hover {
+    background: #16a34a;
+    border-color: #16a34a;
+}
+  `;
+    document.head.appendChild(style);
+}
+
 $(document).ready(function () {
+    injectCountCSS();
     Count.init();
 });
