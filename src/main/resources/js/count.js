@@ -46,6 +46,9 @@ const Count = {
     },
 
     initHtml: function () {
+        // 先移除旧的浮窗
+        const oldBox = document.getElementById("timeContent");
+        if (oldBox) oldBox.remove();
         const wrap = document.createElement("div"), data = this.data;
         wrap.id = "timeContent";
         if (data.left && data.top) {
@@ -289,7 +292,9 @@ const Count = {
         Count.data.status = document.getElementById("countSettingStatus").value;
         Count.save();
         Util.closeAlert();
-        location.reload();
+        if (Count.generateInterval) clearInterval(Count.generateInterval);
+        Count.init();
+
     }
 };
 
