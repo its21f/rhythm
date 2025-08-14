@@ -1896,16 +1896,17 @@ var Util = {
             }
         })
 
-        $('.nav .avatar-small').parent().click(function () {
-            $('#personListPanel').show()
-        })
+        $('.nav .avatar-small').parent().click(function (e) {
+            $('#personListPanel').toggleClass('show');
+            e.stopPropagation();
+        });
 
         $('body').click(function (event) {
             if ($(event.target).closest('a').attr('id') !== 'aPersonListPanel' &&
                 $(event.target).closest('.module').attr('id') !== 'personListPanel') {
-                $('#personListPanel').hide()
+                $('#personListPanel').removeClass('show');
             }
-        })
+        });
 
         // 导航过长处理 导航栏跳舞?涛涛你打野-----Yui留
         /*

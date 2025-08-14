@@ -2400,3 +2400,70 @@ a[class*=" icon-"]:hover {
 .swimming {
   animation: swim 15s linear;
 }*/
+
+// 只让右上角 header 的头像圆形
+.nav .user-nav .avatar-small {
+  width: 36px;
+  height: 36px;
+  border-radius: 50% !important;
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(66,133,244,0.10);
+  border: 2px solid #fff;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  vertical-align: middle;
+}
+
+.nav .user-nav .avatar-small:hover {
+  box-shadow: 0 4px 16px rgba(66,133,244,0.18);
+  border-color: #E59230;
+}
+
+@keyframes dropdown-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.nav .person-list {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px) scale(0.98);
+  transition: opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 8px 32px rgba(54, 54, 54, 0.16), 0 1.5px 6px rgba(0,0,0,0.08);
+  min-width: 160px;
+  background: #fff;
+  z-index: 999;
+  display: block !important; // 保证用opacity控制显示
+}
+
+.nav .person-list.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  animation: dropdown-fade-in 0.25s;
+}
+
+.nav .user-nav .pre-post.current {
+  background: #e59230 !important;
+  color: #fff !important;
+  border-bottom: none !important;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(229,146,48,0.15);
+  /* 让按钮更美观 */
+}
+.nav .user-nav .pre-post.current svg,
+.nav .user-nav .pre-post.current span {
+  color: #3B3E43 !important;
+  fill: #3B3E43 !important;
+}
+
+// 主题色
+$theme-orange: #e59230;
+$theme-orange-light: #fff7ec;

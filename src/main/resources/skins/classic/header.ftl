@@ -147,8 +147,7 @@
                     <span>发帖</span>
                 </svg>
             </a>
-            <a href="javascript:void(0)" id="aPersonListPanel" class="tooltipped tooltipped-w"
-               aria-label="${viewHomeAndProfileLabel}"
+            <a href="javascript:void(0)" id="aPersonListPanel"
                data-url="${servePath}/member/${currentUser.userName}">
                 <span class="avatar-small" style="background-image:url('${currentUser.userAvatarURL48}')"></span>
 
