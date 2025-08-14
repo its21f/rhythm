@@ -106,13 +106,13 @@
     <div class="user-nav">
         <#if isLoggedIn>
             <#if permissions["menuAdmin"].permissionGrant>
-            <a href="${servePath}/admin" aria-label="${adminLabel}" class="tooltipped tooltipped-w">
+            <a href="${servePath}/admin" aria-label="${adminLabel}" class="tooltipped tooltipped-w nav-btn-admin">
                 <svg>
                     <use xlink:href="#manage"></use>
                 </svg>
             </a>
             </#if>
-            <a href="${servePath}/activities" aria-label="${activityLabel}" class="tooltipped tooltipped-w">
+            <a href="${servePath}/activities" aria-label="${activityLabel}" class="tooltipped tooltipped-w nav-btn-admin">
                 <svg>
                     <use xlink:href="#playgame"></use>
                 </svg>

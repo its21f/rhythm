@@ -934,16 +934,70 @@ a[class*=" icon-"]:hover {
   }
 
   .nav-tabs {
-    //flex: 1;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    flex-wrap: nowrap;
-    text-align: center;
-    overflow: hidden;
+    overflow-x: auto;
     white-space: nowrap;
-    text-overflow: ellipsis;
-    line-height: 20px;
+    scrollbar-width: none; // Firefox 隐藏滚动条
+    -ms-overflow-style: none; // IE 隐藏滚动条
+    &::-webkit-scrollbar { display: none; } // Chrome 隐藏滚动条
+  }
+
+  .nav-tabs > a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 12px;
+    height: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    color: #3b3e43;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    z-index: 1;
+    transition: color 0.18s cubic-bezier(.4,0,.2,1);
+
+    svg {
+      margin-right: 4px;
+      width: 14px;
+      height: 14px;
+      transition: opacity 0.18s;
+      opacity: 0.5;
+    }
+
+    &:hover, &:focus {
+      color: #e59230;
+      background: #fff7ec;
+      svg { opacity: 1; }
+    }
+
+    &.current {
+      color: #e59230;
+      font-weight: 600;
+      background: #fff7ec;
+      border-bottom: none !important;
+      svg { opacity: 1; }
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      left: 20%;
+      right: 20%;
+      bottom: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #e59230 0%, #ffb86c 100%);
+      opacity: 0;
+      transform: scaleX(0.6);
+      transition: all 0.25s cubic-bezier(.4,0,.2,1);
+      z-index: 2;
+      border-radius: 6px;
+    }
+    &.current:after, &:hover:after {
+      opacity: 1;
+      transform: scaleX(1);
+    }
   }
 
   .nav-tabs svg {
@@ -2467,3 +2521,52 @@ a[class*=" icon-"]:hover {
 // 主题色
 $theme-orange: #e59230;
 $theme-orange-light: #fff7ec;
+
+.nav .user-nav > a.nav-btn-admin,
+.nav .user-nav > a.nav-btn-activity {
+  transition: background 0.18s, color 0.18s;
+  border-radius: 6px;
+  color: #3b3e43;
+  background: none;
+  display: flex;
+  align-items: center;
+  border-bottom: none !important;
+
+}
+
+.nav .user-nav > a.nav-btn-admin:hover,
+.nav .user-nav > a.nav-btn-admin:focus,
+.nav .user-nav > a.nav-btn-activity:hover,
+.nav .user-nav > a.nav-btn-activity:focus {
+  background: #fff7ec;
+  color: #e59230;
+}
+
+.nav .user-nav > a.nav-btn-admin:hover svg,
+.nav .user-nav > a.nav-btn-admin:focus svg,
+.nav .user-nav > a.nav-btn-activity:hover svg,
+.nav .user-nav > a.nav-btn-activity:focus svg {
+  color: #e59230;
+  fill: #e59230;
+}
+
+.nav .user-nav > a.nav-btn-admin svg,
+.nav .user-nav > a.nav-btn-activity svg {
+  transition: color 0.18s, fill 0.18s;
+  width: 18px;
+  height: 18px;
+  color: #3b3e43;
+  fill: #3b3e43;
+}
+
+.nav .user-nav > a.nav-btn-admin.current,
+.nav .user-nav > a.nav-btn-activity.current {
+  background: #fff7ec;
+  color: #e59230;
+}
+.nav .user-nav > a.nav-btn-admin.current svg,
+.nav .user-nav > a.nav-btn-activity.current svg {
+  color: #e59230;
+  fill: #e59230;
+}
+
