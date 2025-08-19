@@ -462,6 +462,11 @@ public final class Markdowns {
                 a.attr("target", "_blank");
                 a.attr("rel", "nofollow");
             });
+
+            doc.select("iframe").forEach(i -> {
+                i.attr("security", "restricted");
+                i.attr("sandbox", "");
+            });
             doc.outputSettings().prettyPrint(false);
 
             String ret = doc.body().html();
@@ -559,7 +564,7 @@ public final class Markdowns {
     private static void inputWhitelist(final Whitelist whitelist) {
         whitelist.addTags("span", "hr", "kbd", "samp", "tt", "del", "s", "strike", "u", "details", "summary").
                 addAttributes("sup", "id").
-                addAttributes("iframe", "src", "sandbox", "width", "height", "border", "marginwidth", "marginheight").
+                addAttributes("iframe", "src", "security", "sandbox", "width", "height", "border", "marginwidth", "marginheight").
                 addAttributes("audio", "controls", "src").
                 addAttributes("video", "controls", "src", "width", "height").
                 addAttributes("source", "src", "media", "type").
@@ -585,7 +590,7 @@ public final class Markdowns {
     private static void inputWhitelistChat(final Whitelist whitelist) {
         whitelist.addTags("span", "hr", "kbd", "samp", "tt", "del", "s", "strike", "u", "details", "summary").
                 addAttributes("sup",  "id").
-                addAttributes("iframe", "src", "sandbox", "width", "height", "border", "marginwidth", "marginheight").
+                addAttributes("iframe", "src", "security", "sandbox", "width", "height", "border", "marginwidth", "marginheight").
                 addAttributes("audio", "controls", "src").
                 addAttributes("video", "controls", "src", "width", "height").
                 addAttributes("source", "src", "media", "type").
