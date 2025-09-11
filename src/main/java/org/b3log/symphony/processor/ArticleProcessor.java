@@ -1312,6 +1312,7 @@ public class ArticleProcessor {
 
         String stickConfirmLabel = langPropsService.get("stickConfirmLabel");
         stickConfirmLabel = stickConfirmLabel.replace("{point}", Symphonys.POINT_STICK_ARTICLE + "");
+        stickConfirmLabel = stickConfirmLabel.replace("{time}", (Symphonys.STICK_ARTICLE_TIME / (60 * 1000)) + "");
         dataModel.put("stickConfirmLabel", stickConfirmLabel);
         dataModel.put("pointThankArticle", Symphonys.POINT_THANK_ARTICLE);
 

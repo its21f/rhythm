@@ -61,6 +61,8 @@
                 <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.redian.me/">摸鱼热点</a>
                 &nbsp;｜&nbsp;
                 <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://www.lundao.pub/">论道社区</a>
+                &nbsp;｜&nbsp;
+                <a style="margin-right: 0px; padding-right: 0px" target="_blank" href="https://nbtab.com/">NBtab新标签页</a>
             </div>
             <div class="fn-clear ft-smaller">
                 <div style="margin-top: 5px; font-weight: 500">探索</div>

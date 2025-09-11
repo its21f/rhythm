@@ -36,8 +36,9 @@
         <div>
             <a target="_blank" href="http://www.cxy521.com/">程序员导航</a><br>
             <a target="_blank" href="https://bbs.tampermonkey.net.cn/">油猴中文网</a><br>
-            <a target="_blank" href="https://www.redian.me/">摸鱼热点</a>
-            <a target="_blank" href="https://www.lundao.pub/">论道社区</a>
+            <a target="_blank" href="https://www.redian.me/">摸鱼热点</a><br>
+            <a target="_blank" href="https://www.lundao.pub/">论道社区</a><br>
+            <a target="_blank" href="https://nbtab.com/">NBtab新标签页</a>
         </div>
         <div class="fn-hr5"></div>
         <div style="margin-top: 5px">
