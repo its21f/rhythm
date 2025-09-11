@@ -30,6 +30,7 @@ public class DesensitizeUtil {
             article.remove("articleUA");
             article.remove("articleOriginalContent");
             article.remove("articleContent");
+            article.remove("articleIP");
             JSONObject articleAuthor = article.optJSONObject("articleAuthor");
             articleAuthor.remove("userLatestLoginIP");
             articleAuthor.remove("userPassword");
@@ -39,6 +40,17 @@ public class DesensitizeUtil {
             articleAuthor.remove("userCountry");
             articleAuthor.remove("userEmail");
             articleAuthor.remove("secret2fa");
+            articleAuthor.remove("userLongestCheckinStreakStart");
+            articleAuthor.remove("userCheckinTime");
+            articleAuthor.remove("userCurrentCheckinStreakEnd");
+            articleAuthor.remove("userCurrentCheckinStreak");
+            articleAuthor.remove("userLatestCmtTime");
+            articleAuthor.remove("userLongestCheckinStreakEnd");
+            articleAuthor.remove("userLatestLoginTime");
+            articleAuthor.remove("userUpdateTime");
+            articleAuthor.remove("userSubMailSendTime");
+            articleAuthor.remove("userLongestCheckinStreak");
+            articleAuthor.remove("userCurrentCheckinStreakStart");
         }).collect(Collectors.toList());
     }
 
@@ -53,7 +65,19 @@ public class DesensitizeUtil {
         articleAuthor.remove("userCountry");
         articleAuthor.remove("userEmail");
         articleAuthor.remove("secret2fa");
+        articleAuthor.remove("userLongestCheckinStreakStart");
+        articleAuthor.remove("userCheckinTime");
+        articleAuthor.remove("userCurrentCheckinStreakEnd");
+        articleAuthor.remove("userCurrentCheckinStreak");
+        articleAuthor.remove("userLatestCmtTime");
+        articleAuthor.remove("userLongestCheckinStreakEnd");
+        articleAuthor.remove("userLatestLoginTime");
+        articleAuthor.remove("userUpdateTime");
+        articleAuthor.remove("userSubMailSendTime");
+        articleAuthor.remove("userLongestCheckinStreak");
+        articleAuthor.remove("userCurrentCheckinStreakStart");
         article.put("articleAuthor", articleAuthor);
+        article.remove("articleIP");
         return article;
     }
 }
