@@ -2071,6 +2071,12 @@ ${result.info.msg}
                             '</span>';
                         newHTML += '<span class="fn__space5"></span>\n';
                         break;
+                    case 'CLI':
+                        newHTML += '<span class="tooltipped tooltipped-n" aria-label="' + client + ' ' + version + '">' +
+                            '<svg style="vertical-align: -3px;"><use xlink:href="#ic-cli"></use></svg>' +
+                            '</span>';
+                        newHTML += '<span class="fn__space5"></span>\n';
+                        break;
                 }
             }
             // === 客户端标识
