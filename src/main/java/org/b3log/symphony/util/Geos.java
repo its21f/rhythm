@@ -142,8 +142,8 @@ public final class Geos {
             return ipLocatesCache.get(ip);
         }
         try {
-            JSONObject ret = null;
-            try {
+            JSONObject ret = getIpByApi(ip);
+            /**try {
                 GeoIPLocator geoLocator = GeoIPLocator.getInstance(Symphonys.get("geoip.config.mmdb"));
                 ret = geoLocator.getLocation(ip);
             } catch (Exception e) {
@@ -154,7 +154,7 @@ public final class Geos {
                 if (ret2 != null && !ret2.optString("city").isEmpty()) {
                     ret = ret2;
                 }
-            }
+            }**/
             if (ret != null) {
                 ipLocatesCache.put(ip, ret);
             }
@@ -179,8 +179,9 @@ public final class Geos {
         JSONObject src = new JSONObject(res.bodyText()).optJSONObject("data");
         JSONObject result = new JSONObject();
         String country = src.optString("country");
-        String province = src.optString("prov");
-        String city = src.optString("city");
+        String province = src.optString("city");
+        String city = src.optString("area");
+        String back_province = src.optString("prov");
 
         if (country.isEmpty()) {
             result.put("country", "中国");
@@ -193,8 +194,14 @@ public final class Geos {
         }
 
         if (city.isEmpty()) {
-            result.put("country", country);
-            result.put("province", province);
+            if (!back_province.isEmpty()) {
+                result.put("country", country);
+                result.put("province", back_province);
+                result.put("city", province);
+            } else {
+                result.put("country", country);
+                result.put("province", province);
+            }
             return result;
         }
 
