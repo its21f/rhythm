@@ -888,6 +888,7 @@ public class ChatroomProcessor {
                 legalClient.add("PC");
                 legalClient.add("Mobile");
                 legalClient.add("CLI");
+                legalClient.add("uTools");
                 legalClient.add("Windows");
                 legalClient.add("macOS");
                 legalClient.add("Linux");

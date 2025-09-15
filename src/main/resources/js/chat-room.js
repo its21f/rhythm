@@ -2077,6 +2077,12 @@ ${result.info.msg}
                             '</span>';
                         newHTML += '<span class="fn__space5"></span>\n';
                         break;
+                    case 'uTools':
+                        newHTML += '<span class="tooltipped tooltipped-n" aria-label="' + client + ' ' + version + '">' +
+                            '<svg style="vertical-align: -3px;"><use xlink:href="#ic-utools"></use></svg>' +
+                            '</span>';
+                        newHTML += '<span class="fn__space5"></span>\n';
+                        break;
                 }
             }
             // === 客户端标识
