@@ -175,6 +175,7 @@ public class ActivityProcessor {
         Dispatcher.post("/api/games/smallmofish/score", activityProcessor::shareSmallMofishScore);
         Dispatcher.post("/api/games/emojiPair/score", activityProcessor::shareEmojiPairScore, loginCheck::handle, csrfMidware::check);
         Dispatcher.get("/activity/catch-the-cat", activityProcessor::showCatchTheCat, loginCheck::handle, csrfMidware::fill);
+        Dispatcher.get("/activity/daxigua", activityProcessor::showDaxigua, loginCheck::handle, csrfMidware::fill);
         Dispatcher.get("/activity/2048", activityProcessor::show2048, loginCheck::handle, csrfMidware::fill);
         Dispatcher.get("/api/activity/is-collected-liveness", activityProcessor::isCollectedYesterdayLivenessRewardApi, loginCheck::handle);
     }
@@ -201,6 +202,25 @@ public class ActivityProcessor {
      */
     public void showCatchTheCat(final RequestContext context) {
         final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "activity/catch-the-cat.ftl");
+        final Map<String, Object> dataModel = renderer.getDataModel();
+        dataModelService.fillHeaderAndFooter(context, dataModel);
+        dataModelService.fillRandomArticles(dataModel);
+        dataModelService.fillSideHotArticles(dataModel);
+        dataModelService.fillSideTags(dataModel);
+        dataModelService.fillLatestCmts(dataModel);
+
+        final JSONObject user = Sessions.getUser();
+        final String userId = user.optString(Keys.OBJECT_ID);
+    }
+
+
+    /**
+     * 合成大西瓜 game.
+     *
+     * @param context
+     */
+    public void showDaxigua(final RequestContext context) {
+        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "activity/daxigua.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
         dataModelService.fillHeaderAndFooter(context, dataModel);
         dataModelService.fillRandomArticles(dataModel);

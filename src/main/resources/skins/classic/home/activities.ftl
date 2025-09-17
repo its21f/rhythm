@@ -214,6 +214,20 @@
                                 <li>
                                     <div class='fn-flex'>
                                         <div class="avatar"
+                                             style="background-image:url('${staticServePath}/images/activities/daxigua.png')"></div>
+                                        <div class="fn-flex-1">
+                                            <h2>
+                                                <a href="${servePath}/activity/daxigua">合成大西瓜</a>
+                                            </h2>
+                                            <span class="ft-fade vditor-reset">
+                                                大~大~大~大西瓜~
+                                            </span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class='fn-flex'>
+                                        <div class="avatar"
                                              style="background-image:url('${staticServePath}/images/activities/char.png')"></div>
                                         <div class="fn-flex-1">
                                             <h2>
