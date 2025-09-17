@@ -121,11 +121,21 @@
                         </#if>
                     </div>
                     <div class="fn-clear">
+                        <label class="article-anonymous">&nbsp;  ${statementLabel}
+                            <select id="articleStatement" name="articleStatement" >
+                                <option value="0" <#if article?? && 0 == article.articleStatement>selected</#if>>${statementNoneLabel}</option>
+                                <option value="1" <#if article?? && 1 == article.articleStatement>selected</#if>>${statementAILabel}</option>
+                                <option value="2" <#if article?? && 2 == article.articleStatement>selected</#if>>${statementSpoilersLabel}</option>
+                                <option value="3" <#if article?? && 3 == article.articleStatement>selected</#if>>${statementImaginaryLabel}</option>
+                            </select>
+                        </label>
                         <#if permissions["commonAddArticleAnonymous"].permissionGrant && articleType != 2 && articleType != 5>
                             <label class="article-anonymous">&nbsp;  ${anonymousLabel}<input
                                 <#if article??> disabled="disabled"<#if 1 == article.articleAnonymous> checked</#if></#if>
                                 type="checkbox" id="articleAnonymous"></label>
                         </#if>
+                        <br />
+                        <br />
                         <label class="article-anonymous">&nbsp;  ${showInListLabel}<input
                                 <#if (article?? && (1 == article.articleShowInList)) || !article??> checked="checked"</#if>
                                                                                                      type="checkbox" id="articleShowInList"></label>

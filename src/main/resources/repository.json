@@ -1766,6 +1766,11 @@
           "description": "帖子是否可回帖"
         },
         {
+          "name": "articleStatement",
+          "type": "int",
+          "description": "帖子声明，0：无声明，1：包含AI辅助创作，2：包含剧透，3：虚构演绎，仅供娱乐"
+        },
+        {
           "name": "articleEditorType",
           "type": "int",
           "description": "0：Markdown"

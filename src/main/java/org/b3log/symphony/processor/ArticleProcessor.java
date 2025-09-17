@@ -1476,6 +1476,7 @@ public class ArticleProcessor {
         String articleTags = requestJSONObject.optString(Article.ARTICLE_TAGS);
         final String articleContent = requestJSONObject.optString(Article.ARTICLE_CONTENT);
         final boolean articleCommentable = requestJSONObject.optBoolean(Article.ARTICLE_COMMENTABLE, true);
+        final int articleStatement = requestJSONObject.optInt(Article.ARTICLE_STATEMENT, 0);
         final int articleType = requestJSONObject.optInt(Article.ARTICLE_TYPE, Article.ARTICLE_TYPE_C_NORMAL);
         final String articleRewardContent = requestJSONObject.optString(Article.ARTICLE_REWARD_CONTENT);
         final int articleRewardPoint = requestJSONObject.optInt(Article.ARTICLE_REWARD_POINT);
@@ -1493,6 +1494,7 @@ public class ArticleProcessor {
         article.put(Article.ARTICLE_CONTENT, articleContent);
         article.put(Article.ARTICLE_EDITOR_TYPE, 0);
         article.put(Article.ARTICLE_COMMENTABLE, articleCommentable);
+        article.put(Article.ARTICLE_STATEMENT, articleStatement);
         article.put(Article.ARTICLE_TYPE, articleType);
         article.put(Article.ARTICLE_REWARD_CONTENT, articleRewardContent);
         article.put(Article.ARTICLE_REWARD_POINT, articleRewardPoint);
@@ -1703,6 +1705,7 @@ public class ArticleProcessor {
         String articleTags = requestJSONObject.optString(Article.ARTICLE_TAGS);
         final String articleContent = requestJSONObject.optString(Article.ARTICLE_CONTENT);
         final boolean articleCommentable = requestJSONObject.optBoolean(Article.ARTICLE_COMMENTABLE, true);
+        final int articleStatement = requestJSONObject.optInt(Article.ARTICLE_STATEMENT, 0);
         final int articleType = requestJSONObject.optInt(Article.ARTICLE_TYPE, Article.ARTICLE_TYPE_C_NORMAL);
         final String articleRewardContent = requestJSONObject.optString(Article.ARTICLE_REWARD_CONTENT);
         final int articleRewardPoint = requestJSONObject.optInt(Article.ARTICLE_REWARD_POINT);
@@ -1717,6 +1720,7 @@ public class ArticleProcessor {
         article.put(Article.ARTICLE_CONTENT, articleContent);
         article.put(Article.ARTICLE_EDITOR_TYPE, 0);
         article.put(Article.ARTICLE_COMMENTABLE, articleCommentable);
+        article.put(Article.ARTICLE_STATEMENT, articleStatement);
         article.put(Article.ARTICLE_TYPE, articleType);
         article.put(Article.ARTICLE_REWARD_CONTENT, articleRewardContent);
         article.put(Article.ARTICLE_REWARD_POINT, articleRewardPoint);

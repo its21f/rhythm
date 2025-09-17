@@ -131,6 +131,15 @@
     }
   }
 
+  .article-statement{
+    width: auto;
+    color: #0f8cee;
+    background-color: #e3f9fd;
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-weight: bold;
+  }
+
   .article-content {
     padding-top: 15px;
   }
@@ -2843,3 +2852,4 @@ code .dec {
     transform: translateX(-50%);
   }
 }
+

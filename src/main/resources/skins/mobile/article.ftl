@@ -181,7 +181,16 @@
                         </span>
                     </div>
                 </div>
-
+                <#if 0!= article.articleStatement>
+                <div style="display: flex ;margin-bottom: 10px">
+                    <div class="article-statement">
+                        创作声明：
+                        <#if 1== article.articleStatement>${statementAILabel}</#if>
+                        <#if 2== article.articleStatement>${statementSpoilersLabel}</#if>
+                        <#if 3== article.articleStatement>${statementImaginaryLabel}</#if>
+                    </div>
+                </div>
+                </#if>
                 <#if "" != article.articleAudioURL>
                     <div id="articleAudio" data-url="${article.articleAudioURL}"
                          data-author="${article.articleAuthorName}" class="aplayer article-content"></div>

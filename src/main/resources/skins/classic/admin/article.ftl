@@ -215,6 +215,15 @@
                             <option value="0"<#if 0==article.articleShowInList> selected</#if>>${noLabel}</option>
                         </select>
                     </label>
+                    <label class="mid">
+                        <div>${statementLabel}</div>
+                        <select id="articleStatement" name="articleStatement">
+                            <option value="0" <#if 0 == article.articleStatement>selected</#if>>${statementNoneLabel}</option>
+                            <option value="1" <#if 1 == article.articleStatement>selected</#if>>${statementAILabel}</option>
+                            <option value="2" <#if 2 == article.articleStatement>selected</#if>>${statementSpoilersLabel}</option>
+                            <option value="3" <#if 3 == article.articleStatement>selected</#if>>${statementImaginaryLabel}</option>
+                        </select>
+                    </label>
                 </div>
                 <br/>
                 <button type="submit" class="green fn-right">${submitLabel}</button>

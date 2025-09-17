@@ -201,7 +201,9 @@ var AddArticle = {
           articleShowInList: Boolean($('#articleShowInList').prop('checked'))
               ? 1
               : 0,
+          articleStatement: $('#articleStatement').val(),
         }
+        console.log(requestJSONObject);
 
         if (undefined !== isGoodArticle && isGoodArticle === true) {
           requestJSONObject.isGoodArticle = 'yes';

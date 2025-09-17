@@ -645,6 +645,7 @@ public class ArticleMgmtService {
             article.put(Article.ARTICLE_COLLECT_CNT, 0);
             article.put(Article.ARTICLE_WATCH_CNT, 0);
             article.put(Article.ARTICLE_COMMENTABLE, requestJSONObject.optBoolean(Article.ARTICLE_COMMENTABLE, true));
+            article.put(Article.ARTICLE_STATEMENT, requestJSONObject.optInt(Article.ARTICLE_STATEMENT, 0));
             article.put(Article.ARTICLE_CREATE_TIME, currentTimeMillis);
             article.put(Article.ARTICLE_UPDATE_TIME, currentTimeMillis);
             article.put(Article.ARTICLE_LATEST_CMT_TIME, ret);
@@ -906,6 +907,7 @@ public class ArticleMgmtService {
 
             articleToUpdate.put(Article.ARTICLE_TAGS, requestJSONObject.optString(Article.ARTICLE_TAGS));
             articleToUpdate.put(Article.ARTICLE_COMMENTABLE, requestJSONObject.optBoolean(Article.ARTICLE_COMMENTABLE, true));
+            articleToUpdate.put(Article.ARTICLE_STATEMENT, requestJSONObject.optInt(Article.ARTICLE_STATEMENT,0));
             articleToUpdate.put(Article.ARTICLE_TYPE, articleType);
             articleToUpdate.put(Article.ARTICLE_SHOW_IN_LIST, requestJSONObject.optInt(Article.ARTICLE_SHOW_IN_LIST, Article.ARTICLE_SHOW_IN_LIST_C_YES));
             String articleContent = requestJSONObject.optString(Article.ARTICLE_CONTENT);
@@ -1020,6 +1022,7 @@ public class ArticleMgmtService {
             final JSONObject author = userRepository.get(authorId);
 
             article.put(Article.ARTICLE_COMMENTABLE, Boolean.valueOf(article.optBoolean(Article.ARTICLE_COMMENTABLE)));
+            article.put(Article.ARTICLE_STATEMENT, Integer.valueOf(article.optInt(Article.ARTICLE_STATEMENT,0)));
 
             final JSONObject oldArticle = articleRepository.get(articleId);
 
@@ -1741,6 +1744,7 @@ public class ArticleMgmtService {
             article.put(Article.ARTICLE_COLLECT_CNT, 0);
             article.put(Article.ARTICLE_WATCH_CNT, 0);
             article.put(Article.ARTICLE_COMMENTABLE, true);
+            article.put(Article.ARTICLE_STATEMENT, 0);
             article.put(Article.ARTICLE_CREATE_TIME, time);
             article.put(Article.ARTICLE_UPDATE_TIME, time);
             article.put(Article.ARTICLE_LATEST_CMT_TIME, ret);

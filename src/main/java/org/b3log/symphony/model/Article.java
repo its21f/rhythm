@@ -142,6 +142,11 @@ public final class Article {
     public static final String ARTICLE_STATUS = "articleStatus";
 
     /**
+     * Key of article statement.
+     */
+    public static final String ARTICLE_STATEMENT = "articleStatement";
+
+    /**
      * Key of article type.
      */
     public static final String ARTICLE_TYPE = "articleType";

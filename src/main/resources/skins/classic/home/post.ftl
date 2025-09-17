@@ -150,6 +150,14 @@
                         <span class="ft-gray">${addAskArticleTipLabel}</span>
                     </#if>
                     <div class="fn-right">
+                        <label class="article-anonymous">&nbsp;  ${statementLabel}
+                            <select id="articleStatement" name="articleStatement" style="margin-left: 5px">
+                                <option value="0" <#if article?? && 0 == article.articleStatement>selected</#if>>${statementNoneLabel}</option>
+                                <option value="1" <#if article?? && 1 == article.articleStatement>selected</#if>>${statementAILabel}</option>
+                                <option value="2" <#if article?? && 2 == article.articleStatement>selected</#if>>${statementSpoilersLabel}</option>
+                                <option value="3" <#if article?? && 3 == article.articleStatement>selected</#if>>${statementImaginaryLabel}</option>
+                            </select>
+                        </label>
                         <#if permissions["commonAddArticleAnonymous"].permissionGrant && articleType != 2 && articleType != 5>
                         <label class="article-anonymous">${anonymousLabel}<input<#if requisite> readonly disabled</#if>
                                 <#if article??> disabled="disabled"<#if 1 == article.articleAnonymous> checked</#if></#if>
