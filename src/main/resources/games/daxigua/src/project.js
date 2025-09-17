@@ -1404,9 +1404,9 @@ window.__require = function e(t, n, o) {
             }, "cacheList", []), c(o, "ctor", function() {}), c(o, "checkHave", function() {
                 this.isBusy || this.sendOne()
             }), c(o, "httpInitUrl", function(e) {
-                var t = window.location.href,
-                    n = t.substring(0, t.lastIndexOf("//") + 2) + window.location.host + "/Service/Share/index";
-                this.URL = n, console.log("data", this.URL), this.retGameId = e
+                // var t = window.location.href,
+                //     n = t.substring(0, t.lastIndexOf("//") + 2) + window.location.host + "/Service/Share/index";
+                // this.URL = n, console.log("data", this.URL), this.retGameId = e
             }), c(o, "send", function(e, t, n, o) {
                 this.cacheList.push({
                     type: e,
@@ -2016,18 +2016,18 @@ window.__require = function e(t, n, o) {
                     this.gameNameText = c.game_name, this.gameInfoText = c.game_info, this.txtStartText = c.txtStart, this.txtMoreText = c.txtMore, this.txtAgainText = c.txtAgain, this.gameEndLText = c.gameEndL, this.gameEndL1Text = c.gameEndL1, this.bgLayRgb = c.bgRgb, this.gameEndName1 = c.gameT2, this.gameEndName2 = c.gameT3, this.gameEndUrl1 = c.gameUrl1, this.gameEndUrl2 = c.gameUrl2, this.langugeType = this.curType, i.goToCover(this.adShowBefore, this.adShowAfter, e, t, n)
                 },
                 getHttpGameId: function() {
-                    var e = window.location.href,
-                        t = e.substring(0, e.lastIndexOf("//") + 2),
-                        n = window.location.host,
-                        o = t + n + "/Service/Share/index";
-                    //this.gameAllHttp = o, cc.log("gameAll", this.gameAllHttp), this.subScoreHttp = t + n + "/Service/Score/index", this.gamePvHttp = t + n + "/Service/GamePv/index";
-                    var c = document.URL,
-                        a = c.lastIndexOf("/"),
-                        i = c.substring(0, a),
-                        r = (a = i.lastIndexOf("/"), i.substring(a + 1, i.length));
-                    this.gameHttpId = r, console.log("gameIdNew", r);
-                    e.substring(e.lastIndexOf("//") + 4, e.lastIndexOf("com") + 3);
-                    this.moreGameUrl = t + n, console.log("moreGame", this.moreGameUrl)
+                    // var e = window.location.href,
+                    //     t = e.substring(0, e.lastIndexOf("//") + 2),
+                    //     n = window.location.host,
+                    //     o = t + n + "/Service/Share/index";
+                    // //this.gameAllHttp = o, cc.log("gameAll", this.gameAllHttp), this.subScoreHttp = t + n + "/Service/Score/index", this.gamePvHttp = t + n + "/Service/GamePv/index";
+                    // var c = document.URL,
+                    //     a = c.lastIndexOf("/"),
+                    //     i = c.substring(0, a),
+                    //     r = (a = i.lastIndexOf("/"), i.substring(a + 1, i.length));
+                    // this.gameHttpId = r, console.log("gameIdNew", r);
+                    // e.substring(e.lastIndexOf("//") + 4, e.lastIndexOf("com") + 3);
+                    // this.moreGameUrl = t + n, console.log("moreGame", this.moreGameUrl)
                 },
                 gameOverShowText: function(e, t) {
                     // this.ajaxLoad(this.subScoreHttp, "gameScore=" + e + "&gameId=" + this.gameHttpId + "&gameType=" + t, this.scoreResult)
