@@ -44,11 +44,11 @@
         </style>
     </@head>
     <link rel="stylesheet" href="${staticServePath}/css/index.css?${staticResourceVersion}" />
-    <link rel="stylesheet" type="text/css" href="../../games/daxigua/style-mobile.css" />
-    <script src="../../games/daxigua/layer/jquery.min.js"></script>
-    <script src="../../games/daxigua/layer/layer.min.js"></script>
-    <link href="../../games/daxigua/layer/layer.css" rel="stylesheet">
-    <script src="../../games/daxigua/src/settings.js" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="https://file.fishpi.cn/daxigua/style-mobile.css" />
+    <script src="https://file.fishpi.cn/daxigua/layer/jquery.min.js"></script>
+    <script src="https://file.fishpi.cn/daxigua/layer/layer.min.js"></script>
+    <link href="https://file.fishpi.cn/daxigua/layer/layer.css" rel="stylesheet">
+    <script src="https://file.fishpi.cn/daxigua/src/settings.js" charset="utf-8"></script>
 </head>
 <body>
 <#include "../header.ftl">
@@ -82,7 +82,7 @@
                         </div>
 
                         <div id="loadingImg" style="top:45%;width: 100%;position:absolute; left: 36%">
-                            <img src="../../games/daxigua/res/loading.gif" width="7%" height="7%" />
+                            <img src="https://file.fishpi.cn/daxigua/res/loading.gif" width="7%" height="7%" />
                         </div>
                     </div>
                 </div>
@@ -241,7 +241,7 @@
 
     /*setTimeout("ShowBannerAD()","2000");*/
 </script>
-<script src="../../games/daxigua/main.js" charset="utf-8"></script>
+<script src="https://file.fishpi.cn/daxigua/main.js" charset="utf-8"></script>
 <script type="text/javascript">
     (function() {
         // open web debugger console
@@ -255,7 +255,7 @@
 
         var cocos2d = document.createElement('script');
         cocos2d.async = true;
-        cocos2d.src = window._CCSettings.debug ? '../../games/daxigua/cocos2d-js.js' : '../../games/daxigua/cocos2d-js-min.js';
+        cocos2d.src = window._CCSettings.debug ? 'https://file.fishpi.cn/daxigua/cocos2d-js.js' : 'https://file.fishpi.cn/daxigua/cocos2d-js-min.js';
 
         var engineLoaded = function() {
             document.body.removeChild(cocos2d);
