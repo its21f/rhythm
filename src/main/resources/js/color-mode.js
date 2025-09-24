@@ -17,7 +17,7 @@ function toggleColorMode() {
 
 function setColorMode(mode) {
     if (mode == 'dark' || (mode == 'auto' && isDarkModeInSystem)) {
-        DarkReader.auto({
+        DarkReader.enable({
             brightness: 100,
             contrast: 90,
             sepia: 10
