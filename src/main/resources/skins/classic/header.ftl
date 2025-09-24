@@ -117,6 +117,11 @@
                     <use xlink:href="#playgame"></use>
                 </svg>
             </a>
+            <a href="javascript:void(0)" title="${colorModeLabel}" id="color-mode">
+                <svg>
+                    <use xlink:href="#color-sun"></use>
+                </svg>
+            </a>
             <a id="aNotifications"
                class="tooltipped tooltipped-w <#if unreadNotificationCount == 0>no-msg<#else>msg</#if>"
                href="${servePath}/notifications" aria-label="${messageLabel}">
@@ -177,6 +182,11 @@
         <#else>
             <a href="javascript: Util.goLogin();" class="unlogin">${loginLabel}</a>
             <a href="javascript:Util.goRegister()" class="unlogin">${registerLabel}</a>
+            <a href="javascript:void(0)" title="${colorModeLabel}" id="color-mode">
+                <svg>
+                    <use xlink:href="#color-sun"></use>
+                </svg>
+            </a>
         </#if>
     </div>
 </div>
