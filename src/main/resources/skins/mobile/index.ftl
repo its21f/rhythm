@@ -166,7 +166,7 @@
     </a>
     <div class="TGIF__item" style="margin-top: 20px">
         <div style="float: left">
-            <svg style="width: 35px; height: 35px;"><use xlink:href="#logo"></use></svg>
+            <img src="https://file.fishpi.cn/logo_app.png" style="width: 35px; height: 35px;" />
         </div>
         <button class="green fn-right" style="margin-left: 5px" onclick="window.location.href=Label.servePath+'/download'">下载</button>
         <div style="padding-left:40px">

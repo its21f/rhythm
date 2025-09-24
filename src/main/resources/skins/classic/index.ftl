@@ -149,7 +149,7 @@
                 <#elseif TGIF == '-1'>
                     <div class="TGIF__item" style="margin-bottom: 29px; margin-top: 7px">
                         <div style="float: left">
-                            <svg style="width: 35px; height: 35px;"><use xlink:href="#logo"></use></svg>
+                            <img src="https://file.fishpi.cn/logo_app.png" style="width: 35px; height: 35px;" />
                         </div>
                         <button class="green fn-right" style="margin-left: 5px" onclick="window.location.href=Label.servePath+'/download'">下载</button>
 
