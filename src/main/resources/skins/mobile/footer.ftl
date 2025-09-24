@@ -212,5 +212,3 @@
         }, 3000);
     });
 </script>
-<script src="${staticServePath}/js/lib/darkreader.min.js?${staticResourceVersion}"></script>
-<script src="${staticServePath}/js/lib/color-mode.min.js?${staticResourceVersion}"></script>

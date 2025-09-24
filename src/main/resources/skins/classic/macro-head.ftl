@@ -41,6 +41,6 @@
 ${siteVisitStatCode}
 <script type="text/javascript" charset="UTF-8" src="https://cdn.wwads.cn/js/makemoney.js"></script>
 <meta name="baidu-site-verification" content="codeva-wF3TNphcy6" />
-<script src="${staticServePath}/js/lib/darkreader.min.js?${staticResourceVersion}"></script>
+<script src="https://file.fishpi.cn/darkreader.js?${staticResourceVersion}"></script>
 <script src="${staticServePath}/js/color-mode.min.js?${staticResourceVersion}"></script>
 </#macro>
