@@ -190,7 +190,21 @@ public class IndexProcessor {
         Dispatcher.get("/download", indexProcessor::showDownload, anonymousViewCheckMidware::handle);
         Dispatcher.get("/breezemoons", indexProcessor::showBreezemoons, anonymousViewCheckMidware::handle);
         Dispatcher.get("/privacy", indexProcessor::showPrivacy, anonymousViewCheckMidware::handle);
+        Dispatcher.get("/agreement", indexProcessor::showAgreement, anonymousViewCheckMidware::handle);
     }
+
+
+    /**
+     * 用户协议
+     *
+     * @param context
+     */
+    public void showAgreement(final RequestContext context) {
+        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "user-agreement.ftl");
+        final Map<String, Object> dataModel = renderer.getDataModel();
+        dataModelService.fillHeaderAndFooter(context, dataModel);
+    }
+
 
     /**
      * 隐私政策
