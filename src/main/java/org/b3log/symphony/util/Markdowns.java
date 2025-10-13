@@ -465,7 +465,7 @@ public final class Markdowns {
 
             doc.select("iframe").forEach(i -> {
                 i.attr("security", "restricted");
-                i.attr("sandbox", "");
+                i.attr("sandbox", "allow-same-origin allow-forms allow-scripts");
             });
             doc.outputSettings().prettyPrint(false);
 
