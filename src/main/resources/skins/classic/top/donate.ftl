@@ -20,11 +20,10 @@
 -->
 <#include "macro-top.ftl">
 <@top "donate">
-    <h2 class="sub-head">捐助成员排行</h2>
+    <h2 class="sub-head">鱼排续命师</h2>
     <div class="module-header fn-clear">
         <span class="fn-left">
-            总捐助金额 <b>${totalData.totalAmount} ¥</b><br>
-            为社区运营续航 <b>${totalData.donateMakeDays} 天</b>
+            感谢你们为社区运营续航 <b>${totalData.donateMakeDays} 天</b>
         </span>
     </div>
     <div class="list">
@@ -61,8 +60,8 @@
                                     <#if 0 == user.profile.userAppRole>${hackerLabel}<#else>${painterLabel}</#if>
                                 </div>
                             </div>
-                            <div class="cmts tooltipped tooltipped-w" aria-label="共计捐助 ${user.totalCount}笔 ￥${user.total}元，谢谢老板！">
-                                ${user.total} 元
+                            <div class="cmts tooltipped tooltipped-w" aria-label="共计捐助 ${user.totalCount}笔 ${user.total}❤️，谢谢老板！">
+                                ${user.total} ❤️
                             </div>
                         </div>
                     </div>

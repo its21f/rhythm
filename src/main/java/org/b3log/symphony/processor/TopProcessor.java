@@ -922,7 +922,7 @@ public class TopProcessor {
                   "from " + sponsorRepository.getName() + " " +
                   "group by userId " +
                   "order by total desc " +
-                  "limit 64;");
+                  "limit 10;");
           List<JSONObject> result = new ArrayList<>();
           for (JSONObject user : list) {
               try {

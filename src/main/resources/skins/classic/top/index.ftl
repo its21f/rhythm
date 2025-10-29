@@ -111,9 +111,9 @@
                                 <div class="fn-flex-1">
                                     <h2>
                                         <a class="title"
-                                           href="${servePath}/top/donate">捐助排行</a>
+                                           href="${servePath}/top/donate">鱼排续命师</a>
                                     </h2>
-                                    <div class="ft-fade ft-smaller">摸鱼派金主爸爸排名，谢谢老板！</div>
+                                    <div class="ft-fade ft-smaller">摸鱼派续命师排名，谢谢老板！</div>
                                 </div>
                             </li>
                             <li class="fn__flex">

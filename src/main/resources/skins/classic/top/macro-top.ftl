@@ -89,7 +89,7 @@
             </@head>
         </#if>
         <#if type == "donate">
-            <@head title="捐助成员排行 - ${symphonyLabel}">
+            <@head title="鱼排续命师 - ${symphonyLabel}">
                 <link rel="canonical" href="${servePath}/top/donate">
             </@head>
         </#if>
