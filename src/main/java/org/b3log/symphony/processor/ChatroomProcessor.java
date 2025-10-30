@@ -220,7 +220,7 @@ public class ChatroomProcessor {
         Dispatcher.post("/chat-room/node/push", chatroomProcessor::nodePush);
         Dispatcher.get("/chat-room/barrager/get", chatroomProcessor::getBarragerCost, loginCheck::handle);
 
-        Dispatcher.get("/gen", chatroomProcessor::genMetal, loginCheck::handle);
+        Dispatcher.get("/gen", chatroomProcessor::genMetalGif, loginCheck::handle);
     }
 
     public void getBarragerCost(final RequestContext context) {
@@ -235,6 +235,50 @@ public class ChatroomProcessor {
             return size() > 2000;
         }
     });
+
+    public void genMetalGif(final RequestContext context) {
+        String ver = safeParam(context.param("ver"), "ver");
+        String scale = safeParam(context.param("scale"), "scale");
+        String txt = safeParam(context.param("txt"), "txt");
+        String url = safeParam(context.param("url"), "url");
+        String backcolor = safeParam(context.param("backcolor"), "backcolor");
+        String fontcolor = safeParam(context.param("fontcolor"), "fontcolor");
+        String shadow = safeParam(context.param("shadow"), "shadow");
+        String anime = safeParam(context.param("anime"), "anime");
+        String way = safeParam(context.param("way"), "way");
+        String fontway = safeParam(context.param("fontway"), "fontway");
+        String paramString = "?ver=" + ver
+                + "&scale=" + scale
+                + "&txt=" + txt
+                + "&url=" + url
+                + "&backcolor=" + backcolor
+                + "&fontcolor=" + fontcolor
+                + (shadow != null && !shadow.isEmpty() ? "&shadow=" + shadow : "")
+                + (anime != null && !anime.isEmpty() ? "&anime=" + anime : "")
+                + (way != null && !way.isEmpty() ? "&way=" + way : "")
+                + (fontway != null && !fontway.isEmpty() ? "&fontway=" + fontway : "");
+
+        String body = "";
+        if (!metalCache.containsKey(paramString)) {
+            String genUrl = Symphonys.get("gen.metal.url") + paramString;
+            final HttpRequest req = HttpRequest.get(genUrl).header(Common.USER_AGENT, Symphonys.USER_AGENT_BOT);
+            final HttpResponse res = req.connectionTimeout(3000).timeout(5000).send();
+            res.close();
+            if (200 != res.statusCode()) {
+                context.sendError(500);
+                return;
+            }
+            body = res.charset("utf-8").bodyText();
+            metalCache.put(paramString, body);
+        } else {
+            body = metalCache.get(paramString);
+        }
+
+        context.getResponse().setContentType("image/svg+xml");
+        context.getResponse().setHeader("Cache-Control", "max-age=604800");
+        context.getResponse().sendBytes(body.getBytes());
+    }
+
     public void genMetal(final RequestContext context) {
         String ver = safeParam(context.param("ver"), "ver");
         String scale = safeParam(context.param("scale"), "scale");
@@ -278,14 +322,60 @@ public class ChatroomProcessor {
         } else if ("url".equals(type)) {
             String filtered = value.replaceAll("[^\\u4e00-\\u9fa5a-zA-Z0-9\\-._~:/?#@!$&'()*+,;=%]", "");
             return filtered.startsWith("https://file.fishpi.cn") ? filtered : "";
-        } else if ("fontcolor".equals(type)) {
-            return value.replaceAll("[^0-9a-fA-F]", "")
-                    .substring(0, Math.min(6, value.length()))
-                    .toLowerCase();
-        } else if ("backcolor".equals(type)) {
-            return value.replaceAll("[^0-9a-fA-F,]", "")
-                    .substring(0, Math.min(6, value.length()))
-                    .toLowerCase();
+        } else if ("fontcolor".equals(type) || "backcolor".equals(type)) {
+            String v = value.trim();
+            if ("auto".equalsIgnoreCase(v)) {
+                return "auto";
+            }
+            // 检查是否有auto和颜色混用
+            String[] colors = v.split(",");
+            boolean hasAuto = false;
+            List<String> result = new ArrayList<>();
+            for (String color : colors) {
+                color = color.trim();
+                if ("auto".equalsIgnoreCase(color)) {
+                    hasAuto = true;
+                } else {
+                    String c = color.replaceAll("[^0-9a-fA-F]", "")
+                            .substring(0, Math.min(6, color.length()))
+                            .toLowerCase();
+                    if (c.length() == 6) {
+                        result.add(c);
+                    }
+                }
+            }
+            // 不能auto和颜色混用
+            if (hasAuto && result.size() > 0) {
+                return ""; // 或抛异常，或返回null，视你的需求
+            }
+            if (hasAuto) {
+                return "auto";
+            }
+            return String.join(",", result);
+        } else if ("shadow".equals(type) || "anime".equals(type)) {
+            try {
+                double d = Double.parseDouble(value);
+                return String.valueOf(d);
+            } catch (NumberFormatException e) {
+                return "0";
+            }
+        } else if ("way".equals(type) || "fontway".equals(type)) {
+            String v = value.trim().toLowerCase();
+            // 支持角度
+            if (v.matches("^\\d{1,3}deg$")) {
+                int deg = Integer.parseInt(v.replace("deg", ""));
+                deg = ((deg % 360) + 360) % 360; // 归一化到0-359
+                return deg + "deg";
+            }
+            // 支持方向字符串
+            List<String> ways = Arrays.asList(
+                    "top", "bottom", "left", "right",
+                    "top-left", "top-right", "bottom-left", "bottom-right"
+            );
+            if (ways.contains(v)) {
+                return v;
+            }
+            return "bottom"; // 默认值
         }
         return value;
     }
