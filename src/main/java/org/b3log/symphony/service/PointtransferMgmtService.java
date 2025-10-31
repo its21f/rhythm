@@ -138,4 +138,70 @@ public class PointtransferMgmtService {
             return null;
         }
     }
+
+    /**
+     * Transfers point without starting/committing a transaction, so it can be used within an outer transaction.
+     *
+     * @param fromId the specified from id, may be system "sys"
+     * @param toId   the specified to id, may be system "sys"
+     * @param type   the specified type
+     * @param sum    the specified sum
+     * @param dataId the specified data id
+     * @param time   the specified time
+     * @param memo   the specified memo
+     * @return transfer record id, returns {@code null} if transfer failed
+     */
+    public String transferInCurrentTransaction(final String fromId, final String toId, final int type, final int sum,
+                                               final String dataId, final long time, final String memo) {
+        if (StringUtils.equals(fromId, toId)) {
+            LOGGER.log(Level.WARN, "The from id is equal to the to id [" + fromId + "]");
+            return null;
+        }
+
+        try {
+            int fromBalance = 0;
+            if (!Pointtransfer.ID_C_SYS.equals(fromId)) {
+                final JSONObject fromUser = userRepository.get(fromId);
+                fromBalance = fromUser.optInt(UserExt.USER_POINT) - sum;
+                if (type != Pointtransfer.TRANSFER_TYPE_C_ABUSE_DEDUCT) {
+                    if (fromBalance < 0) {
+                        throw new Exception("Insufficient balance");
+                    }
+                }
+
+                List<Integer> canIncludeArray = new ArrayList<>();
+                Collections.addAll(canIncludeArray, 1, 2, 3, 15, 19, 20, 22, 23, 24, 26, 30, 32, 34, 36, 37, 45, 48, 49, 50);
+                if (canIncludeArray.contains(type)) {
+                    fromUser.put(UserExt.USER_USED_POINT, fromUser.optInt(UserExt.USER_USED_POINT) + sum);
+                }
+                fromUser.put(UserExt.USER_POINT, fromBalance);
+                userRepository.update(fromId, fromUser, UserExt.USER_POINT, UserExt.USER_USED_POINT);
+            }
+
+            int toBalance = 0;
+            if (!Pointtransfer.ID_C_SYS.equals(toId)) {
+                final JSONObject toUser = userRepository.get(toId);
+                toBalance = toUser.optInt(UserExt.USER_POINT) + sum;
+                toUser.put(UserExt.USER_POINT, toBalance);
+                userRepository.update(toId, toUser, UserExt.USER_POINT);
+            }
+
+            final JSONObject pointtransfer = new JSONObject();
+            pointtransfer.put(Pointtransfer.FROM_ID, fromId);
+            pointtransfer.put(Pointtransfer.TO_ID, toId);
+            pointtransfer.put(Pointtransfer.SUM, sum);
+            pointtransfer.put(Pointtransfer.FROM_BALANCE, fromBalance);
+            pointtransfer.put(Pointtransfer.TO_BALANCE, toBalance);
+            pointtransfer.put(Pointtransfer.TIME, time);
+            pointtransfer.put(Pointtransfer.TYPE, type);
+            pointtransfer.put(Pointtransfer.DATA_ID, dataId);
+            pointtransfer.put(Pointtransfer.MEMO, memo);
+
+            return pointtransferRepository.add(pointtransfer);
+        } catch (final Exception e) {
+            LOGGER.log(Level.ERROR, "Transfer (in current tx) [fromId=" + fromId + ", toId=" + toId + ", sum=" + sum +
+                    ", type=" + type + ", dataId=" + dataId + ", memo=" + memo + "] failed", e);
+            return null;
+        }
+    }
 }
