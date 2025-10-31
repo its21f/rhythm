@@ -49,6 +49,17 @@ import org.json.JSONArray;
 public class MembershipMgmtService {
     private static final Logger LOGGER = LogManager.getLogger(MembershipMgmtService.class);
 
+    /**
+     * 非折扣或无效优惠券的惩罚倍率（按原价的倍数）。
+     */
+    private static final double INVALID_COUPON_PENALTY_RATE = 1.2d;
+
+    /**
+     * 优惠券类型：折扣。
+     * 当前实现中约定为 0。
+     */
+    private static final int COUPON_TYPE_DISCOUNT = 0;
+
     @Inject
     private MembershipLevelRepository levelRepository;
 
@@ -162,9 +173,11 @@ public class MembershipMgmtService {
             if (StringUtils.isNotBlank(couponCode)) {
                 try {
                     final JSONObject coupon = couponRepository.getByCode(couponCode);
-                    if (null == coupon) {
-                        // 券不存在：按 1.2 倍处罚
-                        finalPrice = (int) Math.round(price * 1.2d);
+                    final int couponType = (null == coupon) ? -1 : coupon.optInt(Coupon.COUPON_TYPE, COUPON_TYPE_DISCOUNT);
+                    // 检查 coupon 是否存在且类型为折扣；否则惩罚
+                    if (null == coupon || couponType != COUPON_TYPE_DISCOUNT) {
+                        // 券不存在或不是折扣类型：按惩罚倍率处罚
+                        finalPrice = (int) Math.round(price * INVALID_COUPON_PENALTY_RATE);
                     } else {
                         final int times = coupon.optInt(Coupon.TIMES);
                         if (times == 0) {
