@@ -79,6 +79,7 @@ public class MembershipMgmtService {
     private MembershipCache membershipCache;
 
     public String addLevel(final JSONObject level) throws ServiceException {
+        final Transaction transaction = levelRepository.beginTransaction();
         try {
             final String lvCode = level.optString(MembershipLevel.LV_CODE);
             final String durationType = level.optString(MembershipLevel.DURATION_TYPE);
@@ -93,14 +94,19 @@ public class MembershipMgmtService {
             level.put(MembershipLevel.CREATED_AT, now);
             level.put(MembershipLevel.UPDATED_AT, now);
             levelRepository.add(level);
+            transaction.commit();
             return level.optString(Keys.OBJECT_ID);
         } catch (RepositoryException e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             LOGGER.error("Add level failed", e);
             throw new ServiceException(e);
         }
     }
 
     public void updateLevel(final String oId, final JSONObject levelPatch) throws ServiceException {
+        final Transaction transaction = levelRepository.beginTransaction();
         try {
             final JSONObject old = levelRepository.getById(oId);
             if (null == old) {
@@ -111,16 +117,25 @@ public class MembershipMgmtService {
             }
             old.put(MembershipLevel.UPDATED_AT, System.currentTimeMillis());
             levelRepository.update(oId, old);
+            transaction.commit();
         } catch (RepositoryException e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             LOGGER.error("Update level failed", e);
             throw new ServiceException(e);
         }
     }
 
     public void removeLevel(final String oId) throws ServiceException {
+        final Transaction transaction = levelRepository.beginTransaction();
         try {
             levelRepository.remove(oId);
+            transaction.commit();
         } catch (RepositoryException e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             LOGGER.error("Remove level failed", e);
             throw new ServiceException(e);
         }
