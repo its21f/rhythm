@@ -60,13 +60,25 @@ public class CouponProcessor {
         try {
             final JSONObject currentUser = (JSONObject) context.attr(User.USER);
             if (!isAdmin(currentUser)) {
-                context.renderJSON(StatusCodes.ERR).renderMsg("无权限");
+                final JSONObject response = new JSONObject();
+                response.put("code", StatusCodes.ERR);
+                response.put("msg", "无权限");
+                response.put("data", new JSONArray());
+                context.renderJSON(response);
                 return;
             }
             final java.util.List<JSONObject> list = couponMgmtService.list();
-            context.renderJSON(new JSONObject().put("data", new JSONArray(list))).renderJSON(StatusCodes.SUCC);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONArray(list));
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONArray());
+            context.renderJSON(response);
         }
     }
 
@@ -75,7 +87,11 @@ public class CouponProcessor {
             final JSONObject req = context.requestJSON();
             final JSONObject currentUser = (JSONObject) context.attr(User.USER);
             if (!isAdmin(currentUser)) {
-                context.renderJSON(StatusCodes.ERR).renderMsg("无权限");
+                final JSONObject response = new JSONObject();
+                response.put("code", StatusCodes.ERR);
+                response.put("msg", "无权限");
+                response.put("data", new JSONObject());
+                context.renderJSON(response);
                 return;
             }
             final String creater = null == currentUser ? null : currentUser.optString(Keys.OBJECT_ID);
@@ -85,9 +101,17 @@ public class CouponProcessor {
             final Integer times = req.has(Coupon.TIMES) ? req.optInt(Coupon.TIMES) : null;
 
             final JSONObject created = couponMgmtService.add(creater, couponCode, couponType, discount, times);
-            context.renderJSON(new JSONObject().put("data", created)).renderJSON(StatusCodes.SUCC);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONObject().put("coupon", created));
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
@@ -95,14 +119,26 @@ public class CouponProcessor {
         try {
             final JSONObject currentUser = (JSONObject) context.attr(User.USER);
             if (!isAdmin(currentUser)) {
-                context.renderJSON(StatusCodes.ERR).renderMsg("无权限");
+                final JSONObject response = new JSONObject();
+                response.put("code", StatusCodes.ERR);
+                response.put("msg", "无权限");
+                response.put("data", new JSONObject());
+                context.renderJSON(response);
                 return;
             }
             final String oId = context.pathVar("oId");
             couponMgmtService.remove(oId);
-            context.renderJSON(StatusCodes.SUCC);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONObject().put("oId", oId));
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
@@ -110,16 +146,28 @@ public class CouponProcessor {
         try {
             final JSONObject currentUser = (JSONObject) context.attr(User.USER);
             if (!isAdmin(currentUser)) {
-                context.renderJSON(StatusCodes.ERR).renderMsg("无权限");
+                final JSONObject response = new JSONObject();
+                response.put("code", StatusCodes.ERR);
+                response.put("msg", "无权限");
+                response.put("data", new JSONObject());
+                context.renderJSON(response);
                 return;
             }
             final String oId = context.pathVar("oId");
             final JSONObject req = context.requestJSON();
             final Integer times = req.has(Coupon.TIMES) ? req.optInt(Coupon.TIMES) : null;
             final JSONObject updated = couponMgmtService.updateTimes(oId, times);
-            context.renderJSON(new JSONObject().put("data", updated)).renderJSON(StatusCodes.SUCC);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONObject().put("coupon", updated));
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 }
