@@ -82,20 +82,20 @@
 
         <div class="card">
             <h2>会员月卡列表</h2>
-            <div class="search-box">
-                <input type="text" class="search-input" id="membershipSearch" placeholder="搜索等级名称或代码...">
-                <button class="btn" onclick="searchMemberships()">搜索</button>
-                <button class="btn btn-outline" onclick="clearMembershipSearch()">清除</button>
-            </div>
+<#--            <div class="search-box">-->
+<#--                <input type="text" class="search-input" id="membershipSearch" placeholder="搜索等级名称或代码...">-->
+<#--                <button class="btn" onclick="searchMemberships()">搜索</button>-->
+<#--                <button class="btn btn-outline" onclick="clearMembershipSearch()">清除</button>-->
+<#--            </div>-->
             <div class="table-container">
                 <table id="membershipTable">
                     <thead>
                     <tr>
-                        <th>等级名称</th>
-                        <th>等级代码</th>
+                        <th>名称</th>
+                        <th>代码</th>
                         <th>价格</th>
-                        <th>时长类型</th>
-                        <th>时长值</th>
+                        <th>类型</th>
+                        <th>时长</th>
                         <th>权益</th>
                         <th>创建时间</th>
                         <th>操作</th>
@@ -121,7 +121,7 @@
                     </div>
                     <div class="form-group">
                         <label>优惠券类型</label>
-                        <input type="text" class="form-control" id="couponName">
+                        <input type="text" class="form-control" id="couponType">
                     </div>
                 </div>
                 <div class="form-row">
@@ -143,19 +143,19 @@
 
         <div class="card">
             <h2>优惠券列表</h2>
-            <div class="search-box">
-                <input type="text" class="search-input" id="couponSearch" placeholder="搜索优惠券名称或代码...">
-                <button class="btn" onclick="searchCoupons()">搜索</button>
-                <button class="btn btn-outline" onclick="clearCouponSearch()">清除</button>
-            </div>
+<#--            <div class="search-box">-->
+<#--                <input type="text" class="search-input" id="couponSearch" placeholder="搜索优惠券名称或代码...">-->
+<#--                <button class="btn" onclick="searchCoupons()">搜索</button>-->
+<#--                <button class="btn btn-outline" onclick="clearCouponSearch()">清除</button>-->
+<#--            </div>-->
             <div class="table-container">
                 <table id="couponTable">
                     <thead>
                     <tr>
-                        <th>优惠券代码</th>
-                        <th>优惠券类型</th>
+                        <th>优惠券</th>
+                        <th>类型</th>
                         <th>折扣</th>
-                        <th>使用次数</th>
+                        <th>次数</th>
                         <th>创建时间</th>
                         <th>操作</th>
                     </tr>

@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.http.Dispatcher;
 import org.b3log.latke.http.RequestContext;
+import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
 import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
@@ -31,12 +32,15 @@ import org.b3log.symphony.model.Membership;
 import org.b3log.symphony.model.MembershipLevel;
 import org.b3log.symphony.model.Role;
 import org.b3log.symphony.processor.middleware.LoginCheckMidware;
+import org.b3log.symphony.service.DataModelService;
 import org.b3log.symphony.service.MembershipMgmtService;
 import org.b3log.symphony.service.MembershipQueryService;
 import org.b3log.symphony.util.Sessions;
 import org.b3log.symphony.util.StatusCodes;
 import org.json.JSONObject;
 import org.json.JSONArray;
+
+import java.util.Map;
 
 /**
  * 会员模块处理器：Admin 管理与开放 API。
@@ -49,6 +53,12 @@ public class MembershipProcessor {
 
     @Inject
     private MembershipQueryService membershipQueryService;
+
+    /**
+     * Data model service.
+     */
+    @Inject
+    private DataModelService dataModelService;
 
     public static void register() {
         final BeanManager beanManager = BeanManager.getInstance();
@@ -67,6 +77,9 @@ public class MembershipProcessor {
         Dispatcher.get("/api/membership/{userId}", processor::getUserMembershipStatus);
         Dispatcher.post("/api/membership/open", processor::openMembership, loginCheck::handle);
         Dispatcher.put("/api/membership/config", processor::updateUserConfig, loginCheck::handle);
+        // Page: 会员页面
+        Dispatcher.get("/vips", processor::showVipPage, loginCheck::handle);
+        Dispatcher.get("/vips-admin",processor::showVipAdminPage,loginCheck::handle);
     }
 
     private boolean isAdmin(final JSONObject user) {
@@ -350,6 +363,24 @@ public class MembershipProcessor {
             context.renderJSON(response);
         }
     }
+
+    public void showVipPage(final RequestContext context) {
+        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "vip/index.ftl");
+        final Map<String, Object> dataModel = renderer.getDataModel();
+        dataModelService.fillHeaderAndFooter(context, dataModel);
+    }
+
+    public void showVipAdminPage(final RequestContext context) {
+        final JSONObject user = getUser(context);
+        if (!isAdmin(user)) {
+            context.sendError(404);
+            return;
+        }
+        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "vip/admin.ftl");
+        final Map<String, Object> dataModel = renderer.getDataModel();
+        dataModelService.fillHeaderAndFooter(context, dataModel);
+    }
+
 
     private JSONObject getUser(final RequestContext context) {
         JSONObject currentUser = Sessions.getUser();

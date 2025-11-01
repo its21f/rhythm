@@ -203,6 +203,9 @@ public class UserProcessor {
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private MembershipQueryService membershipQueryService;
+
     /**
      * Cache for liveness.
      */
@@ -249,9 +252,10 @@ public class UserProcessor {
         Dispatcher.post("/user/edit/items", userProcessor::adjustItem);
         Dispatcher.post("/user/edit/points", userProcessor::adjustPoint);
         Dispatcher.post("/user/identify", userProcessor::submitIdentify, loginCheck::handle);
-        Dispatcher.get("/api/user/{userName}/articles", userProcessor::userArticles,loginCheck::handle);
+        Dispatcher.get("/api/user/{userName}/articles", userProcessor::userArticles, loginCheck::handle);
         Dispatcher.get("/api/user/{userName}/breezemoons", userProcessor::userBreezemoons, loginCheck::handle);
     }
+
     // 根据用户名获取用户活跃度
     public void getUserLiveness(final RequestContext context) {
         JSONObject requestJSONObject = context.requestJSON();
@@ -276,6 +280,7 @@ public class UserProcessor {
             context.renderMsg("金手指(liveness类型)不正确。");
         }
     }
+
     /**
      * 获取用户清风明月列表
      *
@@ -301,7 +306,7 @@ public class UserProcessor {
                 bms.get(i).remove("breezemoonAuthorId");
                 bms.get(i).remove("breezemoonStatus");
             }
-            context.renderJSON(new JSONObject().put("data",result)).renderCode(StatusCodes.SUCC);
+            context.renderJSON(new JSONObject().put("data", result)).renderCode(StatusCodes.SUCC);
         } catch (Exception e) {
             context.renderJSON(new JSONObject()).renderCode(StatusCodes.ERR).renderMsg("请求非法");
         }
@@ -342,7 +347,7 @@ public class UserProcessor {
             pageInfo.put(Pagination.PAGINATION_PAGE_NUMS, pageNums);
             pageInfo.put(Pagination.PAGINATION_RECORD_COUNT, recordCount);
             dataModel.put("articles", DesensitizeUtil.articlesDesensitize(userArticles));
-            context.renderJSON(new JSONObject().put("data",dataModel)).renderCode(StatusCodes.SUCC);
+            context.renderJSON(new JSONObject().put("data", dataModel)).renderCode(StatusCodes.SUCC);
         } catch (Exception e) {
             context.renderJSON(new JSONObject()).renderCode(StatusCodes.ERR).renderMsg("请求非法");
         }
@@ -524,6 +529,7 @@ public class UserProcessor {
 
     /**
      * 金手指：调整用户背包
+     *
      * @param context
      */
     public void adjustItem(final RequestContext context) {
@@ -556,6 +562,7 @@ public class UserProcessor {
 
     /**
      * 金手指：获取用户背包内容
+     *
      * @param context
      */
     public void getItem(final RequestContext context) {
@@ -581,6 +588,7 @@ public class UserProcessor {
 
     /**
      * 金手指：移除勋章
+     *
      * @param context
      */
     public void removeMetal(final RequestContext context) {
@@ -627,6 +635,7 @@ public class UserProcessor {
 
     /**
      * 金手指：添加勋章
+     *
      * @param context
      */
     public void giveMetal(final RequestContext context) {
@@ -655,6 +664,7 @@ public class UserProcessor {
 
     /**
      * 金手指：查询用户最近登录的IP
+     *
      * @param context
      */
     public void getLatestLoginIp(final RequestContext context) {
@@ -696,6 +706,7 @@ public class UserProcessor {
      * @param context
      */
     SimpleCurrentLimiter livenessApiQueryCurrentLimiter = new SimpleCurrentLimiter(60 * 9, 1);
+
     public void getLiveness(final RequestContext context) {
         JSONObject currentUser = Sessions.getUser();
         try {
@@ -1050,6 +1061,14 @@ public class UserProcessor {
         fillHomeUser(dataModel, user, roleQueryService);
 
         avatarQueryService.fillUserAvatarURL(user);
+
+        try {
+            final org.json.JSONObject status = membershipQueryService.getStatusByUserId(followingId);
+            System.out.println(status);
+            dataModel.put("membership", status);
+        } catch (final org.b3log.latke.service.ServiceException e) {
+            dataModel.put("membership", new JSONObject());
+        }
 
         final boolean isLoggedIn = (Boolean) dataModel.get(Common.IS_LOGGED_IN);
         if (isLoggedIn) {
