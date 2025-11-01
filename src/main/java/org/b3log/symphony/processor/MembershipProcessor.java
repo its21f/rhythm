@@ -144,7 +144,11 @@ public class MembershipProcessor {
     public void listLevels(final RequestContext context) {
         try {
             final java.util.List<JSONObject> levels = membershipQueryService.listLevels();
-            context.renderJSON(new JSONObject().put("data", new JSONArray(levels))).renderJSON(StatusCodes.SUCC);
+            JSONObject response = new JSONObject();
+            response.put("data", levels != null ? new JSONArray(levels) : new JSONArray());
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            context.renderJSON(response);
         } catch (ServiceException e) {
             context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
         }
