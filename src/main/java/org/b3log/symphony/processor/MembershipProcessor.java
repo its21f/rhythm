@@ -70,6 +70,8 @@ public class MembershipProcessor {
         Dispatcher.delete("/admin/membership/level/{oId}", processor::removeLevel, loginCheck::handle);
         Dispatcher.get("/api/membership/levels", processor::listLevels);
         // API：查询会员状态（按 userId 唯一） & 开通会员 & 更新用户配置
+        // 一次性查询出所有激活用户的配置（公开，无需登录）
+        Dispatcher.get("/api/memberships/configs", processor::listActiveConfigs);
         Dispatcher.get("/api/membership/{userId}", processor::getUserMembershipStatus);
         Dispatcher.post("/api/membership/open", processor::openMembership, loginCheck::handle);
         Dispatcher.put("/api/membership/config", processor::updateUserConfig, loginCheck::handle);
@@ -143,6 +145,26 @@ public class MembershipProcessor {
         try {
             final java.util.List<JSONObject> levels = membershipQueryService.listLevels();
             context.renderJSON(new JSONObject().put("data", new JSONArray(levels))).renderJSON(StatusCodes.SUCC);
+        } catch (ServiceException e) {
+            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+        }
+    }
+
+    /**
+     * 一次性查询所有激活用户的会员配置（Admin）。
+     * 返回数组 data，其中每项为一个会员记录（含 configJson）。
+     */
+    public void listActiveConfigs(final RequestContext context) {
+        try {
+            final java.util.List<org.json.JSONObject> memberships = membershipQueryService.listActiveConfigs();
+            final org.json.JSONArray data = new org.json.JSONArray();
+            for (final org.json.JSONObject m : memberships) {
+                final org.json.JSONObject item = new org.json.JSONObject();
+                item.put(org.b3log.symphony.model.Membership.USER_ID, m.optString(org.b3log.symphony.model.Membership.USER_ID));
+                item.put(org.b3log.symphony.model.Membership.CONFIG_JSON, m.optString(org.b3log.symphony.model.Membership.CONFIG_JSON));
+                data.put(item);
+            }
+            context.renderJSON(new org.json.JSONObject().put("data", data)).renderJSON(StatusCodes.SUCC);
         } catch (ServiceException e) {
             context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
         }
