@@ -37,6 +37,7 @@ import org.b3log.symphony.model.MembershipLevel;
 import org.b3log.symphony.repository.MembershipLevelRepository;
 import org.b3log.symphony.repository.MembershipRepository;
 import org.json.JSONObject;
+import java.util.ArrayList;
 
 @Singleton
 public class MembershipQueryService {
@@ -147,6 +148,40 @@ public class MembershipQueryService {
             return levels;
         } catch (final RepositoryException e) {
             LOGGER.error("List membership levels failed", e);
+            throw new ServiceException(e);
+        }
+    }
+
+    /**
+     * 一次性列出所有激活中的会员配置（过滤已过期）。
+     * 返回的每项包含用户当前激活的会员记录（含 configJson）。
+     * 会同步更新缓存，移除过期项，写入有效项。
+     */
+    public List<JSONObject> listActiveConfigs() throws ServiceException {
+        try {
+            final long now = System.currentTimeMillis();
+            final Query query = new Query()
+                    .setFilter(new PropertyFilter(Membership.STATE, FilterOperator.EQUAL, 1))
+                    .addSort(Membership.UPDATED_AT, SortDirection.DESCENDING);
+            final List<JSONObject> all = membershipRepository.getList(query);
+            final List<JSONObject> ret = new ArrayList<>();
+            for (final JSONObject membership : all) {
+                final long expiresAt = membership.optLong(Membership.EXPIRES_AT, 0L);
+                if (expiresAt != 0L && expiresAt <= now) {
+                    // 过期：同步移除缓存并跳过
+                    final String uid = membership.optString(Membership.USER_ID);
+                    if (uid != null && !uid.isEmpty()) {
+                        membershipCache.remove(uid);
+                    }
+                    continue;
+                }
+                // 有效：写入/刷新缓存
+                membershipCache.put(membership);
+                ret.add(membership);
+            }
+            return ret;
+        } catch (final RepositoryException e) {
+            LOGGER.error("List active membership configs failed", e);
             throw new ServiceException(e);
         }
     }
