@@ -22,23 +22,21 @@ import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.http.Dispatcher;
 import org.b3log.latke.http.RequestContext;
-import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
 import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.User;
 import org.b3log.latke.service.ServiceException;
-import org.b3log.symphony.model.*;
+import org.b3log.symphony.model.Membership;
+import org.b3log.symphony.model.MembershipLevel;
+import org.b3log.symphony.model.Role;
 import org.b3log.symphony.processor.middleware.LoginCheckMidware;
-import org.b3log.symphony.service.DataModelService;
 import org.b3log.symphony.service.MembershipMgmtService;
 import org.b3log.symphony.service.MembershipQueryService;
 import org.b3log.symphony.util.Sessions;
 import org.b3log.symphony.util.StatusCodes;
 import org.json.JSONObject;
 import org.json.JSONArray;
-
-import java.util.Map;
 
 /**
  * 会员模块处理器：Admin 管理与开放 API。
@@ -51,12 +49,6 @@ public class MembershipProcessor {
 
     @Inject
     private MembershipQueryService membershipQueryService;
-
-    /**
-     * Data model service.
-     */
-    @Inject
-    private DataModelService dataModelService;
 
     public static void register() {
         final BeanManager beanManager = BeanManager.getInstance();
@@ -75,9 +67,6 @@ public class MembershipProcessor {
         Dispatcher.get("/api/membership/{userId}", processor::getUserMembershipStatus);
         Dispatcher.post("/api/membership/open", processor::openMembership, loginCheck::handle);
         Dispatcher.put("/api/membership/config", processor::updateUserConfig, loginCheck::handle);
-        // Page: 会员页面
-        Dispatcher.get("/vips", processor::showVipPage, loginCheck::handle);
-        Dispatcher.get("/vips-admin",processor::showVipAdminPage,loginCheck::handle);
     }
 
     private boolean isAdmin(final JSONObject user) {
@@ -87,7 +76,11 @@ public class MembershipProcessor {
     public void addLevel(final RequestContext context) {
         final JSONObject user = getUser(context);
         if (!isAdmin(user)) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("无权限");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "无权限");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         final JSONObject req = context.requestJSON();
@@ -101,40 +94,72 @@ public class MembershipProcessor {
             level.put(MembershipLevel.BENEFITS, req.optString(MembershipLevel.BENEFITS));
 
             final String id = membershipMgmtService.addLevel(level);
-            context.renderJSON(StatusCodes.SUCC).renderJSON(new JSONObject().put(Keys.OBJECT_ID, id));
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONObject().put(Keys.OBJECT_ID, id));
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
     public void updateLevel(final RequestContext context) {
         final JSONObject user = getUser(context);
         if (!isAdmin(user)) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("无权限");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "无权限");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         final String oId = context.pathVar("oId");
         final JSONObject req = context.requestJSON();
         try {
             membershipMgmtService.updateLevel(oId, req);
-            context.renderJSON(StatusCodes.SUCC);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
     public void removeLevel(final RequestContext context) {
         final JSONObject user = getUser(context);
         if (!isAdmin(user)) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("无权限");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "无权限");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         final String oId = context.pathVar("oId");
         try {
             membershipMgmtService.removeLevel(oId);
-            context.renderJSON(StatusCodes.SUCC);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
@@ -144,13 +169,17 @@ public class MembershipProcessor {
     public void listLevels(final RequestContext context) {
         try {
             final java.util.List<JSONObject> levels = membershipQueryService.listLevels();
-            JSONObject response = new JSONObject();
+            final JSONObject response = new JSONObject();
             response.put("data", levels != null ? new JSONArray(levels) : new JSONArray());
             response.put("code", StatusCodes.SUCC);
             response.put("msg", "success");
             context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONArray());
+            context.renderJSON(response);
         }
     }
 
@@ -168,9 +197,17 @@ public class MembershipProcessor {
                 item.put(org.b3log.symphony.model.Membership.CONFIG_JSON, m.optString(org.b3log.symphony.model.Membership.CONFIG_JSON));
                 data.put(item);
             }
-            context.renderJSON(new org.json.JSONObject().put("data", data)).renderJSON(StatusCodes.SUCC);
+            final org.json.JSONObject response = new org.json.JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", data);
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final org.json.JSONObject response = new org.json.JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new org.json.JSONArray());
+            context.renderJSON(response);
         }
     }
 
@@ -178,35 +215,63 @@ public class MembershipProcessor {
         final String userId = context.pathVar("userId");
         final String lvCode = context.pathVar("lvCode");
         if (StringUtils.isBlank(userId) || StringUtils.isBlank(lvCode)) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("参数错误");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "参数错误");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         try {
             final JSONObject status = membershipQueryService.getStatus(userId, lvCode);
-            context.renderJSON(StatusCodes.SUCC).renderJSON(status);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", status);
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
     public void getUserMembershipStatus(final RequestContext context) {
         final String userId = context.pathVar("userId");
         if (StringUtils.isBlank(userId)) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("参数错误");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "参数错误");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         try {
             final org.json.JSONObject status = membershipQueryService.getStatusByUserId(userId);
-            context.renderJSON(StatusCodes.SUCC).renderJSON(status);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", status);
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
     public void openMembership(final RequestContext context) {
         final JSONObject user = getUser(context);
         if (null == user) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("未登录");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "未登录");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         final JSONObject req = context.requestJSON();
@@ -216,15 +281,27 @@ public class MembershipProcessor {
         final String couponCode = req.optString(Membership.COUPON_CODE);
 
         if (StringUtils.isBlank(levelOId)) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("参数错误");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "参数错误");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
 
         try {
             final JSONObject result = membershipMgmtService.openMembership(user.optString(Keys.OBJECT_ID), levelOId, configJson, couponCode);
-            context.renderJSON(StatusCodes.SUCC).renderJSON(result);
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", result);
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
     }
 
@@ -234,7 +311,11 @@ public class MembershipProcessor {
     public void updateUserConfig(final RequestContext context) {
         final JSONObject user = getUser(context);
         if (null == user) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("未登录");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "未登录");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         final JSONObject req = context.requestJSON();
@@ -247,32 +328,27 @@ public class MembershipProcessor {
             }
         }
         if (StringUtils.isBlank(configJson)) {
-            context.renderJSON(StatusCodes.ERR).renderMsg("参数错误：configJson 不能为空");
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", "参数错误：configJson 不能为空");
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
             return;
         }
         try {
             final JSONObject updated = membershipMgmtService.updateUserConfig(user.optString(Keys.OBJECT_ID), configJson);
-            context.renderJSON(StatusCodes.SUCC).renderJSON(new JSONObject().put("membership", updated));
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.SUCC);
+            response.put("msg", "success");
+            response.put("data", new JSONObject().put("membership", updated));
+            context.renderJSON(response);
         } catch (ServiceException e) {
-            context.renderJSON(StatusCodes.ERR).renderMsg(e.getMessage());
+            final JSONObject response = new JSONObject();
+            response.put("code", StatusCodes.ERR);
+            response.put("msg", e.getMessage());
+            response.put("data", new JSONObject());
+            context.renderJSON(response);
         }
-    }
-
-    public void showVipPage(final RequestContext context) {
-        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "vip/index.ftl");
-        final Map<String, Object> dataModel = renderer.getDataModel();
-        dataModelService.fillHeaderAndFooter(context, dataModel);
-    }
-
-    public void showVipAdminPage(final RequestContext context) {
-        final JSONObject user = getUser(context);
-        if (!isAdmin(user)) {
-            context.sendError(404);
-            return;
-        }
-        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "vip/admin.ftl");
-        final Map<String, Object> dataModel = renderer.getDataModel();
-        dataModelService.fillHeaderAndFooter(context, dataModel);
     }
 
     private JSONObject getUser(final RequestContext context) {
