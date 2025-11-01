@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
+import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.service.ServiceException;
@@ -49,6 +50,7 @@ public class CouponMgmtService {
 
     public JSONObject add(final String creater, final String couponCode, final Integer couponType, final Integer discount, final Integer times)
             throws ServiceException {
+        final Transaction transaction = couponRepository.beginTransaction();
         try {
             final long now = System.currentTimeMillis();
             final JSONObject coupon = new JSONObject();
@@ -86,21 +88,31 @@ public class CouponMgmtService {
 
             final String id = couponRepository.add(coupon);
             coupon.put(Keys.OBJECT_ID, id);
+            transaction.commit();
             return coupon;
         } catch (RepositoryException e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             throw new ServiceException(e);
         }
     }
 
     public void remove(final String oId) throws ServiceException {
+        final Transaction transaction = couponRepository.beginTransaction();
         try {
             couponRepository.remove(oId);
+            transaction.commit();
         } catch (RepositoryException e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             throw new ServiceException(e);
         }
     }
 
     public JSONObject updateTimes(final String oId, final Integer times) throws ServiceException {
+        final Transaction transaction = couponRepository.beginTransaction();
         try {
             if (null == times) {
                 throw new ServiceException("times 不能为空");
@@ -112,8 +124,12 @@ public class CouponMgmtService {
             coupon.put(Coupon.TIMES, times);
             coupon.put(Coupon.UPDATED_AT, System.currentTimeMillis());
             couponRepository.update(oId, coupon);
+            transaction.commit();
             return coupon;
         } catch (RepositoryException e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             throw new ServiceException(e);
         }
     }
