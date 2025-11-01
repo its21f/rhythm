@@ -53,4 +53,11 @@ public class MembershipRepository extends AbstractRepository {
         ).setPageCount(1).setPage(1, 1);
         return getFirst(query);
     }
+
+    public JSONObject getByUserId(final String userId) throws RepositoryException {
+        final Query query = new Query().setFilter(
+            new PropertyFilter(Membership.USER_ID, FilterOperator.EQUAL, userId)
+        ).setPageCount(1).setPage(1, 1);
+        return getFirst(query);
+    }
 }

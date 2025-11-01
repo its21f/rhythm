@@ -252,17 +252,17 @@ public class MembershipProcessor {
     }
 
     public void getUserMembershipStatus(final RequestContext context) {
-        final String userId = context.pathVar("userId");
-        if (StringUtils.isBlank(userId)) {
+        final JSONObject user = getUser(context);
+        if (null == user) {
             final JSONObject response = new JSONObject();
             response.put("code", StatusCodes.ERR);
-            response.put("msg", "参数错误");
+            response.put("msg", "未登录");
             response.put("data", new JSONObject());
             context.renderJSON(response);
             return;
         }
         try {
-            final org.json.JSONObject status = membershipQueryService.getStatusByUserId(userId);
+            final org.json.JSONObject status = membershipQueryService.getStatusByUserId(user.optString(Keys.OBJECT_ID));
             final JSONObject response = new JSONObject();
             response.put("code", StatusCodes.SUCC);
             response.put("msg", "success");

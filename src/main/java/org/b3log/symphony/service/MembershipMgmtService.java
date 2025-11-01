@@ -18,6 +18,8 @@
  */
 package org.b3log.symphony.service;
 
+import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +33,7 @@ import org.b3log.latke.repository.PropertyFilter;
 import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.Ids;
+import org.b3log.latke.util.Strings;
 import org.b3log.latke.util.Times;
 import org.b3log.symphony.model.Membership;
 import org.b3log.symphony.model.MembershipActivation;
@@ -144,7 +147,8 @@ public class MembershipMgmtService {
     /**
      * 开通会员：按照等级定义计算过期时间，写入会员记录与开通记录。
      */
-    public JSONObject openMembership(final String userId, final String levelOId, final String configJson, final String couponCode)
+    public JSONObject openMembership(final String userId, final String levelOId, final String configJson,
+            final String couponCode)
             throws ServiceException {
         final Transaction transaction = membershipRepository.beginTransaction();
         try {
@@ -165,30 +169,26 @@ public class MembershipMgmtService {
             final long now = System.currentTimeMillis();
             final long expiresAt = calcExpires(now, durationType, durationValue);
 
-            // 如果当前已有激活会员且未过期，则直接返回失败
-            final JSONObject active = membershipRepository.getActiveByUserId(userId);
-            if (null != active) {
-                final long existsExpiresAt = active.optLong(Membership.EXPIRES_AT, 0L);
-                if (existsExpiresAt == 0L || existsExpiresAt > now) {
+            JSONObject membership = membershipRepository.getByUserId(userId);
+            if (Objects.isNull(membership)) {
+                membership = new JSONObject();
+                membership.put(Membership.USER_ID, userId);
+                membership.put(Membership.CREATED_AT, now);
+            }else{
+                if(membership.getLong(Membership.EXPIRES_AT) > now){
                     throw new ServiceException("已经是会员了, 等待会员周期结束");
                 }
             }
-
-            JSONObject membership = membershipRepository.getByUserIdAndLvCode(userId, lvCode);
-            if (null == membership) {
-                membership = new JSONObject();
-                membership.put(Keys.OBJECT_ID, Ids.genTimeMillisId());
-                membership.put(Membership.USER_ID, userId);
-                membership.put(Membership.LV_CODE, lvCode);
-                membership.put(Membership.CREATED_AT, now);
-            }
+            // 更新会员等级
+            membership.put(Membership.LV_CODE, lvCode);
             // 优惠券校验, 如果有优惠券代码, 计算优惠价格.
             // 如果查出来没有结果或 times=0 就说明是假的/无效, 最后按 1.2 倍计算 (略施小惩)
             int finalPrice = price;
             if (StringUtils.isNotBlank(couponCode)) {
                 try {
                     final JSONObject coupon = couponRepository.getByCode(couponCode);
-                    final int couponType = (null == coupon) ? -1 : coupon.optInt(Coupon.COUPON_TYPE, COUPON_TYPE_DISCOUNT);
+                    final int couponType = (null == coupon) ? -1
+                            : coupon.optInt(Coupon.COUPON_TYPE, COUPON_TYPE_DISCOUNT);
                     // 检查 coupon 是否存在且类型为折扣；否则惩罚
                     if (null == coupon || couponType != COUPON_TYPE_DISCOUNT) {
                         // 券不存在或不是折扣类型：按惩罚倍率处罚
@@ -210,21 +210,22 @@ public class MembershipMgmtService {
                         }
                     }
                 } catch (final RepositoryException ignore) {
-                    // 更新失败? 那就原价吧                    
+                    // 更新失败? 那就原价吧
                     finalPrice = price;
                 }
             }
+            final String memo = "开通 " + level.optString(MembershipLevel.LV_NAME) + "(" + level.optString(MembershipLevel.DURATION_TYPE) + ") 会员\n" +
+                            "原价：" + price + "(" +
+                            "优惠价：" + finalPrice + ")";
             // 扣积分（余额不足则失败），参与当前事务
             final String transferId = pointtransferMgmtService.transferInCurrentTransaction(
                     userId,
                     Pointtransfer.ID_C_SYS,
-                    Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT,
+                    Pointtransfer.TRANSFER_TYPE_C_ABUSE_DEDUCT,
                     finalPrice,
-                    "",
+                    memo,
                     now,
-                    "开通会员[" + level.optString(MembershipLevel.LV_NAME) + "](" + lvCode + ")，" +
-                            "原价：" + price + "，" +
-                            "优惠价：" + finalPrice);
+                    "");
             if (null == transferId) {
                 throw new ServiceException("当前积分不足, 少年需要继续努力");
             }
@@ -234,7 +235,7 @@ public class MembershipMgmtService {
             membership.put(Membership.CONFIG_JSON, configJson);
             membership.put(Membership.UPDATED_AT, now);
 
-            if (null == membership.optString(Keys.OBJECT_ID)) {
+            if (StringUtils.isBlank(membership.optString(Keys.OBJECT_ID))) {
                 membership.put(Keys.OBJECT_ID, Ids.genTimeMillisId());
                 membershipRepository.add(membership);
             } else {
@@ -303,7 +304,8 @@ public class MembershipMgmtService {
 
             final String lvCode = membership.optString(Membership.LV_CODE);
             // 通过 lvCode 获取一个等级定义（不依赖 durationType）
-            final Query query = new Query().setFilter(new PropertyFilter(MembershipLevel.LV_CODE, FilterOperator.EQUAL, lvCode))
+            final Query query = new Query()
+                    .setFilter(new PropertyFilter(MembershipLevel.LV_CODE, FilterOperator.EQUAL, lvCode))
                     .setPageCount(1).setPage(1, 1);
             final JSONObject level = levelRepository.getFirst(query);
             if (null == level) {
@@ -313,7 +315,8 @@ public class MembershipMgmtService {
             final String benefitsTemplateStr = level.optString(MembershipLevel.BENEFITS);
             JSONObject benefitsTemplate;
             try {
-                benefitsTemplate = StringUtils.isBlank(benefitsTemplateStr) ? new JSONObject() : new JSONObject(benefitsTemplateStr);
+                benefitsTemplate = StringUtils.isBlank(benefitsTemplateStr) ? new JSONObject()
+                        : new JSONObject(benefitsTemplateStr);
             } catch (final Exception e) {
                 throw new ServiceException("等级配置模板非法");
             }
