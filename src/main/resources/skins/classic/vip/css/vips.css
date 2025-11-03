@@ -95,7 +95,11 @@
     color: white;
 }
 
-.features {
+.btn.disabled {
+    background: grey;
+}
+
+.features, .change-config-box {
     background: white;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
@@ -230,6 +234,7 @@ footer {
         transform: scale(1);
     }
 }
+
 .faq-section {
     margin-bottom: 3rem;
 }
@@ -276,7 +281,8 @@ footer {
     box-shadow: none;
     color: var(--primary);;
 }
-.accordion-header:focus{
+
+.accordion-header:focus {
     box-shadow: none;
 }
 

@@ -51,7 +51,7 @@ function addMembership() {
     };
 
     if (!formData.lvName || !formData.lvCode || !formData.price || !formData.durationType || !formData.durationValue || !formData.benefits) {
-        showMessage('请填写所有必填字段', 'error');
+        showMessage('请填写所有必填字段', 'danger');
         return;
     }
 
@@ -208,7 +208,7 @@ function addCoupon() {
     };
 
     if (!formData.times || !formData.discount) {
-        showMessage('请填写所有必填字段', 'error');
+        showMessage('请填写所有必填字段', 'danger');
         return;
     }
 
@@ -302,7 +302,7 @@ function updateCoupon(oId) {
             ...formData,
         };
 
-        fetch('/admin/coupon/'+oId, {
+        fetch('/admin/coupon/' + oId, {
             method: "PUT",
             headers: {
                 "Content-type": "application-json"
@@ -350,12 +350,5 @@ function resetCouponForm() {
 
 // 通用函数
 function showMessage(text, type) {
-    const messageEl = document.getElementById('message');
-    messageEl.textContent = text;
-    messageEl.className = `message message-${type}`;
-    messageEl.style.display = 'block';
-
-    setTimeout(() => {
-        messageEl.style.display = 'none';
-    }, 3000);
+    Util.notice(type, 30000, text);
 }

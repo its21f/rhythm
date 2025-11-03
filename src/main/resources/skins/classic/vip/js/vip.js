@@ -126,7 +126,7 @@ function loadPageData() {
         html += `<div class="card">
             <h3>${vip.name}</h3>
             <p>限时特惠: ${vip.monthly.price} 积分/月</p>
-            <a href="#" class="btn" onclick="buyVip('${item}')">立即开通</a>
+            <a href="#" class="btn ${membership.state == 1 ? 'disabled' : ''}" onclick="buyVip('${item}')">${membership.state == 1 ? '已是VIP' : '立即开通'}</a>
         </div>`
 
         detailHtml += `<div class="pricing-card ${item === 'VIP2' ? 'popular' : ''}">
@@ -149,7 +149,7 @@ function loadPageData() {
                        ${vip.benefits.jointVip != null ? ' <li><i class="fas fa-check"></i> 联合会员</li>' : ''}
                     </ul>
                 </div>
-                <a href="#" class="btn" onclick="buyVip('${item}')">立即开通</a>
+                <a href="#" class="btn ${membership.state == 1 ? 'disabled' : ''}" onclick="buyVip('${item}')">${membership.state == 1 ? '已是VIP' : '立即开通'}</a>
             </div>`
     }
     vipCardGrid.innerHTML = html;
@@ -157,6 +157,7 @@ function loadPageData() {
 }
 
 function buyVip(vip) {
+    if (membership.state === 1) return;
     const priceType = isYear ? 'yearly' : 'monthly';
     if (confirm(`确定要开通${vipList[vip].name}一${isYear ? '年' : '月'}？此操作不可恢复。`)) {
         fetch('/api/membership/open',
@@ -171,23 +172,83 @@ function buyVip(vip) {
                 if (data.code === 0) {
                     vipList = simpleProcessVIPData(data);
                     loadPageData();
+                    Util.notice('success', 3000, '开通成功')
+                } else {
+                    Util.notice('danger', 3000, data.msg)
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
+                Util.notice('danger', 3000, '系统异常')
+
             });
     }
 }
 
+let userNameItem = null;
+let vipDefaultConfig = [
+    {"bold": true, "underline": true, "checkinCard": 20},
+    {"bold": true, "underline": true, "color": "red", "checkinCard": 50},
+    {"bold": true, "underline": true, "color": "red", "checkinCard": 120, "metal": true},
+    {"bold": true, "underline": true, "color": "red", "jointVip": true, "autoCheckin": 0, "metal": true}
+]
+
 function checkVip() {
-    fetch('/api/membership/'+'1761926961020')
+    userNameItem = document.querySelector('#configBox');
+    userNameItem.innerHTML = user.userName;
+    if (membership.configJson == "") {
+        switch (membership.lvCode.split('_')[0]) {
+            case 'VIP1':
+                membership.configJson = vipDefaultConfig[0];
+                break;
+            case 'VIP2':
+                membership.configJson = vipDefaultConfig[1];
+                break;
+            case 'VIP3':
+                membership.configJson = vipDefaultConfig[2];
+                break;
+            case 'VIP4':
+                membership.configJson = vipDefaultConfig[3];
+                break;
+        }
+    }
+    console.log(user, membership);
+}
+
+function changeBold() {
+    membership.configJson.bold = !membership.configJson.bold;
+    userNameItem.style.fontWeight = membership.configJson.bold ? 'bold' : 400;
+}
+
+function changeLine() {
+    membership.configJson.underline = !membership.configJson.underline;
+    userNameItem.style.textDecoration = membership.configJson.underline ? 'underline' : 'none';
+}
+
+function changeColor(e) {
+    let color = e.value;
+    membership.configJson.color = color;
+    userNameItem.style.color = color;
+}
+
+
+function saveConfig() {
+    fetch('/api/membership/config', {
+        method: "PUT",
+        body: JSON.stringify({
+            configJson: membership.configJson
+        })
+    })
         .then(response => response.json())
         .then(data => {
             if (data.code === 0) {
-                console.log(data)
+                Util.notice('success', 3000, '保存成功')
+            } else {
+                Util.notice('danger', 3000, data.msg)
             }
         })
         .catch(error => {
-            console.error('Error fetching data:', error);
+            console.log(error)
+            Util.notice('danger', 3000, '系统异常')
         });
 }

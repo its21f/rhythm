@@ -218,7 +218,23 @@
     document.getElementById("onlineMinute").addEventListener("click", function () {
         window.location.href = "${servePath}/top/online";
     });
-    console.log(${membership})
+    <#if membership??>
+    let membership = ${membership};
+    let userNameDom = document.querySelector('#userNicknameDom');
+    if (typeof membership.configJson == 'string') {
+        membership.configJson = JSON.parse(membership.configJson)
+    }
+    if (membership.configJson.bold) {
+        userNameDom.style.fontWeight = 'bold';
+    }
+    if (membership.configJson.underline) {
+        userNameDom.style.textDecoration = 'underline';
+    }
+    if (membership.configJson.color) {
+        userNameDom.style.color = membership.configJson.color;
+    }
+    </#if>
+
 </script>
 
 <div id="reportDialog">

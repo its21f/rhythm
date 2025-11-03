@@ -167,8 +167,6 @@
             </div>
         </div>
     </div>
-
-    <div id="message" class="message" style="display: none;"></div>
 </div>
 <#include "../footer.ftl">
 <script src="${staticServePath}/skins/classic/vip/js/admin.js?${staticResourceVersion}"></script>

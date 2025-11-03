@@ -36,6 +36,16 @@
     <div class="grid" id="vipGrid">
 
     </div>
+    <#if membership.state == 1>
+    <div class="change-config-box" id="vipConfigBox" style="text-align: center;">
+        <div>效果预览：</div>
+        <div id="configBox" style="margin-bottom: 2rem;font-size: 2rem"></div>
+        <button id="configBold" onclick="changeBold()">加粗</button>
+        <button id="configLine" onclick="changeLine()">下划线</button>
+        <input id="configColor" type="color" onchange="changeColor(this)"/>
+        <button onclick="saveConfig()">保存配置</button>
+    </div>
+    </#if>
 
     <section class="pricing">
         <h2>选择适合您的方案</h2>
@@ -85,6 +95,10 @@
     </section>
 </div>
 <#include "../footer.ftl">
+<script>
+    var user = ${user};
+    var membership = ${membership};
+</script>
 <script src="${staticServePath}/skins/classic/vip/js/vip.js?${staticResourceVersion}"></script>
 </body>
 </html>

@@ -39,6 +39,7 @@ import org.b3log.symphony.util.Sessions;
 import org.b3log.symphony.util.StatusCodes;
 import org.json.JSONObject;
 import org.json.JSONArray;
+import org.b3log.latke.repository.annotation.Transactional;
 
 import java.util.Map;
 
@@ -321,6 +322,7 @@ public class MembershipProcessor {
     /**
      * 更新当前用户的会员配置 configJson。
      */
+    @Transactional
     public void updateUserConfig(final RequestContext context) {
         final JSONObject user = getUser(context);
         if (null == user) {
@@ -367,6 +369,15 @@ public class MembershipProcessor {
     public void showVipPage(final RequestContext context) {
         final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "vip/index.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
+        final JSONObject user = (JSONObject) context.attr(User.USER);
+        dataModel.put(User.USER, user);
+        try {
+            final org.json.JSONObject status = membershipQueryService.getStatusByUserId(user.optString(Keys.OBJECT_ID));
+            System.out.println(status);
+            dataModel.put("membership", status);
+        } catch (final org.b3log.latke.service.ServiceException e) {
+            dataModel.put("membership", new JSONObject());
+        }
         dataModelService.fillHeaderAndFooter(context, dataModel);
     }
 
