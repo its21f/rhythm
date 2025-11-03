@@ -650,9 +650,10 @@ public class UserProcessor {
             final String description = requestJSONObject.optString("description");
             final String attr = requestJSONObject.optString("attr");
             final String data = requestJSONObject.optString("data");
-            cloudService.giveMetal(userId, name, description, attr, data);
+            final String expireDate = Dates.calExpire(requestJSONObject.optString("expireDate"));
+            cloudService.giveMetal(userId, name, description, attr, data, expireDate);
             // === 记录日志 ===
-            LogsService.simpleLog(context, "添加勋章", "用户: " + userName + ", 勋章名称: " + name + ", 勋章描述: " + description + ", 勋章属性: " + attr);
+            LogsService.simpleLog(context, "添加勋章", "用户: " + userName + ", 勋章名称: " + name + ", 勋章描述: " + description + ", 勋章属性: " + attr + ", 勋章有效期: " + expireDate);
             // === 记录日志 ===
             context.renderJSON(StatusCodes.SUCC);
             context.renderMsg("勋章安装成功。");

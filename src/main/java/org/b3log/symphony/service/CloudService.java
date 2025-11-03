@@ -18,6 +18,7 @@
  */
 package org.b3log.symphony.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,11 +27,13 @@ import org.b3log.latke.repository.*;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.service.annotation.Service;
 import org.b3log.symphony.repository.CloudRepository;
+import org.b3log.symphony.util.Dates;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CloudService {
@@ -301,7 +304,18 @@ public class CloudService {
                             new PropertyFilter("gameId", FilterOperator.EQUAL, CloudService.SYS_MEDAL)
                     ));
             JSONObject result = cloudRepository.getFirst(cloudQuery);
-            return result.optString("data");
+            JSONObject object1 = new JSONObject(result.optString("data"));
+            JSONArray object2 = object1.optJSONArray("list");
+            for (int i = object2.length() - 1; i >= 0; i--) {
+                JSONObject object3 = object2.optJSONObject(i);
+                // 如果勋章过期日期在今天之前, 移除
+                if (Dates.isExpired(object3.optString("expireDate", "2099-12-31"), Dates.PATTERN_DATE)) {
+                    object2.remove(i);
+                    removeMetal(userId, object3.optString("name"));
+                }
+            }
+            object1.put("list", object2);
+            return object1.toString();
         } catch (Exception e) {
             return new JSONObject().toString();
         }
@@ -322,6 +336,11 @@ public class CloudService {
                 if (!object3.optBoolean("enabled")) {
                     object2.remove(i);
                 }
+                // 如果勋章过期日期在今天之前, 移除
+                if (Dates.isExpired(object3.optString("expireDate", "2099-12-31"), Dates.PATTERN_DATE)) {
+                    object2.remove(i);
+                    removeMetal(userId, object3.optString("name"));
+                }
             }
             object1.put("list", object2);
             return object1.toString();
@@ -331,6 +350,10 @@ public class CloudService {
     }
 
     synchronized public void giveMetal(String userId, String name, String description, String attr, String data) {
+        giveMetal(userId, name, description, attr, data, "2099-12-31");
+    }
+
+    synchronized public void giveMetal(String userId, String name, String description, String attr, String data, String expireDate) {
         JSONObject metal = new JSONObject(getMetal(userId));
         if (!metal.has("list")) {
             metal.put("list", new JSONArray());
@@ -342,13 +365,16 @@ public class CloudService {
                 return;
             }
         }
-        list.put(new JSONObject()
+        JSONObject newMetal = new JSONObject()
                 .put("name", name)
                 .put("description", description)
                 .put("attr", attr)
                 .put("data", data)
-                .put("enabled", true)
-        );
+                .put("enabled", true);
+        if (StringUtils.isNotBlank(expireDate)) {
+            newMetal.put("expireDate", expireDate);
+        }
+        list.put(newMetal);
         metal.put("list", list);
         saveMetal(userId, metal.toString());
     }
@@ -381,6 +407,11 @@ public class CloudService {
                 list.remove(i);
                 jsonObject.put("enabled", enabled);
                 list.put(jsonObject);
+            }
+            // 如果勋章过期日期在今天之前, 移除
+            if (Dates.isExpired(jsonObject.optString("expireDate", "2099-12-31"), Dates.PATTERN_DATE)) {
+                list.remove(i);
+                removeMetal(userId, jsonObject.optString("name"));
             }
         }
         metal.put("list", list);
