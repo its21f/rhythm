@@ -744,9 +744,10 @@ public class AdminProcessor {
         final String description = context.param("description");
         final String attr = context.param("attr");
         final String data = context.param("data");
+        final String expireDate = context.param("expireDate");
         final BeanManager beanManager = BeanManager.getInstance();
         final CloudService cloudService = beanManager.getReference(CloudService.class);
-        cloudService.giveMetal(userId, name, description, attr, data);
+        cloudService.giveMetal(userId, name, description, attr, data, Dates.calExpire(expireDate));
         context.sendRedirect(Latkes.getServePath() + "/admin/user/" + userId);
     }
 
