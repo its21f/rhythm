@@ -81,6 +81,9 @@ public class MembershipMgmtService {
     @Inject
     private MembershipCache membershipCache;
 
+    @Inject
+    private CloudService cloudService;
+
     public String addLevel(final JSONObject level) throws ServiceException {
         final Transaction transaction = levelRepository.beginTransaction();
         try {
@@ -174,8 +177,8 @@ public class MembershipMgmtService {
                 membership = new JSONObject();
                 membership.put(Membership.USER_ID, userId);
                 membership.put(Membership.CREATED_AT, now);
-            }else{
-                if(membership.getLong(Membership.EXPIRES_AT) > now){
+            } else {
+                if (membership.getLong(Membership.EXPIRES_AT) > now) {
                     throw new ServiceException("已经是会员了, 等待会员周期结束");
                 }
             }
@@ -214,9 +217,10 @@ public class MembershipMgmtService {
                     finalPrice = price;
                 }
             }
-            final String memo = "开通 " + level.optString(MembershipLevel.LV_NAME) + "(" + level.optString(MembershipLevel.DURATION_TYPE) + ") 会员\n" +
-                            "原价：" + price + "(" +
-                            "优惠价：" + finalPrice + ")";
+            final String memo = "开通 " + level.optString(MembershipLevel.LV_NAME) + "("
+                    + level.optString(MembershipLevel.DURATION_TYPE) + ") 会员\n" +
+                    "原价：" + price + "(" +
+                    "优惠价：" + finalPrice + ")";
             // 扣积分（余额不足则失败），参与当前事务
             final String transferId = pointtransferMgmtService.transferInCurrentTransaction(
                     userId,
@@ -259,6 +263,28 @@ public class MembershipMgmtService {
 
             // Update cache with the latest active membership
             membershipCache.put(membership);
+
+            // 更新背包
+            switch (lvCode) {
+                case "VIP1_YEAR":
+                    // VIP1_YEAR 送20张免签卡
+                    cloudService.putBag(userId, "checkin1day", 20, Integer.MAX_VALUE);
+                    break;
+                case "VIP2_YEAR":
+                    // VIP2_YEAR 送50张免签卡
+                    cloudService.putBag(userId, "checkin1day", 50,  Integer.MAX_VALUE);
+                    break;
+                case "VIP3_YEAR":
+                    // VIP3_YEAR 送120张免签卡
+                    cloudService.putBag(userId, "checkin1day", 120,  Integer.MAX_VALUE);
+                    break;
+                case "VIP4_YEAR":
+                    // VIP4_YEAR 直接一年免签
+                    cloudService.putBag(userId, "sysCheckinRemain", 366,  Integer.MAX_VALUE);
+                    break;
+                default:
+                    break;
+            }
 
             final JSONObject ret = new JSONObject();
             ret.put("membership", membership);
