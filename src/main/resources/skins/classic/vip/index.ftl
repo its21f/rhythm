@@ -95,6 +95,7 @@
     </section>
 </div>
 <#include "../footer.ftl">
+<script src="${staticServePath}/js/common${miniPostfix}.js?${staticResourceVersion}"></script>
 <script>
     var user = ${user};
     var membership = ${membership};

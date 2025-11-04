@@ -142,6 +142,8 @@ var ChatRoom = {
         // 加载表情
         ChatRoom.listenUploadEmojis();
         ChatRoom.loadEmojis();
+        // 加载VIP用户
+        ChatRoom.getVipUserList();
         // 监听按钮
 
         (() => {
@@ -1462,6 +1464,39 @@ border-bottom: none;
         }
         localStorage.setItem('user_remark', JSON.stringify(ChatRoom.remarkList));
     },
+    vipUserList: [],
+    getVipUserList: function () {
+        let configJsonList = Label.vipUsers;
+        configJsonList.forEach(item => {
+            if (typeof item.configJson === 'string') {
+                item.configJson = JSON.parse(item.configJson)
+            }
+        })
+        ChatRoom.vipUserList = configJsonList;
+    },
+    setVipUserName: function (data, remark) {
+        console.log(101, Label.vipUsers, this.vipUserList);
+        console.log(111, data, remark)
+        const vipUser = this.vipUserList.find(item => item.userId == data.userOId);
+        console.log(222, vipUser)
+        if (vipUser) {
+            let uStyle = '';
+            if (vipUser.configJson.bold) {
+                uStyle += 'font-weight: bold;'
+            }
+            if (vipUser.configJson.underline) {
+                uStyle += 'text-decoration: underline;'
+            }
+            if (vipUser.configJson.color) {
+                uStyle += 'color:' + vipUser.configJson.color + ';'
+            }
+            console.log(333, uStyle)
+            return '<span class="ft-gray" style="' + uStyle + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
+
+        }
+        console.log(444)
+        return '    <span class="ft-gray">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
+    },
     /**
      * 处理消息
      * 处理图片压缩 处理特殊颜色文字
@@ -1915,7 +1950,7 @@ ${result.info.msg}
             // let display = Label.currentUser === data.userName && !isPlusOne ? 'display: none;' : ''
             let display = '';
             newHTML += '<div id="userName" class="ft__fade ft__smaller" style="' + display + 'padding-bottom: 3px;border-bottom: 1px solid #eee">\n' +
-                '    <span class="' + (isAdmin ? "ft-admin-user" : "ft-gray") + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n';
+                ChatRoom.setVipUserName(data, remark);
             if (data.sysMetal !== undefined && data.sysMetal !== "") {
                 let list = JSON.parse(data.sysMetal).list;
                 if (list !== undefined) {
@@ -1928,7 +1963,7 @@ ${result.info.msg}
             newHTML += '</div>';
 
             newHTML += '        <div class="vditor-reset ft__smaller ' + Label.chatRoomPictureStatus + '" style="margin-top: 3px">\n' +
-                '            ' + ChatRoom.filterContent(data.content ,isAdmin) + '\n' +
+                '            ' + ChatRoom.filterContent(data.content, isAdmin) + '\n' +
                 '        </div>\n' +
                 '        <div class="ft__smaller ft__fade fn__right date-bar">\n' +
                 '            ' + data.time + '\n' +

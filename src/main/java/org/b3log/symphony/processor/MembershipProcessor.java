@@ -373,7 +373,6 @@ public class MembershipProcessor {
         dataModel.put(User.USER, user);
         try {
             final org.json.JSONObject status = membershipQueryService.getStatusByUserId(user.optString(Keys.OBJECT_ID));
-            System.out.println(status);
             dataModel.put("membership", status);
         } catch (final org.b3log.latke.service.ServiceException e) {
             dataModel.put("membership", new JSONObject());

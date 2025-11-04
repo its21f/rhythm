@@ -218,21 +218,26 @@
     document.getElementById("onlineMinute").addEventListener("click", function () {
         window.location.href = "${servePath}/top/online";
     });
-    <#if membership??>
-    let membership = ${membership};
-    let userNameDom = document.querySelector('#userNicknameDom');
+    let user = ${user}
+    console.log(user)
+    <#if user.membership??>
+    let membership = ${user.membership};
+    let userNameDom = document.querySelector('.user-name #userNicknameDom');
+    let userDom = document.querySelector('.user-name .ft-gray');
     if (typeof membership.configJson == 'string') {
         membership.configJson = JSON.parse(membership.configJson)
     }
+    const targetDom = user.userNickname === '' ? userDom : userNameDom;
     if (membership.configJson.bold) {
-        userNameDom.style.fontWeight = 'bold';
+        targetDom.style.fontWeight = 'bold';
     }
     if (membership.configJson.underline) {
-        userNameDom.style.textDecoration = 'underline';
+        targetDom.style.textDecoration = 'underline';
     }
     if (membership.configJson.color) {
-        userNameDom.style.color = membership.configJson.color;
+        targetDom.style.color = membership.configJson.color;
     }
+
     </#if>
 
 </script>

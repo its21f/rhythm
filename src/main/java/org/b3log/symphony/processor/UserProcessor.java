@@ -1063,13 +1063,6 @@ public class UserProcessor {
 
         avatarQueryService.fillUserAvatarURL(user);
 
-        try {
-            final org.json.JSONObject status = membershipQueryService.getStatusByUserId(followingId);
-            dataModel.put("membership", status);
-        } catch (final org.b3log.latke.service.ServiceException e) {
-            dataModel.put("membership", new JSONObject());
-        }
-
         final boolean isLoggedIn = (Boolean) dataModel.get(Common.IS_LOGGED_IN);
         if (isLoggedIn) {
             final JSONObject currentUser = Sessions.getUser();

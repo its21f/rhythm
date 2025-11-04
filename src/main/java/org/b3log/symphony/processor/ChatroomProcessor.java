@@ -192,6 +192,9 @@ public class ChatroomProcessor {
     @Inject
     private AvatarQueryService avatarQueryService;
 
+    @Inject
+    private MembershipQueryService membershipQueryService;
+
     public static int barragerCost = 5;
 
     public static String barragerUnit = "积分";
@@ -539,6 +542,7 @@ public class ChatroomProcessor {
 
     /**
      * 获得思过崖
+     *
      * @param context
      */
     public void getSiGuoList(final RequestContext context) {
@@ -588,11 +592,11 @@ public class ChatroomProcessor {
             int muted = ChatRoomBot.muted(userId);
             // 是否全员禁言中
             boolean isAll = muted < 0 && muted != -1;
-            if (isAll){
-                if (DataModelService.hasPermission(currentUser.optString(User.USER_ROLE), 3)){
+            if (isAll) {
+                if (DataModelService.hasPermission(currentUser.optString(User.USER_ROLE), 3)) {
                     // OP 豁免全员禁言
                     muted = -1;
-                }else {
+                } else {
                     // 回正
                     muted *= -1;
                 }
@@ -602,9 +606,9 @@ public class ChatroomProcessor {
             int muteMinute = muted % (24 * 60 * 60) % (60 * 60) / 60;
             int muteSecond = muted % (24 * 60 * 60) % (60 * 60) % 60;
             if (muted != -1) {
-                if (isAll){
+                if (isAll) {
                     context.renderJSON(StatusCodes.ERR).renderMsg("抢红包失败，原因：正在全员禁言中，剩余时间 " + muteDay + " 天 " + muteHour + " 小时 " + muteMinute + " 分 " + muteSecond + " 秒。");
-                }else {
+                } else {
                     context.renderJSON(StatusCodes.ERR).renderMsg("抢红包失败，原因：正在禁言中，剩余时间 " + muteDay + " 天 " + muteHour + " 小时 " + muteMinute + " 分 " + muteSecond + " 秒。");
                 }
                 return;
@@ -956,6 +960,7 @@ public class ChatroomProcessor {
     final private static SimpleCurrentLimiter chatRoomLivenessLimiter = new SimpleCurrentLimiter(60, 1);
     final private static SimpleCurrentLimiter risksControlMessageLimiter = new SimpleCurrentLimiter(15 * 60, 1);
     final private static SimpleCurrentLimiter openRedPacketLimiter = new SimpleCurrentLimiter(30 * 60, 1);
+
     /**
      * Send chatroom message.
      *
@@ -1236,10 +1241,10 @@ public class ChatroomProcessor {
                 } catch (Exception e) {
                     LOGGER.log(Level.INFO, "User " + userName + " failed to send a red packet.");
                 }
-            }  else if (content.startsWith("[weather]") && content.endsWith("[/weather]")){
+            } else if (content.startsWith("[weather]") && content.endsWith("[/weather]")) {
                 String weatherString = content.replaceAll("^\\[weather\\]", "").replaceAll("\\[/weather\\]$", "");
                 JSONObject weather = new JSONObject(weatherString);
-                weather.put("msgType","weather");
+                weather.put("msgType", "weather");
                 // 加活跃
                 incLiveness(userId);
                 // 聊天室内容保存到数据库
@@ -1267,10 +1272,10 @@ public class ChatroomProcessor {
                     LOGGER.log(Level.ERROR, "Update user latest comment time failed", e);
                 }
 
-            }  else if (content.startsWith("[music]") && content.endsWith("[/music]")){
+            } else if (content.startsWith("[music]") && content.endsWith("[/music]")) {
                 String musicString = content.replaceAll("^\\[music\\]", "").replaceAll("\\[/music\\]$", "");
                 JSONObject music = new JSONObject(musicString);
-                music.put("msgType","music");
+                music.put("msgType", "music");
                 String title = music.getString("title");
                 if (title != null) {
                     // 将HTML标签全部替换为空
@@ -1303,7 +1308,7 @@ public class ChatroomProcessor {
                     LOGGER.log(Level.ERROR, "Update user latest comment time failed", e);
                 }
 
-            }  else if (content.startsWith("[setdiscuss]") && content.endsWith("[/setdiscuss]")) {
+            } else if (content.startsWith("[setdiscuss]") && content.endsWith("[/setdiscuss]")) {
                 // 扣钱
                 final boolean succ = null != pointtransferMgmtService.transfer(userId, Pointtransfer.ID_C_SYS,
                         Pointtransfer.TRANSFER_TYPE_C_ACTIVITY_SET_DISCUSS,
@@ -1450,9 +1455,9 @@ public class ChatroomProcessor {
                 (codePoint >= 0x1F600 && codePoint <= 0x1F64F) || // Emoticons
                 (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport & Map
                 (codePoint >= 0x1F700 && codePoint <= 0x1F77F) || // Alchemical Symbols
-                (codePoint >= 0x2600 && codePoint <= 0x26FF)   || // Misc symbols
-                (codePoint >= 0x2700 && codePoint <= 0x27BF)   || // Dingbats
-                (codePoint >= 0xFE00 && codePoint <= 0xFE0F)   || // Variation Selectors
+                (codePoint >= 0x2600 && codePoint <= 0x26FF) || // Misc symbols
+                (codePoint >= 0x2700 && codePoint <= 0x27BF) || // Dingbats
+                (codePoint >= 0xFE00 && codePoint <= 0xFE0F) || // Variation Selectors
                 (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental Symbols & Pictographs
                 (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Symbols & Pictographs Extended-A
                 (codePoint >= 0x200D); // Zero Width Joiner（部分emoji组合用）
@@ -1609,6 +1614,20 @@ public class ChatroomProcessor {
         dataModel.put(Common.SELECTED, "cr");
         dataModel.put("barragerCost", barragerCost);
         dataModel.put("barragerUnit", barragerUnit);
+
+        try {
+            final java.util.List<org.json.JSONObject> memberships = membershipQueryService.listActiveConfigs();
+            final org.json.JSONArray vipData = new org.json.JSONArray();
+            for (final org.json.JSONObject m : memberships) {
+                final org.json.JSONObject item = new org.json.JSONObject();
+                item.put(org.b3log.symphony.model.Membership.USER_ID, m.optString(org.b3log.symphony.model.Membership.USER_ID));
+                item.put(org.b3log.symphony.model.Membership.CONFIG_JSON, m.optString(org.b3log.symphony.model.Membership.CONFIG_JSON));
+                vipData.put(item);
+            }
+            dataModel.put("vipUsers", vipData);
+        } catch (Exception e) {
+            dataModel.put("vipUsers", new org.json.JSONArray());
+        }
     }
 
     /**
@@ -1641,6 +1660,7 @@ public class ChatroomProcessor {
 
     /**
      * 获取某个oId的聊天消息上下文
+     *
      * @param context
      */
     public void getContextMessage(final RequestContext context) {
@@ -1690,7 +1710,7 @@ public class ChatroomProcessor {
                 }
             }
             String type = context.param("type");
-            List<JSONObject> jsonObject = getMessages(page,type);
+            List<JSONObject> jsonObject = getMessages(page, type);
             JSONObject ret = new JSONObject();
             ret.put(Keys.CODE, StatusCodes.SUCC);
             ret.put(Keys.MSG, "");
@@ -1792,6 +1812,7 @@ public class ChatroomProcessor {
             context.renderJSON(StatusCodes.ERR).renderMsg("撤回失败，请联系 @adlered。");
         }
     }
+
     /**
      * Get all messages from database.
      *
@@ -1811,7 +1832,7 @@ public class ChatroomProcessor {
                     "SELECT  *  FROM `" + chatRoomRepository.getName() + "` ORDER BY oId DESC LIMIT " + start + "," + count);
             List<JSONObject> msgs = messageList.stream().map(msg -> new JSONObject(msg.optString("content")).put("oId", msg.optString(Keys.OBJECT_ID))).collect(Collectors.toList());
             msgs = msgs.stream().map(msg -> JSONs.clone(msg).put(Common.TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(msg.optLong(Common.TIME)))).collect(Collectors.toList());
-            if(!"md".equals(type)){
+            if (!"md".equals(type)) {
                 msgs = msgs.stream().map(msg -> JSONs.clone(msg.put("content", processMarkdown(msg.optString("content"))))).collect(Collectors.toList());
             }
             for (JSONObject msg : msgs) {
@@ -1859,7 +1880,7 @@ public class ChatroomProcessor {
             }
             msgs = msgs.stream().map(msg -> new JSONObject(msg.optString("content")).put("oId", msg.optString(Keys.OBJECT_ID))).collect(Collectors.toList());
             msgs = msgs.stream().map(msg -> JSONs.clone(msg).put(Common.TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(msg.optLong(Common.TIME)))).collect(Collectors.toList());
-            if(!"md".equals(type)){
+            if (!"md".equals(type)) {
                 msgs = msgs.stream().map(msg -> JSONs.clone(msg.put("content", processMarkdown(msg.optString("content"))))).collect(Collectors.toList());
             }
             return msgs;

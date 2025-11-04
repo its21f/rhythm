@@ -211,8 +211,15 @@ function checkVip() {
                 membership.configJson = vipDefaultConfig[3];
                 break;
         }
+    } else {
+        if (typeof membership.configJson === 'string') {
+            membership.configJson = JSON.parse(membership.configJson)
+        }
     }
     console.log(user, membership);
+    userNameItem.style.fontWeight = membership.configJson.bold ? 'bold' : 400;
+    userNameItem.style.textDecoration = membership.configJson.underline ? 'underline' : 'none';
+    userNameItem.style.color = membership.configJson.color;
 }
 
 function changeBold() {
