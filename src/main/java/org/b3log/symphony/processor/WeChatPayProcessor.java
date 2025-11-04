@@ -74,7 +74,7 @@ public class WeChatPayProcessor {
     final static String L3_ATTR = "url=https://file.fishpi.cn/2021/12/ht3-b97ea102.jpg&backcolor=ee3a8c&fontcolor=ffffff";
     final static String L4_NAME = "摸鱼派骨粉";
     final static String L4_DESC = "捐助摸鱼派达4096; 编号No.";
-    final static String L4_ATTR = "url=https://file.fishpi.cn/2025/10/ht4-6799b79b.png&backcolor=ff69b4,ffff1c,00c3ff&fontcolor=ffffff&shadow=0.8&anime=3&way=left&fontway=left";
+    final static String L4_ATTR = "url=https://file.fishpi.cn/2025/11/premiumVIP-dbf070c6.gif&backcolor=ff69b4,ffff1c,00c3ff&fontcolor=ffffff&shadow=0.8&anime=3&way=left&fontway=left";
 
     public static void register() {
         final BeanManager beanManager = BeanManager.getInstance();
