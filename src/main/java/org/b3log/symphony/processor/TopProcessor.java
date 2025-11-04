@@ -947,6 +947,33 @@ public class TopProcessor {
       dataModelService.fillLatestCmts(dataModel);
   }
 
+    public static int getDonateRankByUserId(String userId) {
+        final BeanManager beanManager = BeanManager.getInstance();
+        final SponsorRepository sponsorRepository = beanManager.getReference(SponsorRepository.class);
+        try {
+            // 查询所有用户的捐赠总额，按总额降序排列
+            List<JSONObject> list = sponsorRepository.select(
+                    "select userId as userId, sum(amount) as total " +
+                            "from " + sponsorRepository.getName() + " " +
+                            "group by userId " +
+                            "order by total desc;"
+            );
+            int rank = 1;
+            for (JSONObject user : list) {
+                String currentUserId = user.optString("userId");
+                if (currentUserId != null && currentUserId.equals(userId)) {
+                    return rank;
+                }
+                rank++;
+            }
+        } catch (Exception e) {
+            // 查询失败
+            e.printStackTrace();
+        }
+        // 没找到该用户
+        return -1;
+    }
+
   /**
      * Get Donate ranking data.
      *
