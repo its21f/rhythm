@@ -134,6 +134,10 @@
                             <img src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=%E6%91%B8%E9%B1%BC%E6%B4%BE%E9%93%81%E7%B2%89&url=https://file.fishpi.cn/2021/12/ht3-b97ea102.jpg&backcolor=ee3a8c&fontcolor=ffffff" />
                             &nbsp;&nbsp;
                             <b style="line-height: 25px">1024 ❤️</b>
+                            <br>
+                            <img src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=%E6%91%B8%E9%B1%BC%E6%B4%BE%E9%AA%A8%E7%B2%89&url=https://file.fishpi.cn/2025/10/ht4-6799b79b.png&backcolor=B3E5FC&fontcolor=FF2A6D" />
+                            &nbsp;&nbsp;
+                            <b style="line-height: 25px">4096 ❤️</b>
                         </div>
                     </div>
                 </div>

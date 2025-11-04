@@ -72,6 +72,9 @@ public class WeChatPayProcessor {
     final static String L3_NAME = "摸鱼派铁粉";
     final static String L3_DESC = "捐助摸鱼派达1024; 编号No.";
     final static String L3_ATTR = "url=https://file.fishpi.cn/2021/12/ht3-b97ea102.jpg&backcolor=ee3a8c&fontcolor=ffffff";
+    final static String L4_NAME = "摸鱼派骨粉";
+    final static String L4_DESC = "捐助摸鱼派达4096; 编号No.";
+    final static String L4_ATTR = "url=https://file.fishpi.cn/2025/10/ht4-6799b79b.png&backcolor=B3E5FC&fontcolor=FF2A6D";
 
     public static void register() {
         final BeanManager beanManager = BeanManager.getInstance();
@@ -159,8 +162,14 @@ public class WeChatPayProcessor {
         cloudService.removeMetal(userId, L1_NAME);
         cloudService.removeMetal(userId, L2_NAME);
         cloudService.removeMetal(userId, L3_NAME);
+        cloudService.removeMetal(userId, L4_NAME);
         // 赋予勋章
-        if (sum >= 1024) {
+        if (sum >= 4096) {
+            cloudService.giveMetal(userId, L4_NAME, L4_DESC + getNo(userId, 4), L4_ATTR, "");
+            cloudService.giveMetal(userId, L3_NAME, L3_DESC + getNo(userId, 3), L3_ATTR, "");
+            cloudService.giveMetal(userId, L2_NAME, L2_DESC + getNo(userId, 2), L2_ATTR, "");
+            cloudService.giveMetal(userId, L1_NAME, L1_DESC + getNo(userId, 1), L1_ATTR, "");
+        } else if (sum >= 1024) {
             cloudService.giveMetal(userId, L3_NAME, L3_DESC + getNo(userId, 3), L3_ATTR, "");
             cloudService.giveMetal(userId, L2_NAME, L2_DESC + getNo(userId, 2), L2_ATTR, "");
             cloudService.giveMetal(userId, L1_NAME, L1_DESC + getNo(userId, 1), L1_ATTR, "");
@@ -215,8 +224,14 @@ public class WeChatPayProcessor {
         cloudService.removeMetal(userId, L1_NAME);
         cloudService.removeMetal(userId, L2_NAME);
         cloudService.removeMetal(userId, L3_NAME);
+        cloudService.removeMetal(userId, L4_NAME);
         // 赋予勋章
-        if (sum >= 1024) {
+        if (sum >= 4096) {
+            cloudService.giveMetal(userId, L4_NAME, L4_DESC + getNo(userId, 4), L4_ATTR, "");
+            cloudService.giveMetal(userId, L3_NAME, L3_DESC + getNo(userId, 3), L3_ATTR, "");
+            cloudService.giveMetal(userId, L2_NAME, L2_DESC + getNo(userId, 2), L2_ATTR, "");
+            cloudService.giveMetal(userId, L1_NAME, L1_DESC + getNo(userId, 1), L1_ATTR, "");
+        } else if (sum >= 1024) {
             cloudService.giveMetal(userId, L3_NAME, L3_DESC + getNo(userId, 3), L3_ATTR, "");
             cloudService.giveMetal(userId, L2_NAME, L2_DESC + getNo(userId, 2), L2_ATTR, "");
             cloudService.giveMetal(userId, L1_NAME, L1_DESC + getNo(userId, 1), L1_ATTR, "");
@@ -367,6 +382,14 @@ public class WeChatPayProcessor {
                                     map.put(id, map.get(id) + amount);
                                 }
                                 break;
+                            case 4:
+                                if (map.get(id) + amount >= 4096) {
+                                    rank.add(id);
+                                    ignores.add(id);
+                                } else {
+                                    map.put(id, map.get(id) + amount);
+                                }
+                                break;
                         }
                     } else {
                         switch (level) {
@@ -388,6 +411,14 @@ public class WeChatPayProcessor {
                                 break;
                             case 3:
                                 if (amount >= 1024) {
+                                    rank.add(id);
+                                    ignores.add(id);
+                                } else {
+                                    map.put(id, amount);
+                                }
+                                break;
+                            case 4:
+                                if (amount >= 4096) {
                                     rank.add(id);
                                     ignores.add(id);
                                 } else {
