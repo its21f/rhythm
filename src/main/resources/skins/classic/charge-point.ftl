@@ -135,7 +135,7 @@
                             &nbsp;&nbsp;
                             <b style="line-height: 25px">1024 ❤️</b>
                             <br>
-                            <img src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=%E6%91%B8%E9%B1%BC%E6%B4%BE%E9%AA%A8%E7%B2%89&url=https://file.fishpi.cn/2025/11/premiumVIP-dbf070c6.gif&backcolor=ff69b4,ffff1c,00c3ff&fontcolor=ffffff&shadow=0.8&anime=3&way=left&fontway=left" />
+                            <img src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=%E6%91%B8%E9%B1%BC%E6%B4%BE%E9%AA%A8%E7%B2%89&url=https://file.fishpi.cn/2025/11/lovegif1762236700451-aea18b9a.gif&backcolor=ff69b4,ffff1c,00c3ff&fontcolor=ffffff&shadow=0.8&anime=3&way=left&fontway=left" />
                             &nbsp;&nbsp;
                             <b style="line-height: 25px">4096 ❤️</b>
                         </div>
