@@ -72,7 +72,7 @@ public class WeChatPayProcessor {
     final static String L3_NAME = "摸鱼派铁粉";
     final static String L3_DESC = "捐助摸鱼派达1024; 编号No.";
     final static String L3_ATTR = "url=https://file.fishpi.cn/2021/12/ht3-b97ea102.jpg&backcolor=ee3a8c&fontcolor=ffffff";
-    final static String L4_NAME = "Premium%20Sponsor%20";
+    final static String L4_NAME = "Premium Sponsor ";
     final static String L4_DESC = "捐助摸鱼派达4096; 编号No.";
     final static String L4_ATTR = "url=https://file.fishpi.cn/2025/11/lovegif1762236700451-aea18b9a.gif&backcolor=ff69b4,ffff1c,00c3ff&fontcolor=ffffff&shadow=0.8&anime=3&way=left&fontway=left";
 
