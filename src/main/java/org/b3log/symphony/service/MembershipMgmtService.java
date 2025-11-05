@@ -177,10 +177,12 @@ public class MembershipMgmtService {
                 membership = new JSONObject();
                 membership.put(Membership.USER_ID, userId);
                 membership.put(Membership.CREATED_AT, now);
+                membership.put(Membership.CONFIG_JSON, configJson);
             } else {
                 if (membership.getLong(Membership.EXPIRES_AT) > now) {
                     throw new ServiceException("已经是会员了, 等待会员周期结束");
                 }
+                membership.put(Membership.CONFIG_JSON, "");
             }
             // 更新会员等级
             membership.put(Membership.LV_CODE, lvCode);
@@ -236,7 +238,6 @@ public class MembershipMgmtService {
 
             membership.put(Membership.STATE, 1);
             membership.put(Membership.EXPIRES_AT, expiresAt);
-            membership.put(Membership.CONFIG_JSON, configJson);
             membership.put(Membership.UPDATED_AT, now);
 
             if (StringUtils.isBlank(membership.optString(Keys.OBJECT_ID))) {
