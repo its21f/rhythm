@@ -1468,18 +1468,15 @@ border-bottom: none;
     getVipUserList: function () {
         let configJsonList = Label.vipUsers;
         configJsonList.forEach(item => {
-            if (typeof item.configJson === 'string') {
+            if (typeof item.configJson === 'string' && item.configJson != "") {
                 item.configJson = JSON.parse(item.configJson)
             }
         })
         ChatRoom.vipUserList = configJsonList;
     },
     setVipUserName: function (data, remark) {
-        console.log(101, Label.vipUsers, this.vipUserList);
-        console.log(111, data, remark)
         const vipUser = this.vipUserList.find(item => item.userId == data.userOId);
-        console.log(222, vipUser)
-        if (vipUser) {
+        if (vipUser && vipUser.configJson != "") {
             let uStyle = '';
             let uClass = '';
             if (vipUser.configJson.bold) {
@@ -1497,7 +1494,6 @@ border-bottom: none;
             return '<span class="ft-gray ' + uClass + '" style="' + uStyle + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
 
         }
-        console.log(444)
         return '    <span class="ft-gray">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
     },
     /**

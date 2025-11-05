@@ -170,7 +170,6 @@ function buyVip(vip) {
             .then(response => response.json())
             .then(data => {
                 if (data.code === 0) {
-                    vipList = simpleProcessVIPData(data);
                     loadPageData();
                     Util.notice('success', 3000, '开通成功')
                 } else {
@@ -194,8 +193,6 @@ let vipDefaultConfig = [
 ]
 
 function checkVip() {
-    userNameItem = document.querySelector('#configBox');
-    userNameItem.innerHTML = user.userName;
     if (membership.configJson == "") {
         switch (membership.lvCode.split('_')[0]) {
             case 'VIP1':
@@ -217,6 +214,9 @@ function checkVip() {
         }
     }
     console.log(user, membership);
+    if (membership.state == 0) return;
+    userNameItem = document.querySelector('#configBox');
+    userNameItem.innerHTML = user.userName;
     userNameItem.style.fontWeight = membership.configJson.bold ? 'bold' : 400;
     userNameItem.style.textDecoration = membership.configJson.underline ? 'underline' : 'none';
     if (membership.configJson.color.startsWith('#')) {
