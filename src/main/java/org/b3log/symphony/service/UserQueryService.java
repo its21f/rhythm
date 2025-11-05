@@ -35,6 +35,7 @@ import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Paginator;
 import org.b3log.latke.util.Times;
 import org.b3log.latke.util.URLs;
+import org.b3log.symphony.cache.MembershipCache;
 import org.b3log.symphony.cache.UserCache;
 import org.b3log.symphony.model.*;
 import org.b3log.symphony.repository.FollowRepository;
@@ -102,6 +103,9 @@ public class UserQueryService {
      */
     @Inject
     private UserCache userCache;
+
+    @Inject
+    private MembershipQueryService membershipQueryService;
 
     /**
      * Get nice users with the specified fetch size.
@@ -533,6 +537,14 @@ public class UserQueryService {
                 ret.put(UserExt.USER_T_POINT_HEX, Integer.toHexString(point));
             } else {
                 ret.put(UserExt.USER_T_POINT_CC, UserExt.toCCString(point));
+            }
+            // 会员信息
+            final String userId = ret.optString(Keys.OBJECT_ID);
+            try {
+                final JSONObject membership = membershipQueryService.getStatusByUserId(userId);
+                ret.put(UserExt.USER_MEMBERSHIP, membership);
+            } catch (final Exception e) {
+                LOGGER.log(Level.ERROR, "Gets membership by user id[" + userId + "] failed", e);
             }
 
             return ret;

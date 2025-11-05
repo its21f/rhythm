@@ -172,6 +172,9 @@
                         <a href="${servePath}/charge/point"><span class="ft-red">❤</span>️ ${chargePointLabel}</a>
                     </li>
                     <li>
+                        <a href="${servePath}/vips">开通VIP</a>
+                    </li>
+                    <li>
                         <a href="${servePath}/settings/help">${helpLabel}</a>
                     </li>
                     <li>

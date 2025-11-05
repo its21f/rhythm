@@ -560,6 +560,11 @@ public final class UserExt {
     public static final int USER_LIST_VIEW_MODE_TITLE_ABSTRACT = 1;
 
     /**
+     * User membership.
+     */
+    public static final String USER_MEMBERSHIP = "membership";
+
+    /**
      * Private constructor.
      */
     private UserExt() {

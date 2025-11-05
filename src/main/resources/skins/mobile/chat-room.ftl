@@ -231,6 +231,7 @@
 <#include "footer.ftl">
 <script>
     Label.uploadLabel = "${uploadLabel}";
+    Label.vipUsers = ${vipUsers};
 </script>
 <script src="${staticServePath}/js/lib/echarts.min.js"></script>
 <script src="${staticServePath}/js/lib/jquery/file-upload-9.10.1/jquery.fileupload.min.js"></script>

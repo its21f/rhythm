@@ -113,6 +113,8 @@ public final class Router {
         ApiProcessor.register();
         // 商店
         ShopProcessor.register();
+        // 优惠券
+        CouponProcessor.register();
         // 支付宝
         AlipayProcessor.register();
         // MFA
@@ -125,6 +127,8 @@ public final class Router {
         WeChatPayProcessor.register();
         // OpenID
         OpenIdProcessor.register();
+        // 会员
+        MembershipProcessor.register();
 
         final BeanManager beanManager = BeanManager.getInstance();
         final LoginCheckMidware loginCheck = beanManager.getReference(LoginCheckMidware.class);

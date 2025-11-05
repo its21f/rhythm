@@ -580,6 +580,12 @@
                         <input id="metal-data" type="text" name="data" value=""/>
                     </label>
                 </div>
+                <div class="fn__flex">
+                    <label class="mid" style="margin-right: 0">
+                        <div>过期时间(格式:yyyy-MM-dd,如:2020-08-31),留空为永久</div>
+                        <input id="metal-expireDate" type="text" name="expireDate" value=""/>
+                    </label>
+                </div>
                 <br/>
                 <button type="submit" class="green fn-right">${submitLabel}</button>
             </form>

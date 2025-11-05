@@ -30,27 +30,37 @@
 
             <div>
                 <#if isLoggedIn && (currentUser.userName != user.userName)>
-                    <button class="green small" onclick="window.location.href = '${servePath}/chat?toUser=${user.userName}'">
+                    <button class="green small"
+                            onclick="window.location.href = '${servePath}/chat?toUser=${user.userName}'">
                         ${privateMessageLabel}
                     </button>
                 </#if>
                 <#if user.mbti != "">
-                    <a target="_blank" style="text-decoration: none" href="https://www.16personalities.com/ch/${user.mbti[0..3]}-%E4%BA%BA%E6%A0%BC" class="tooltipped-new tooltipped__n" rel="nofollow" aria-label="TA是 ${user.mbti}">
-                        <span class="mbti"><svg style="vertical-align: -3px"><use xlink:href="#mbti"></use></svg> ${user.mbti}</span>
+                    <a target="_blank" style="text-decoration: none"
+                       href="https://www.16personalities.com/ch/${user.mbti[0..3]}-%E4%BA%BA%E6%A0%BC"
+                       class="tooltipped-new tooltipped__n" rel="nofollow" aria-label="TA是 ${user.mbti}">
+                        <span class="mbti"><svg style="vertical-align: -3px"><use
+                                        xlink:href="#mbti"></use></svg> ${user.mbti}</span>
                     </a>
                 </#if>
                 <#if (isLoggedIn && ("adminRole" == currentUser.userRole || currentUser.userName == user.userName)) || 0 == user.userOnlineStatus>
-                    <span class="tooltipped tooltipped-n" aria-label="<#if user.userOnlineFlag>${onlineLabel}<#else>${offlineLabel}</#if>">
+                    <span class="tooltipped tooltipped-n"
+                          aria-label="<#if user.userOnlineFlag>${onlineLabel}<#else>${offlineLabel}</#if>">
                         <span class="<#if user.userOnlineFlag>online<#else>offline</#if>"><#if user.userOnlineFlag>在线<#else>离线</#if></span>
                     </span>
                 </#if>
                 <#if permissions["userAddPoint"].permissionGrant ||
-                        permissions["userAddUser"].permissionGrant ||
-                        permissions["userExchangePoint"].permissionGrant ||
-                        permissions["userDeductPoint"].permissionGrant ||
-                        permissions["userUpdateUserAdvanced"].permissionGrant ||
-                        permissions["userUpdateUserBasic"].permissionGrant>
-                    <a class="ft-13 tooltipped tooltipped-n ft-a-title" href="${servePath}/admin/user/${user.oId}" aria-label="${adminLabel}"><svg class="fn-text-top"><use xlink:href="#setting"></use></svg></a>
+                permissions["userAddUser"].permissionGrant ||
+                permissions["userExchangePoint"].permissionGrant ||
+                permissions["userDeductPoint"].permissionGrant ||
+                permissions["userUpdateUserAdvanced"].permissionGrant ||
+                permissions["userUpdateUserBasic"].permissionGrant>
+                    <a class="ft-13 tooltipped tooltipped-n ft-a-title" href="${servePath}/admin/user/${user.oId}"
+                       aria-label="${adminLabel}">
+                        <svg class="fn-text-top">
+                            <use xlink:href="#setting"></use>
+                        </svg>
+                    </a>
                 </#if>
                 <span aria-label="${reportLabel}" class="tooltipped tooltipped-n"
                       onclick="$('#reportDialog').data('id', '${user.oId}').dialog('open')"
@@ -78,43 +88,44 @@
             </div>
 
             <#if isLoggedIn && (currentUser.userName != user.userName)>
-            <#if isFollowing>
-            <button class="follow" onclick="Util.unfollow(this, '${followingId}', 'user')">
-                ${unfollowLabel}
-            </button>
-            <#else>
-            <button class="follow" onclick="Util.follow(this, '${followingId}', 'user')">
-                ${followLabel}
-            </button>
-            </#if>
+                <#if isFollowing>
+                    <button class="follow" onclick="Util.unfollow(this, '${followingId}', 'user')">
+                        ${unfollowLabel}
+                    </button>
+                <#else>
+                    <button class="follow" onclick="Util.follow(this, '${followingId}', 'user')">
+                        ${followLabel}
+                    </button>
+                </#if>
             </#if>
         </div>
 
         <div class="user-details">
-        <#if user.userIntro!="">
-        <div class="user-intro" id="userIntroDom">
-            ${user.userIntro}
-        </div>
-        </#if>
-        <div class="user-info">
-            <span class="ft-gray">${symphonyLabelClear}</span>
-            ${user.userNo?c}
-            <span class="ft-gray">${numMemberLabel}</span>, <#if 0 == user.userAppRole>${hackerLabel}<#else>${painterLabel}</#if>
-        <span class="ft-gray">${pointLabel}</span>
-        <a href="${servePath}/member/${user.userName}/points" class="tooltipped tooltipped-n" aria-label="${user.userPoint?c}">
-                <#if 0 == user.userAppRole>
-                0x${user.userPointHex}
-                <#else>
-                <div class="painter-point" style="background-color: #${user.userPointCC}"></div>
-                </#if>
-            </a>
-        </div>
-        <#if "" != user.userTags>
-        <div class="user-info">
-            <span class="ft-gray">${selfTagLabel}</span>
-            <span id="userTagsDom"><#list user.userTags?split(',') as tag> ${tag?html}<#if tag_has_next>,</#if></#list></span>
-        </div>
-        </#if>
+            <#if user.userIntro!="">
+                <div class="user-intro" id="userIntroDom">
+                    ${user.userIntro}
+                </div>
+            </#if>
+            <div class="user-info">
+                <span class="ft-gray">${symphonyLabelClear}</span>
+                ${user.userNo?c}
+                <span class="ft-gray">${numMemberLabel}</span>, <#if 0 == user.userAppRole>${hackerLabel}<#else>${painterLabel}</#if>
+                <span class="ft-gray">${pointLabel}</span>
+                <a href="${servePath}/member/${user.userName}/points" class="tooltipped tooltipped-n"
+                   aria-label="${user.userPoint?c}">
+                    <#if 0 == user.userAppRole>
+                        0x${user.userPointHex}
+                    <#else>
+                        <div class="painter-point" style="background-color: #${user.userPointCC}"></div>
+                    </#if>
+                </a>
+            </div>
+            <#if "" != user.userTags>
+                <div class="user-info">
+                    <span class="ft-gray">${selfTagLabel}</span>
+                    <span id="userTagsDom"><#list user.userTags?split(',') as tag> ${tag?html}<#if tag_has_next>,</#if></#list></span>
+                </div>
+            </#if>
             <#if "" != user.userCountry && "" != user.userProvince && "" != user.userCity && 0 == user.userGeoStatus>
                 <div class="user-info">
                     <#if user.userCountry == "中国">
@@ -132,24 +143,24 @@
                     </#if>
                 </div>
             </#if>
-        <#if user.userURL!="">
-        <div class="user-info">
-            <a id="userURLDom" target="_blank" rel="friend" href="${user.userURL?html}">${user.userURL?html}</a>
-        </div>
-        </#if>
-        <div class="user-info">
-            <span class="ft-gray">${joinTimeLabel}</span> ${user.userCreateTime?string('yyyy-MM-dd HH:mm')}
-        </div>
-        <div class="user-info">
-            <span class="ft-gray">最后登录</span> ${user.userLatestLoginTime?string('yyyy-MM-dd HH:mm')}
-        </div>
-        <div class="user-info">
-            <span class="ft-gray">${checkinStreakPart0Label}</span>
-            ${user.userLongestCheckinStreak?c}
-            <span class="ft-gray">${checkinStreakPart1Label}</span>
-            ${user.userCurrentCheckinStreak?c}
-            <span class="ft-gray">${checkinStreakPart2Label}</span>
-        </div>
+            <#if user.userURL!="">
+                <div class="user-info">
+                    <a id="userURLDom" target="_blank" rel="friend" href="${user.userURL?html}">${user.userURL?html}</a>
+                </div>
+            </#if>
+            <div class="user-info">
+                <span class="ft-gray">${joinTimeLabel}</span> ${user.userCreateTime?string('yyyy-MM-dd HH:mm')}
+            </div>
+            <div class="user-info">
+                <span class="ft-gray">最后登录</span> ${user.userLatestLoginTime?string('yyyy-MM-dd HH:mm')}
+            </div>
+            <div class="user-info">
+                <span class="ft-gray">${checkinStreakPart0Label}</span>
+                ${user.userLongestCheckinStreak?c}
+                <span class="ft-gray">${checkinStreakPart1Label}</span>
+                ${user.userCurrentCheckinStreak?c}
+                <span class="ft-gray">${checkinStreakPart2Label}</span>
+            </div>
         </div>
         <ul class="status fn-flex" style="padding-bottom: 0">
             <li id="userTags">
@@ -207,13 +218,40 @@
     document.getElementById("onlineMinute").addEventListener("click", function () {
         window.location.href = "${servePath}/top/online";
     });
+    let user = ${user}
+    <#if user.membership??>
+    let membership = ${user.membership};
+    let userNameDom = document.querySelector('.user-name #userNicknameDom');
+    let userDom = document.querySelector('.user-name .ft-gray');
+    if (typeof membership.configJson == 'string') {
+        membership.configJson = JSON.parse(membership.configJson)
+    }
+    const targetDom = user.userNickname === '' ? userDom : userNameDom;
+    if (membership.configJson.bold) {
+        targetDom.style.fontWeight = 'bold';
+    }
+    if (membership.configJson.underline) {
+        targetDom.style.textDecoration = 'underline';
+    }
+    if (membership.configJson.color) {
+        if(membership.configJson.color.startsWith('#')){
+            targetDom.style.color = membership.configJson.color;
+        }else{
+            targetDom.classList.add(membership.configJson.color)
+        }
+    }
+
+    </#if>
+
 </script>
 
 <div id="reportDialog">
     <div class="form fn-clear">
-        <div class="fn-clear"><label><input type="radio" value="5" name="report" checked> ${posingAccountLabel}</label></div>
+        <div class="fn-clear"><label><input type="radio" value="5" name="report" checked> ${posingAccountLabel}</label>
+        </div>
         <div class="fn-clear"><label><input type="radio" value="6" name="report"> ${spamADAccountLabel}</label></div>
-        <div class="fn-clear"><label><input type="radio" value="7" name="report"> ${personalInfoViolationLabel}</label></div>
+        <div class="fn-clear"><label><input type="radio" value="7" name="report"> ${personalInfoViolationLabel}</label>
+        </div>
         <div class="fn-clear"><label><input type="radio" value="49" name="report"> ${miscLabel}</label></div>
         <br>
         <textarea id="reportTextarea" placeholder="${reportContentLabel}" rows="3"></textarea><br><br>

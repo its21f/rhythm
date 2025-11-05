@@ -10,6 +10,100 @@
   "since": "0.2.0",
   "repositories": [
     {
+      "name": "membership_level",
+      "description": "会员等级定义",
+      "keys": [
+        { "name": "oId", "type": "String", "length": 19, "description": "主键" },
+        { "name": "lvName", "type": "String", "length": 64, "description": "等级名称" },
+        { "name": "lvCode", "type": "String", "length": 32, "description": "等级编码" },
+        { "name": "price", "type": "int", "description": "售价（正整数）" },
+        { "name": "durationType", "type": "String", "length": 16, "description": "周期名称（示例：体验卡/日卡/周卡/月卡/年卡/终身卡）" },
+        { "name": "durationValue", "type": "int", "description": "周期值（天），最小 1" },
+        { "name": "benefits", "type": "String", "length": 102400, "description": "权益细节 JSON" },
+        { "name": "createdAt", "type": "long", "description": "创建时间" },
+        { "name": "updatedAt", "type": "long", "description": "更新时间" }
+      ]
+    },
+    {
+      "name": "coupon",
+      "description": "优惠券表",
+      "keys": [
+        {
+          "name": "oId",
+          "type": "String",
+          "length": 19,
+          "description": "主键"
+        },
+        {
+          "name": "coupon_code",
+          "type": "String",
+          "length": 32,
+          "description": "优惠券代码"
+        },
+        {
+          "name": "coupon_type",
+          "type": "int",
+          "description": "优惠券类型，0：会员，其他待定"
+        },
+        {
+          "name": "discount",
+          "type": "int",
+          "description": "折扣倍率，>=0，计算价钱*（discount/100）"
+        },
+        {
+          "name": "times",
+          "type": "int",
+          "description": "可使用次数，0 表示无效，-1 表示永久"
+        },
+        {
+          "name": "creater",
+          "type": "String",
+          "length": 19,
+          "description": "创建人"
+        },
+        {
+          "name": "createdAt",
+          "type": "long",
+          "description": "创建时间"
+        },
+        {
+          "name": "updatedAt",
+          "type": "long",
+          "description": "更新时间"
+        }
+      ]
+    },
+    {
+      "name": "membership",
+      "description": "会员记录表",
+      "keys": [
+        { "name": "oId", "type": "String", "length": 19, "description": "主键" },
+        { "name": "userId", "type": "String", "length": 19, "description": "用户ID" },
+        { "name": "lvCode", "type": "String", "length": 32, "description": "等级编码" },
+        { "name": "state", "type": "int", "description": "0 未开通/已过期，1 已开通" },
+        { "name": "expiresAt", "type": "long", "description": "过期时间（终身为 0）" },
+        { "name": "configJson", "type": "String", "length": 102400, "description": "权益配置 JSON" },
+        { "name": "createdAt", "type": "long", "description": "创建时间" },
+        { "name": "updatedAt", "type": "long", "description": "更新时间" }
+      ]
+    },
+    {
+      "name": "membership_activation",
+      "description": "等级开通记录",
+      "keys": [
+        { "name": "oId", "type": "String", "length": 19, "description": "主键" },
+        { "name": "userId", "type": "String", "length": 19, "description": "用户ID" },
+        { "name": "lvCode", "type": "String", "length": 32, "description": "等级编码" },
+        { "name": "price", "type": "int", "description": "售价（正整数）" },
+        { "name": "durationType", "type": "String", "length": 16, "description": "周期名称" },
+        { "name": "durationValue", "type": "int", "description": "周期值（天）" },
+        { "name": "couponCode", "type": "String", "length": 32, "description": "使用的优惠券代码（可为空）" },
+        { "name": "configJson", "type": "String", "length": 102400, "description": "权益配置 JSON" },
+        { "name": "createdAt", "type": "long", "description": "创建时间" },
+        { "name": "updatedAt", "type": "long", "description": "更新时间" }
+      ]
+    },
+    {
       "name": "operation",
       "description": "关键操作记录表",
       "keys": [
