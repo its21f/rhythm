@@ -240,6 +240,7 @@ function changeColor(e) {
     let color = e.value;
     membership.configJson.color = color;
     userNameItem.style.color = color;
+    userNameItem.classList = [];
 }
 
 function changeVipColor(color) {
