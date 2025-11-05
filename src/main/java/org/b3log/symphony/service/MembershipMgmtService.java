@@ -329,6 +329,8 @@ public class MembershipMgmtService {
             }
 
             final String lvCode = membership.optString(Membership.LV_CODE);
+            // 检查是否为 VIP4 等级
+            final boolean isV4 = lvCode.contains("VIP4");
             // 通过 lvCode 获取一个等级定义（不依赖 durationType）
             final Query query = new Query()
                     .setFilter(new PropertyFilter(MembershipLevel.LV_CODE, FilterOperator.EQUAL, lvCode))
@@ -387,6 +389,13 @@ public class MembershipMgmtService {
                     final boolean bothNumber = (tplVal instanceof Number) && (usrVal instanceof Number);
                     if (!bothNumber && !tCls.equals(uCls)) {
                         throw new ServiceException("配置项类型不匹配: " + key);
+                    }
+                }
+                // 不是V4等级, 颜色配置只允许#000000到#ffffff格式
+                if (!isV4 && "color".equals(key)) {
+                    final String color = userConfig.optString(key);
+                    if (!StringUtils.isBlank(color) && !color.matches("^#[0-9a-fA-F]{6}$")) {
+                        throw new ServiceException("颜色配置格式错误: " + color);
                     }
                 }
             }
