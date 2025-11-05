@@ -38,32 +38,34 @@
 
     </div>
     <#if membership.state == 1>
-    <div class="change-config-box" id="vipConfigBox" style="text-align: center;">
-        <div style="margin-bottom: 10px;font-weight:bold;font-size: 18px">效果预览:</div>
-        <div style="margin:1rem">
-            <div id="configBox" style="margin-bottom: 2rem;font-size: 2rem"></div>
-            <button id="configBold" onclick="changeBold()">加粗</button>
-            <button id="configLine" onclick="changeLine()">下划线</button>
-            <input id="configColor" type="color" onchange="changeColor(this)"/>
+        <div class="change-config-box" id="vipConfigBox" style="text-align: center;">
+            <div style="margin-bottom: 10px;font-weight:bold;font-size: 18px">效果预览:</div>
+            <div style="margin:1rem">
+                <div id="configBox" style="margin-bottom: 2rem;font-size: 2rem"></div>
+                <button id="configBold" onclick="changeBold()">加粗</button>
+                <button id="configLine" onclick="changeLine()">下划线</button>
+                <#if membership.lvCode != "VIP1_YEAR" && membership.lvCode != "VIP1_MONTH">
+                    <input id="configColor" type="color" onchange="changeColor(this)"/>
+                </#if>
+            </div>
+            <#if membership.lvCode == "VIP4_YEAR" || membership.lvCode == "VIP4_MONTH">
+                <div style="margin: 1rem">
+                    <div style="margin-bottom: 10px;font-weight:bold;font-size: 18px">VIP至尊版专属权益:</div>
+                    <div style="margin-bottom: 10px;color:grey">部分效果无法使用下划线</div>
+                    <button class="rainbow" onclick="changeVipColor('rainbow')">彩虹效果</button>
+                    <button class="neon" onclick="changeVipColor('neon')">霓虹效果</button>
+                    <button class="fire" onclick="changeVipColor('fire')">火焰效果</button>
+                    <button class="ocean" onclick="changeVipColor('ocean')">海洋效果</button>
+                    <button class="forest" onclick="changeVipColor('forest')">森林效果</button>
+                    <button class="sunset" onclick="changeVipColor('sunset')">日落效果</button>
+                    <button class="metal" onclick="changeVipColor('metal')">金属效果</button>
+                    <button class="galaxy" onclick="changeVipColor('galaxy')">星空效果</button>
+                </div>
+            </#if>
+            <div>
+                <button class="btn" onclick="saveConfig()">保存配置</button>
+            </div>
         </div>
-        <#if membership.lvCode == "VIP4_YEAR" || membership.lvCode == "VIP4_MONTH">
-        <div style="margin: 1rem">
-            <div style="margin-bottom: 10px;font-weight:bold;font-size: 18px">VIP至尊版专属权益:</div>
-            <div style="margin-bottom: 10px;color:grey">部分效果无法使用下划线</div>
-            <button class="rainbow" onclick="changeVipColor('rainbow')">彩虹效果</button>
-            <button class="neon" onclick="changeVipColor('neon')">霓虹效果</button>
-            <button class="fire" onclick="changeVipColor('fire')">火焰效果</button>
-            <button class="ocean" onclick="changeVipColor('ocean')">海洋效果</button>
-            <button class="forest" onclick="changeVipColor('forest')">森林效果</button>
-            <button class="sunset" onclick="changeVipColor('sunset')">日落效果</button>
-            <button class="metal" onclick="changeVipColor('metal')">金属效果</button>
-            <button class="galaxy" onclick="changeVipColor('galaxy')">星空效果</button>
-        </div>
-        </#if>
-        <div>
-            <button class="btn" onclick="saveConfig()">保存配置</button>
-        </div>
-    </div>
     </#if>
 
     <section class="pricing">
