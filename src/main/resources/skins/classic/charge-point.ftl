@@ -134,6 +134,10 @@
                             <img src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=%E6%91%B8%E9%B1%BC%E6%B4%BE%E9%93%81%E7%B2%89&url=https://file.fishpi.cn/2021/12/ht3-b97ea102.jpg&backcolor=ee3a8c&fontcolor=ffffff" />
                             &nbsp;&nbsp;
                             <b style="line-height: 25px">1024 ❤️</b>
+                            <br>
+                            <img src="https://fishpi.cn/gen?ver=0.1&scale=0.79&txt=Premium%20Sponsor%20&url=https://file.fishpi.cn/2025/11/lovegif1762236700451-aea18b9a.gif&backcolor=ff69b4,ffff1c,00c3ff&fontcolor=ffffff&shadow=0.8&anime=3&way=left&fontway=left" />
+                            &nbsp;&nbsp;
+                            <b style="line-height: 25px">4096 ❤️</b>
                         </div>
                     </div>
                 </div>

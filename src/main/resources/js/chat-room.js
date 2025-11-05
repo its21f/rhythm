@@ -1959,7 +1959,11 @@ ${result.info.msg}
                 if (list !== undefined) {
                     for (let i = 0; i < list.length; i++) {
                         let m = list[i];
-                        newHTML += "<img title='" + m.name + " - " + m.description + "' src='" + Util.genMiniMetal(m.attr) + "'/>";
+                        if (m.name === "Premium Sponsor ") {
+                            newHTML += "<img title='" + m.name + " - " + m.description + "' src='" + Util.genMetal("Premium Sponsor ", m.attr) + "'/>";
+                        } else {
+                            newHTML += "<img title='" + m.name + " - " + m.description + "' src='" + Util.genMiniMetal(m.attr) + "'/>";
+                        }
                     }
                 }
             }
