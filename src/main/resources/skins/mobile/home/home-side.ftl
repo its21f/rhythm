@@ -210,6 +210,30 @@
     document.getElementById("onlineMinute").addEventListener("click", function () {
         window.location.href = "${servePath}/top/online";
     });
+    let user = ${user}
+    <#if user.membership??>
+    let membership = ${user.membership};
+    let userNameDom = document.querySelector('.user-name #userNicknameDom');
+    let userDom = document.querySelector('.user-name .ft-gray');
+    if (typeof membership.configJson == 'string') {
+        membership.configJson = JSON.parse(membership.configJson)
+    }
+    const targetDom = user.userNickname === '' ? userDom : userNameDom;
+    if (membership.configJson.bold) {
+        targetDom.style.fontWeight = 'bold';
+    }
+    if (membership.configJson.underline) {
+        targetDom.style.textDecoration = 'underline';
+    }
+    if (membership.configJson.color) {
+        if(membership.configJson.color.startsWith('#')){
+            targetDom.style.color = membership.configJson.color;
+        }else{
+            targetDom.classList.add(membership.configJson.color)
+        }
+    }
+
+    </#if>
 </script>
 
 <div id="reportDialog">

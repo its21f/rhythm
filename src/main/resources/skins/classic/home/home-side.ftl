@@ -219,7 +219,6 @@
         window.location.href = "${servePath}/top/online";
     });
     let user = ${user}
-    console.log(user)
     <#if user.membership??>
     let membership = ${user.membership};
     let userNameDom = document.querySelector('.user-name #userNicknameDom');
