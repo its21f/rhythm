@@ -235,7 +235,11 @@
         targetDom.style.textDecoration = 'underline';
     }
     if (membership.configJson.color) {
-        targetDom.style.color = membership.configJson.color;
+        if(membership.configJson.color.startsWith('#')){
+            targetDom.style.color = membership.configJson.color;
+        }else{
+            targetDom.classList.add(membership.configJson.color)
+        }
     }
 
     </#if>

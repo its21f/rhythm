@@ -1481,17 +1481,20 @@ border-bottom: none;
         console.log(222, vipUser)
         if (vipUser) {
             let uStyle = '';
+            let uClass = '';
             if (vipUser.configJson.bold) {
                 uStyle += 'font-weight: bold;'
             }
             if (vipUser.configJson.underline) {
                 uStyle += 'text-decoration: underline;'
             }
-            if (vipUser.configJson.color) {
+            if (vipUser.configJson.color.startsWith('#')) {
                 uStyle += 'color:' + vipUser.configJson.color + ';'
+            } else {
+                uClass = vipUser.configJson.color;
             }
-            console.log(333, uStyle)
-            return '<span class="ft-gray" style="' + uStyle + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
+
+            return '<span class="ft-gray ' + uClass + '" style="' + uStyle + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
 
         }
         console.log(444)

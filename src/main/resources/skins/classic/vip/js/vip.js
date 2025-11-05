@@ -126,7 +126,7 @@ function loadPageData() {
         html += `<div class="card">
             <h3>${vip.name}</h3>
             <p>限时特惠: ${vip.monthly.price} 积分/月</p>
-            <a href="#" class="btn ${membership.state == 1 ? 'disabled' : ''}" onclick="buyVip('${item}')">${membership.state == 1 ? '已是VIP' : '立即开通'}</a>
+            <button class="btn ${membership.state == 1 ? 'disabled' : ''}" onclick="buyVip('${item}')">${membership.state == 1 ? '已是VIP' : '立即开通'}</button>
         </div>`
 
         detailHtml += `<div class="pricing-card ${item === 'VIP2' ? 'popular' : ''}">
@@ -149,7 +149,7 @@ function loadPageData() {
                        ${vip.benefits.jointVip != null ? ' <li><i class="fas fa-check"></i> 联合会员</li>' : ''}
                     </ul>
                 </div>
-                <a href="#" class="btn ${membership.state == 1 ? 'disabled' : ''}" onclick="buyVip('${item}')">${membership.state == 1 ? '已是VIP' : '立即开通'}</a>
+                <button class="btn ${membership.state == 1 ? 'disabled' : ''}" onclick="buyVip('${item}')">${membership.state == 1 ? '已是VIP' : '立即开通'}</button>
             </div>`
     }
     vipCardGrid.innerHTML = html;
@@ -219,7 +219,11 @@ function checkVip() {
     console.log(user, membership);
     userNameItem.style.fontWeight = membership.configJson.bold ? 'bold' : 400;
     userNameItem.style.textDecoration = membership.configJson.underline ? 'underline' : 'none';
-    userNameItem.style.color = membership.configJson.color;
+    if (membership.configJson.color.startsWith('#')) {
+        userNameItem.style.color = membership.configJson.color;
+    } else {
+        userNameItem.classList = [membership.configJson.color]
+    }
 }
 
 function changeBold() {
@@ -236,6 +240,12 @@ function changeColor(e) {
     let color = e.value;
     membership.configJson.color = color;
     userNameItem.style.color = color;
+}
+
+function changeVipColor(color) {
+    membership.configJson.color = color;
+    userNameItem.style.color = 'rgba(0,0,0,0)';
+    userNameItem.classList = [color]
 }
 
 
