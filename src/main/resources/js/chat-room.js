@@ -1486,7 +1486,7 @@ border-bottom: none;
             if (bold) styleParts.push('font-weight: bold;');
             if (underline) styleParts.push('text-decoration: underline;');
             if (!lvCode.startsWith('VIP1') && color) {
-                if (color.startsWith('#')) {
+                if (color && color.startsWith('#')) {
                     styleParts.push(`color: ${color};`);
                 } else {
                     uClass = color;
