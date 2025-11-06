@@ -1485,12 +1485,10 @@ border-bottom: none;
             let uClass = '';
             if (bold) styleParts.push('font-weight: bold;');
             if (underline) styleParts.push('text-decoration: underline;');
-            if (!lvCode.startsWith('VIP1') && color) {
-                if (color && color.startsWith('#')) {
-                    styleParts.push(`color: ${color};`);
-                } else {
-                    uClass = color;
-                }
+            if (color && color.startsWith('#')) {
+                styleParts.push(`color: ${color};`);
+            } else {
+                uClass = color;
             }
             uStyle = styleParts.join('');
             return '<span class="ft-gray ' + uClass + '" style="' + uStyle + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
