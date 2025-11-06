@@ -223,7 +223,7 @@
     let membership = ${user.membership};
     let userNameDom = document.querySelector('.user-name #userNicknameDom');
     let userDom = document.querySelector('.user-name .ft-gray');
-    if (typeof membership.configJson == 'string') {
+    if (typeof membership.configJson == 'string' && membership.configJson != '') {
         membership.configJson = JSON.parse(membership.configJson)
     }
     const targetDom = user.userNickname === '' ? userDom : userNameDom;
@@ -234,9 +234,9 @@
         targetDom.style.textDecoration = 'underline';
     }
     if (membership.configJson.color) {
-        if(membership.configJson.color.startsWith('#')){
+        if (membership.configJson.color.startsWith('#')) {
             targetDom.style.color = membership.configJson.color;
-        }else{
+        } else {
             targetDom.classList.add(membership.configJson.color)
         }
     }

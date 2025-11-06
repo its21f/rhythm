@@ -1477,20 +1477,22 @@ border-bottom: none;
     setVipUserName: function (data, remark) {
         const vipUser = this.vipUserList.find(item => item.userId == data.userOId);
         if (vipUser && vipUser.configJson != "") {
+            const styleParts = [];
+            const { bold, underline, color } = vipUser.configJson;
+            const { lvCode } = vipUser;
+
             let uStyle = '';
             let uClass = '';
-            if (vipUser.configJson.bold) {
-                uStyle += 'font-weight: bold;'
+            if (bold) styleParts.push('font-weight: bold;');
+            if (underline) styleParts.push('text-decoration: underline;');
+            if (!lvCode.startsWith('VIP1') && color) {
+                if (color.startsWith('#')) {
+                    styleParts.push(`color: ${color};`);
+                } else {
+                    uClass = color;
+                }
             }
-            if (vipUser.configJson.underline) {
-                uStyle += 'text-decoration: underline;'
-            }
-            if (vipUser.configJson.color.startsWith('#')) {
-                uStyle += 'color:' + vipUser.configJson.color + ';'
-            } else {
-                uClass = vipUser.configJson.color;
-            }
-
+            uStyle = styleParts.join('');
             return '<span class="ft-gray ' + uClass + '" style="' + uStyle + '">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
 
         }
