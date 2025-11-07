@@ -1134,7 +1134,7 @@ public class ChatroomProcessor {
                                 toatlMoney = money;
                                 // 征税 VIP4免税
                                 if (notSVIP) {
-                                    collectTaxes = true;    
+                                    collectTaxes = true;
                                 }
                                 break;
                             case "average":
@@ -1618,6 +1618,12 @@ public class ChatroomProcessor {
             dataModel.put("level3Permitted", DataModelService.hasPermission(currentUser.optString(User.USER_ROLE), 3));
             // 通知标为已读
             notificationMgmtService.makeRead(currentUser.optString(Keys.OBJECT_ID), Notification.DATA_TYPE_C_CHAT_ROOM_AT);
+            try {
+                final org.json.JSONObject status = membershipQueryService.getStatusByUserId(currentUser.optString(Keys.OBJECT_ID));
+                dataModel.put("membership", status);
+            } catch (Exception e) {
+                dataModel.put("membership", new JSONObject());
+            }
         } else {
             dataModel.put(UserExt.CHAT_ROOM_PICTURE_STATUS, UserExt.USER_XXX_STATUS_C_ENABLED);
             dataModel.put("level3Permitted", false);

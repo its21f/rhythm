@@ -48,6 +48,12 @@ if (window.localStorage['catch-word-flag']) {
     catchWordFlag = true;
 }
 $('#catch-word').prop('checked', catchWordFlag);
+let isVip4 = false;
+try {
+    isVip4 = Label.membership.lvCode.startsWith("VIP4");
+} catch (e) {
+    isVip4 = false;
+}
 var ChatRoom = {
     init: function () {
         if (window.localStorage['robot_list'] == undefined) {
@@ -281,6 +287,7 @@ var ChatRoom = {
 
             var onelineUsers = new Map();
             $("#redPacketType").on('change', function () {
+
                 let type = $("#redPacketType").val();
                 if (type === 'specify') {
                     $('#who').removeAttr("style");
@@ -324,8 +331,8 @@ var ChatRoom = {
                     $("#redPacketCount").val("1");
                     $("#redPacketMoney").val("256")
                     $('#redPacketCount').attr("readOnly", "true");
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
-                }else{
+                    $("#redPacketAmount").text(ChatRoom.redPacketCheckVip4($("#redPacketMoney").val()))
+                } else {
                     $("#redPacketMoney").val("32")
                 }
                 if (type === 'dice') {
@@ -349,7 +356,7 @@ var ChatRoom = {
                 $("#redPacketAmount").text($("#redPacketMoney").val());
                 let type = $("#redPacketType").val();
                 if (type === 'rockPaperScissors') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
+                    $("#redPacketAmount").text(ChatRoom.redPacketCheckVip4($("#redPacketMoney").val()));
                 }
             });
 
@@ -368,7 +375,7 @@ var ChatRoom = {
                     $("#redPacketAmount").text($("#redPacketMoney").val());
                     $("#redPacketMsg").val("玩的就是心跳！");
                 } else if (type === 'rockPaperScissors') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
+                    $("#redPacketAmount").text(ChatRoom.redPacketCheckVip4($("#redPacketMoney").val()));
                 }
             });
 
@@ -1481,8 +1488,8 @@ border-bottom: none;
         const vipUser = this.vipUserList.find(item => item.userId == data.userOId);
         if (vipUser && vipUser.configJson != "") {
             const styleParts = [];
-            const { bold, underline, color } = vipUser.configJson;
-            const { lvCode } = vipUser;
+            const {bold, underline, color} = vipUser.configJson;
+            const {lvCode} = vipUser;
 
             let uStyle = '';
             let uClass = '';
@@ -1498,6 +1505,12 @@ border-bottom: none;
 
         }
         return '    <span class="ft-gray">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
+    },
+    redPacketCheckVip4: function(number){
+        if(isVip4){
+            return number + "(VIP4已减免猜拳红包税) "
+        }
+        return number + "(含猜拳红包税 15%，实际红包 " + Math.floor(number * 0.15) + " 积分)购买VIP4可免税 "
     },
     /**
      * 处理消息
