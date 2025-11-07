@@ -1219,6 +1219,8 @@ public class ChatroomProcessor {
                             if (length > 1) {
                                 tax *= length;
                             }
+                        }else if(StringUtils.equals(type, "average")){
+                                tax *= count;
                         }
                         pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS,
                                 userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
