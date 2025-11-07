@@ -145,7 +145,20 @@
     var user = ${user};
     var membership = ${membership};
     var Label = {
-        servePath:"",
+        servePath: "${servePath}",
+        makeAsReadLabel: '${makeAsReadLabel}',
+        notificationCommentedLabel: '${notificationCommentedLabel}',
+        notificationReplyLabel: '${notificationReplyLabel}',
+        notificationAtLabel: '${notificationAtLabel}',
+        notificationFollowingLabel: '${notificationFollowingLabel}',
+        pointLabel: '${pointLabel}',
+        sameCityLabel: '${sameCityLabel}',
+        systemLabel: '${systemLabel}',
+        newFollowerLabel: '${newFollowerLabel}',
+        <#if isLoggedIn>
+        currentUserName: '${currentUser.userName}',
+        </#if>
+
     }
 </script>
 <script src="${staticServePath}/skins/classic/vip/js/vip.js?${staticResourceVersion}"></script>

@@ -170,5 +170,23 @@
 </div>
 <#include "../footer.ftl">
 <script src="${staticServePath}/skins/classic/vip/js/admin.js?${staticResourceVersion}"></script>
+<script>
+    var Label = {
+        servePath: "${servePath}",
+        makeAsReadLabel: '${makeAsReadLabel}',
+        notificationCommentedLabel: '${notificationCommentedLabel}',
+        notificationReplyLabel: '${notificationReplyLabel}',
+        notificationAtLabel: '${notificationAtLabel}',
+        notificationFollowingLabel: '${notificationFollowingLabel}',
+        pointLabel: '${pointLabel}',
+        sameCityLabel: '${sameCityLabel}',
+        systemLabel: '${systemLabel}',
+        newFollowerLabel: '${newFollowerLabel}',
+        <#if isLoggedIn>
+        currentUserName: '${currentUser.userName}',
+        </#if>
+
+    }
+</script>
 </body>
 </html>
