@@ -144,6 +144,9 @@
 <script>
     var user = ${user};
     var membership = ${membership};
+    var Label = {
+        servePath:"",
+    }
 </script>
 <script src="${staticServePath}/skins/classic/vip/js/vip.js?${staticResourceVersion}"></script>
 </body>
