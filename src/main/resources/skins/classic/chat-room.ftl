@@ -239,6 +239,7 @@
 <script>
     Label.uploadLabel = "${uploadLabel}";
     Label.vipUsers = ${vipUsers};
+    Label.membership = ${membership};
 </script>
 <script src="${staticServePath}/js/lib/echarts.min.js"></script>
 <script src="${staticServePath}/js/lib/jquery/file-upload-9.10.1/jquery.fileupload.min.js"></script>

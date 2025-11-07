@@ -48,6 +48,12 @@ if (window.localStorage['catch-word-flag']) {
     catchWordFlag = true;
 }
 $('#catch-word').prop('checked', catchWordFlag);
+let isVip4 = false;
+try {
+    isVip4 = Label.membership.lvCode.startsWith("VIP4");
+} catch (e) {
+    isVip4 = false;
+}
 var ChatRoom = {
     init: function () {
         if (window.localStorage['robot_list'] == undefined) {
@@ -226,7 +232,7 @@ var ChatRoom = {
                 "</label>\n" +
                 "<div class=\"fn-hr5\"></div>\n" +
                 "<div class=\"fn__flex\" style=\"margin-top: 15px\">\n" +
-                "  <div id='totalAmount' class=\"fn__flex-1 fn__flex-center\" style=\"text-align: left;\">总计：<span id=\"redPacketAmount\">32</span> 积分</div>\n" +
+                "  <div id='totalAmount' class=\"fn__flex-1 fn__flex-center\" style=\"text-align: left;\">总计：<span id=\"redPacketAmount\">"+ChatRoom.redPacketCheckVip4(32,'random')+"</span></div>\n" +
                 "  <button class=\"btn btn--confirm\" id=\"redPacketConfirm\">发送</button>\n" +
                 "</div>\n" +
                 "</div>" +
@@ -234,6 +240,8 @@ var ChatRoom = {
 
             var UserSelectedList = [];
             var SelectedPanelTimeout = 0;
+            // 这里修复打开后红包个数会继承上次的
+            $("#redPacketCount").val("1")
             $("#userInput").on('focus input', function () {
                 var inputName = $("#userInput").val().toUpperCase();
 
@@ -261,7 +269,8 @@ var ChatRoom = {
                             userInfos.push(onelineUsers.get(UserSelectedList[index]))
                         }
                         $("#recivers").html("");
-                        $("#redPacketCount").val(userInfos.length);
+                        // 这里修复jq直接设置val不会触发input事件的bug
+                        $("#redPacketCount").val(userInfos.length).trigger("input");
                         for (var userInfo in userInfos) {
                             $("#recivers").append("<a target=\"_blank\" data-name=\"" + userInfos[userInfo].userName + "\"\n" +
                                 "href=\"" + userInfos[userInfo].homePage + "\">\n" +
@@ -284,6 +293,8 @@ var ChatRoom = {
                 let type = $("#redPacketType").val();
                 if (type === 'specify') {
                     $('#who').removeAttr("style");
+                    // 这里修复从猜拳红包切换后 猜拳选项依然在的bug
+                    $('#gesture').css('display', 'none')
                     $("#redPacketCount").val("1");
                     $('#redPacketCount').attr("readOnly", "true");
                     $.ajax({
@@ -324,8 +335,7 @@ var ChatRoom = {
                     $("#redPacketCount").val("1");
                     $("#redPacketMoney").val("256")
                     $('#redPacketCount').attr("readOnly", "true");
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
-                }else{
+                } else {
                     $("#redPacketMoney").val("32")
                 }
                 if (type === 'dice') {
@@ -334,6 +344,7 @@ var ChatRoom = {
                     $("#countx").text("开盘人数");
                     $("#redPacketCount").val("3");
                 }
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4($("#redPacketMoney").val(),type))
             });
 
             $("#redPacketMoney").unbind();
@@ -346,51 +357,56 @@ var ChatRoom = {
                 if ($("#redPacketMoney").val() < 32) {
                     $("#redPacketMoney").val("32");
                 }
-                $("#redPacketAmount").text($("#redPacketMoney").val());
                 let type = $("#redPacketType").val();
-                if (type === 'rockPaperScissors') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
+                let number = $("#redPacketMoney").val();
+                if (type === 'average' || type === 'specify') {
+                    number = $("#redPacketMoney").val() * $("#redPacketCount").val();
                 }
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number,type))
             });
 
             $('#redPacketMoney,#redPacketCount').bind('input propertychange', function () {
                 let type = $("#redPacketType").val();
+                let number = 0;
                 if (type === 'average') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() * $("#redPacketCount").val());
+                    number = $("#redPacketMoney").val() * $("#redPacketCount").val();
                     $("#redPacketMsg").val("平分红包，人人有份！");
                 } else if (type === 'random') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val());
+                    number = $("#redPacketMoney").val();
                     $("#redPacketMsg").val("摸鱼者，事竟成！");
                 } else if (type === 'specify') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() * $("#redPacketCount").val());
+                    number = $("#redPacketMoney").val() * $("#redPacketCount").val();
                     $("#redPacketMsg").val("试试看，这是给你的红包吗？");
                 } else if (type === 'heartbeat') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val());
+                    number = $("#redPacketMoney").val();
                     $("#redPacketMsg").val("玩的就是心跳！");
                 } else if (type === 'rockPaperScissors') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
+                    number = $("#redPacketMoney").val();
                 }
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number,type))
             });
 
             $("#redPacketType").on('change', function () {
                 let type = $("#redPacketType").val();
+                let number = 0;
                 if (type === 'average') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() * $("#redPacketCount").val());
+                    number = $("#redPacketMoney").val() * $("#redPacketCount").val();
                     $("#redPacketMsg").val("平分红包，人人有份！");
                 } else if (type === 'random') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val());
+                    number = $("#redPacketMoney").val();
                     $("#redPacketMsg").val("摸鱼者，事竟成！");
                 } else if (type === 'specify') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() * $("#redPacketCount").val());
+                    number = $("#redPacketMoney").val() * $("#redPacketCount").val();
                     $("#redPacketMsg").val("试试看，这是给你的红包吗？");
                 } else if (type === 'heartbeat') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val());
+                    number = $("#redPacketMoney").val();
                     $("#redPacketMsg").val("玩的就是心跳！");
                 } else if (type === 'rockPaperScissors') {
                     $("#redPacketMsg").val("石头剪刀布！");
                 } else if (type === 'dice') {
                     $("#redPacketMsg").val("买定离手！");
                 }
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number,type))
             });
 
             $("#redPacketCount").on('change', function () {
@@ -1481,8 +1497,8 @@ border-bottom: none;
         const vipUser = this.vipUserList.find(item => item.userId == data.userOId);
         if (vipUser && vipUser.configJson != "") {
             const styleParts = [];
-            const { bold, underline, color } = vipUser.configJson;
-            const { lvCode } = vipUser;
+            const {bold, underline, color} = vipUser.configJson;
+            const {lvCode} = vipUser;
 
             let uStyle = '';
             let uClass = '';
@@ -1498,6 +1514,35 @@ border-bottom: none;
 
         }
         return '    <span class="ft-gray">' + (remark != null ? (remark + '-') : '') + data.userNickname + '</span>&nbsp;\n'
+    },
+    redPacketCheckVip4: function(number,type){
+        // 防止number为0 导致显示错误
+        if(number == 0) number = $("#redPacketMoney").val();
+
+        if(isVip4){
+            return number + "积分(VIP4已减免红包税)"
+        }
+        let msg = "";
+        let count = $("#redPacketCount").val();
+        let point = $("#redPacketMoney").val();
+        let endPoint = 0;
+        switch(type){
+            case 'specify':
+                endPoint = (point  - (Math.ceil(point * 0.01))) * count;
+                msg =  number + "积分<br><span style='font-size: 12px;color: grey'>(每个红包税1%,实际红包 " + endPoint + " 积分,购买VIP4可免税)</span>";
+                break;
+            case 'average':
+                endPoint = (point  - (Math.ceil(point * 0.03))) * count;
+                msg =  number + "积分<br><span style='font-size: 12px;color: grey'>(每个红包税3%,实际红包 " + endPoint + " 积分,购买VIP4可免税)</span>";
+                break;
+            case 'rockPaperScissors':
+                msg =  number + "积分<br><span style='font-size: 12px;color: grey'>(含红包税 15%,实际红包 " + Math.floor(number * 0.85) + " 积分,购买VIP4可免税)</span>";
+                break;
+            default:
+                msg =  number + "积分<br><span style='font-size: 12px;color: grey'>(含红包税 3%,实际红包 " + Math.floor(number * 0.97) + " 积分,购买VIP4可免税)</span>";
+                break;
+        }
+        return msg;
     },
     /**
      * 处理消息

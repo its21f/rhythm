@@ -37,6 +37,7 @@ import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.User;
 import org.b3log.latke.repository.*;
+import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Crypts;
 import org.b3log.symphony.model.*;
 import org.b3log.symphony.processor.bot.ChatRoomBot;
@@ -1051,9 +1052,19 @@ public class ChatroomProcessor {
                 LOGGER.log(Level.INFO, "Sent red packet [content={}], userName={}]", content, userName);
                 // 是否收税
                 Boolean collectTaxes = false;
-                // 税率
-                BigDecimal taxRate = new BigDecimal("0.3");
+                // 基础税率 猜拳
+                BigDecimal taxRate = new BigDecimal("0.15");
                 try {
+                    // 获取用户会员状态
+                    JSONObject memberShip = membershipQueryService.getStatusByUserId(userId);
+                    // 是否是尊贵的会员
+                    boolean notSVIP = true;
+                    if (Objects.nonNull(memberShip) && memberShip.getInt(Membership.STATE) != 0) {
+                        if (memberShip.optString(Membership.LV_CODE).contains("VIP4")) {
+                            // 免税
+                            notSVIP = false;
+                        }
+                    }
                     String redpacketString = content.replaceAll("^\\[redpacket\\]", "").replaceAll("\\[/redpacket\\]$", "");
                     JSONObject redpacket = new JSONObject(redpacketString);
                     String type = redpacket.optString("type");
@@ -1122,11 +1133,18 @@ public class ChatroomProcessor {
                                 }
                                 count = 1;
                                 toatlMoney = money;
-                                // 征税
-                                collectTaxes = true;
+                                // 征税 VIP4免税
+                                if (notSVIP) {
+                                    collectTaxes = true;
+                                }
                                 break;
                             case "average":
                                 toatlMoney = money * count;
+                                if (notSVIP) {
+                                    collectTaxes = true;
+                                    // 重新设置税点
+                                    taxRate = new BigDecimal("0.03");
+                                }
                                 break;
                             case "specify":
                                 if (StringUtils.isNotBlank(recivers)) {
@@ -1138,6 +1156,11 @@ public class ChatroomProcessor {
                                     }
                                     if (length > 0) {
                                         toatlMoney = money * length;
+                                        if (notSVIP) {
+                                            collectTaxes = true;
+                                            // 重新设置税点
+                                            taxRate = new BigDecimal("0.01");
+                                        }
                                     } else {
                                         context.renderJSON(StatusCodes.ERR).renderMsg("专属红包需要指定用户！");
                                         return;
@@ -1150,6 +1173,11 @@ public class ChatroomProcessor {
                             case "random":
                             case "heartbeat":
                             default:
+                                if (notSVIP) {
+                                    collectTaxes = true;
+                                    // 重新设置税点
+                                    taxRate = new BigDecimal("0.03");
+                                }
                                 toatlMoney = money;
                         }
                         final boolean succ = null != pointtransferMgmtService.transfer(userId, Pointtransfer.ID_C_SYS,
@@ -1179,11 +1207,26 @@ public class ChatroomProcessor {
                     // 红包特殊标识，堵漏洞
                     redPacketJSON.put("msgType", "redPacket");
 
-                    // 税给admin
-                    int tax = money - (BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue());
-                    pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS, userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
-                            Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, tax, userId, System.currentTimeMillis(), "猜拳红包税收，纳税人：" + userName);
-
+                    // 税给admin V4没有税
+                    if (notSVIP) {
+                        int tax = money - BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue();
+                        if (tax < 1) {
+                            tax = 1;
+                        }
+                        if (StringUtils.isNotBlank(recivers)) {
+                            final JSONArray reciverArray = new JSONArray(recivers);
+                            final int length = reciverArray.length();
+                            if (length > 1) {
+                                tax *= length;
+                            }else if(StringUtils.equals(type, "average")){
+                                tax *= count;
+                            }
+                        }
+                        pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS,
+                                userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
+                                Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, tax, userId, System.currentTimeMillis(),
+                                type + " 红包税收，纳税人：" + userName);
+                    }
                     // 写入数据库
                     final Transaction transaction = chatRoomRepository.beginTransaction();
                     try {
@@ -1201,11 +1244,11 @@ public class ChatroomProcessor {
                             break;
                         case "heartbeat":
                             // 预分配红包
-                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateHeartbeatRedPacket(msg.optString("oId"), userId, money, count, 3));
+                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateHeartbeatRedPacket(msg.optString("oId"), userId, collectTaxes ? BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue() : money, count, 3));
                             break;
                         case "random":
                             // 预分配红包
-                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateRedPacket(msg.optString("oId"), userId, money, count, 2));
+                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateRedPacket(msg.optString("oId"), userId, collectTaxes ? BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue() : money, count, 2));
                             break;
                         case "specify":
                             // 发通知
@@ -1593,6 +1636,12 @@ public class ChatroomProcessor {
             dataModel.put("level3Permitted", DataModelService.hasPermission(currentUser.optString(User.USER_ROLE), 3));
             // 通知标为已读
             notificationMgmtService.makeRead(currentUser.optString(Keys.OBJECT_ID), Notification.DATA_TYPE_C_CHAT_ROOM_AT);
+            try {
+                final org.json.JSONObject status = membershipQueryService.getStatusByUserId(currentUser.optString(Keys.OBJECT_ID));
+                dataModel.put("membership", status);
+            } catch (Exception e) {
+                dataModel.put("membership", new JSONObject());
+            }
         } else {
             dataModel.put(UserExt.CHAT_ROOM_PICTURE_STATUS, UserExt.USER_XXX_STATUS_C_ENABLED);
             dataModel.put("level3Permitted", false);
