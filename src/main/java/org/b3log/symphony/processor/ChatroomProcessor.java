@@ -1172,6 +1172,11 @@ public class ChatroomProcessor {
                             case "random":
                             case "heartbeat":
                             default:
+                                if (notSVIP) {
+                                    collectTaxes = true;
+                                    // 重新设置税点
+                                    taxRate = new BigDecimal("0.03");
+                                }
                                 toatlMoney = money;
                         }
                         final boolean succ = null != pointtransferMgmtService.transfer(userId, Pointtransfer.ID_C_SYS,
