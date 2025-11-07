@@ -1052,7 +1052,7 @@ public class ChatroomProcessor {
                 // 是否收税
                 Boolean collectTaxes = false;
                 // 税率
-                BigDecimal taxRate = new BigDecimal("0.1");
+                BigDecimal taxRate = new BigDecimal("0.3");
                 try {
                     String redpacketString = content.replaceAll("^\\[redpacket\\]", "").replaceAll("\\[/redpacket\\]$", "");
                     JSONObject redpacket = new JSONObject(redpacketString);
@@ -1081,8 +1081,8 @@ public class ChatroomProcessor {
                             context.renderJSON(StatusCodes.ERR).renderMsg("红包发送失败！红包最大限额为" + 10240 + "！");
                             return;
                         }
-                        if (money < 32) {
-                            context.renderJSON(StatusCodes.ERR).renderMsg("红包最小金额为32！");
+                        if (money < (type.equals("rockPaperScissors") ? 256 : 32)) {
+                            context.renderJSON(StatusCodes.ERR).renderMsg(type.equals("rockPaperScissors") ? "红包最小金额为256！" : "红包最小金额为32！");
                             return;
                         }
                         if (count < 1) {

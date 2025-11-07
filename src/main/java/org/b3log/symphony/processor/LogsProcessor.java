@@ -18,6 +18,7 @@
  */
 package org.b3log.symphony.processor;
 
+import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.http.Dispatcher;
 import org.b3log.latke.http.RequestContext;
@@ -25,16 +26,24 @@ import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
 import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
+import org.b3log.latke.repository.CompositeFilter;
+import org.b3log.latke.repository.CompositeFilterOperator;
+import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.repository.PropertyFilter;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.SortDirection;
+import org.b3log.symphony.model.Article;
+import org.b3log.symphony.model.Tag;
 import org.b3log.symphony.processor.middleware.LoginCheckMidware;
 import org.b3log.symphony.repository.LogsRepository;
 import org.b3log.symphony.service.DataModelService;
 import org.b3log.symphony.util.StatusCodes;
 import org.json.JSONObject;
 
+import com.alipay.service.schema.util.StringUtil;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,9 +74,11 @@ public class LogsProcessor {
     public void moreLogs(final RequestContext context) {
         int page = 1;
         int pageSize = 20;
+        String key3 = "";
         try {
             page = Integer.parseInt(context.param("page"));
             pageSize = Integer.parseInt(context.param("pageSize"));
+            key3 = context.param("key3");
         } catch (Exception ignored) {
         }
         try {
@@ -75,6 +86,12 @@ public class LogsProcessor {
                     .setFilter(new PropertyFilter("public", FilterOperator.EQUAL, true))
                     .addSort(Keys.OBJECT_ID, SortDirection.DESCENDING)
                     .setPage(page, pageSize);
+            if (StringUtils.isNotBlank(key3)) {
+                final List<Filter> filters = new ArrayList<>();
+                filters.add(new PropertyFilter("public", FilterOperator.EQUAL, true));
+                filters.add(new PropertyFilter("key3", FilterOperator.EQUAL, key3));
+                query.setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
+            }
             List<JSONObject> list = logsRepository.getList(query);
             context.renderJSON(StatusCodes.SUCC);
             context.renderData(list);

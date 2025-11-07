@@ -32,12 +32,13 @@
             <div class="wrapper">
                 <div class="content">
                     <h1>管理日志公开</h1>
-                    <i class="ft-gray">摸鱼派管理组公平、公正、公开，感谢大家的监督。</i>
+                    <i class="ft-gray">摸鱼派管理组公平、公正、公开，感谢大家的监督。(点击日志类型可以筛选)</i>
                     <br><br>
                     <div id="logsContent">
                     </div>
                     <br>
                     <div style="color: #888f91; cursor: pointer" onclick="Logs.more()" id="loadMoreBtn">加载更多</div>
+                    <div style="color: #888f91; cursor: pointer;margin-top: 1rem" onclick="Logs.reset();" id="loadMoreBtn">重置筛选</div>
                 </div>
                 <div class="side">
                     <#include "side.ftl">

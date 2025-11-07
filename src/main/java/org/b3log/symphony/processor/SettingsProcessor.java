@@ -55,6 +55,7 @@ import org.b3log.symphony.util.*;
 import org.json.JSONObject;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -1195,8 +1196,12 @@ public class SettingsProcessor {
         context.renderJSON(ret);
 
         final JSONObject requestJSONObject = context.requestJSON();
-
-        final int amount = requestJSONObject.optInt(Common.AMOUNT);
+        // 手续费
+        BigDecimal feeRate = new BigDecimal("0.01");
+        int amountInt = requestJSONObject.optInt(Common.AMOUNT);
+        int fee = amountInt < 100 ? 1 : BigDecimal.valueOf(amountInt).multiply(feeRate).intValue();
+        // 最后金额
+        final int amount = amountInt - fee;
         final JSONObject toUser = (JSONObject) context.attr(Common.TO_USER);
         JSONObject currentUser = Sessions.getUser();
         try {
@@ -1217,6 +1222,9 @@ public class SettingsProcessor {
 
         final String transferId = pointtransferMgmtService.transfer(fromId, toId,
                 Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, amount, toId, System.currentTimeMillis(), memo);
+        // 手续费给admin
+        pointtransferMgmtService.transfer(fromId, userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
+                Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, fee, fromId, System.currentTimeMillis(), "转账手续费，纳税人：" + fromUsername);
         final boolean succ = null != transferId;
         if (succ) {
             ret.put(Keys.CODE, StatusCodes.SUCC);

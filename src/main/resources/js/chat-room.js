@@ -322,8 +322,11 @@ var ChatRoom = {
                 if (type === 'rockPaperScissors') {
                     $('#gesture').removeAttr("style");
                     $("#redPacketCount").val("1");
+                    $("#redPacketMoney").val("256")
                     $('#redPacketCount').attr("readOnly", "true");
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 10%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.9) + " 积分) ");
+                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
+                }else{
+                    $("#redPacketMoney").val("32")
                 }
                 if (type === 'dice') {
                     $('#redPacketMoneyLabel').css('display', 'none')
@@ -346,7 +349,7 @@ var ChatRoom = {
                 $("#redPacketAmount").text($("#redPacketMoney").val());
                 let type = $("#redPacketType").val();
                 if (type === 'rockPaperScissors') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 10%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.9) + " 积分) ");
+                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
                 }
             });
 
@@ -365,7 +368,7 @@ var ChatRoom = {
                     $("#redPacketAmount").text($("#redPacketMoney").val());
                     $("#redPacketMsg").val("玩的就是心跳！");
                 } else if (type === 'rockPaperScissors') {
-                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 10%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.9) + " 积分) ");
+                    $("#redPacketAmount").text($("#redPacketMoney").val() + " (含猜拳红包税 30%，实际红包 " + Math.floor($("#redPacketMoney").val() * 0.7) + " 积分) ");
                 }
             });
 
