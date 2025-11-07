@@ -1231,11 +1231,11 @@ public class ChatroomProcessor {
                             break;
                         case "heartbeat":
                             // 预分配红包
-                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateHeartbeatRedPacket(msg.optString("oId"), userId, money, count, 3));
+                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateHeartbeatRedPacket(msg.optString("oId"), userId, collectTaxes ? BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue() : money, count, 3));
                             break;
                         case "random":
                             // 预分配红包
-                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateRedPacket(msg.optString("oId"), userId, money, count, 2));
+                            RED_PACKET_BUCKET.put(msg.optString("oId"), allocateRedPacket(msg.optString("oId"), userId, collectTaxes ? BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue() : money, count, 2));
                             break;
                         case "specify":
                             // 发通知
