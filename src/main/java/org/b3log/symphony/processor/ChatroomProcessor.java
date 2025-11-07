@@ -1181,7 +1181,7 @@ public class ChatroomProcessor {
                         }
                         final boolean succ = null != pointtransferMgmtService.transfer(userId, Pointtransfer.ID_C_SYS,
                                 Pointtransfer.TRANSFER_TYPE_C_ACTIVITY_SEND_RED_PACKET,
-                                collectTaxes ? BigDecimal.valueOf(toatlMoney).multiply(BigDecimal.ONE.subtract(taxRate)).intValue() : toatlMoney, "", System.currentTimeMillis(), collectTaxes ? "collectTaxes" : "");
+                                toatlMoney, "", System.currentTimeMillis(), collectTaxes ? "collectTaxes" : "");
                         if (!succ) {
                             context.renderJSON(StatusCodes.ERR).renderMsg("少年，你的积分不足！");
                             return;
