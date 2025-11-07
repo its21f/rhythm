@@ -142,11 +142,13 @@ function loadPageData() {
                     <ul class="pricing-features">
                        ${vip.benefits.bold != null ? ' <li><i class="fas fa-check"></i> 昵称加粗</li>' : ''}
                        ${vip.benefits.underline != null ? ' <li><i class="fas fa-check"></i> 昵称下划线</li>' : ''}
-                       ${vip.benefits.color != null ? ' <li><i class="fas fa-check"></i> 昵称颜色</li>' : ''}
+                       ${vip.benefits.color != null ? ' <li><i class="fas fa-check"></i> ' + (item === "VIP4" ? "昵称渐变" : "昵称颜色") + '</li>' : ''}
                        ${vip.benefits.autoCheckin != null ? ' <li><i class="fas fa-check"></i> 自动签到(年付)</li>' : ''}
                        ${vip.benefits.checkinCard != null ? ' <li><i class="fas fa-check"></i> 免签卡(年付): ' + vip.benefits.checkinCard + '张</li>' : ''}
                        ${vip.benefits.metal != null ? ' <li><i class="fas fa-check"></i> DIY动态勋章</li>' : ''}
                        ${vip.benefits.jointVip != null ? ' <li><i class="fas fa-check"></i> 联合会员</li>' : ''}
+                       
+                       ${item === 'VIP4' ? ' <li><i class="fas fa-check"></i> 全站积分交易免税</li>' : ''}
                     </ul>
                 </div>
                 <button class="btn ${membership.state == 1 ? 'disabled' : ''}" onclick="buyVip('${item}')">${membership.state == 1 ? '已是VIP' : '立即开通'}</button>
