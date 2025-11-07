@@ -1054,6 +1054,16 @@ public class ChatroomProcessor {
                 // 税率
                 BigDecimal taxRate = new BigDecimal("0.3");
                 try {
+                    // 获取用户会员状态
+                    JSONObject memberShip = membershipQueryService.getStatusByUserId(userId);
+                    // 是否是尊贵的会员
+                    boolean isSVIP = false;
+                    if (Objects.nonNull(memberShip) && memberShip.getInt(Membership.STATE) != 0) {
+                        if (memberShip.optString(Membership.LV_CODE).contains("VIP4")) {
+                            // 免税
+                            isSVIP = true;
+                        }
+                    }
                     String redpacketString = content.replaceAll("^\\[redpacket\\]", "").replaceAll("\\[/redpacket\\]$", "");
                     JSONObject redpacket = new JSONObject(redpacketString);
                     String type = redpacket.optString("type");
@@ -1122,8 +1132,10 @@ public class ChatroomProcessor {
                                 }
                                 count = 1;
                                 toatlMoney = money;
-                                // 征税
-                                collectTaxes = true;
+                                // 征税 VIP4免税
+                                if (!isSVIP) {
+                                    collectTaxes = true;    
+                                }
                                 break;
                             case "average":
                                 toatlMoney = money * count;
@@ -1179,11 +1191,14 @@ public class ChatroomProcessor {
                     // 红包特殊标识，堵漏洞
                     redPacketJSON.put("msgType", "redPacket");
 
-                    // 税给admin
-                    int tax = money - (BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue());
-                    pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS, userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
-                            Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, tax, userId, System.currentTimeMillis(), "猜拳红包税收，纳税人：" + userName);
-
+                    // 税给admin V4没有税
+                    if (!isSVIP) {
+                        int tax = money - (BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue());
+                        pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS,
+                                userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
+                                Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, tax, userId, System.currentTimeMillis(),
+                                "猜拳红包税收，纳税人：" + userName);
+                    }
                     // 写入数据库
                     final Transaction transaction = chatRoomRepository.beginTransaction();
                     try {

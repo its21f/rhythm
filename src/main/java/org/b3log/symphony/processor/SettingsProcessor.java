@@ -1197,7 +1197,7 @@ public class SettingsProcessor {
 
         final JSONObject requestJSONObject = context.requestJSON();
         // 手续费
-        BigDecimal feeRate = new BigDecimal("0.01");
+        BigDecimal feeRate = new BigDecimal("0.1");
         int amountInt = requestJSONObject.optInt(Common.AMOUNT);
         int fee = amountInt < 100 ? 1 : BigDecimal.valueOf(amountInt).multiply(feeRate).intValue();
         // 最后金额
