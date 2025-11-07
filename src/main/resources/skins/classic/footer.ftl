@@ -66,9 +66,6 @@
             </div>
             <div class="fn-clear ft-smaller">
                 <div style="margin-top: 5px; font-weight: 500">探索</div>
-                <div class="ft-smaller fn-right">
-                    <a href="https://ipw.cn/ipv6webcheck/?site=fishpi.cn" target="_blank" title="本站支持IPv6访问"><img src="https://static.ipw.cn/icon/ipv6-certified-s1.svg" alt="本站支持IPv6访问" style="display: inline-block; vertical-align: middle; width: 85px; height: 36px;"></a><br>
-                </div>
                 <div>
                     <a href="https://github.com/orgs/FishPiOffical/repositories" target="_blank">摸鱼派开源项目</a><br>
                     <a href="${servePath}/download">摸鱼派客户端</a>&nbsp;&nbsp;
@@ -78,7 +75,7 @@
                         <a href="https://fishpi.cn/article/1638189205758" target="_blank" title="IntelliJ IDEA插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-idea"></use></svg></a>&nbsp;
                         <a href="https://fishpi.cn/article/1639648815789" target="_blank" title="Chrome 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-chrome"></use></svg></a>&nbsp;
                         <a href="https://fishpi.cn/article/1745833503658" target="_blank" title="安卓 APK 应用"><svg style="vertical-align: -2px;"><use xlink:href="#ic-apk"></use></svg></a>&nbsp;
-                        <a href="https://zhuanlan.zhihu.com/p/445372463" target="_blank" title="VSCode 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-vscode"></use></svg></a>&nbsp;
+                        <a href="https://fishpi.cn/article/1642231999994" target="_blank" title="VSCode 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-vscode"></use></svg></a>&nbsp;
                         <a href="https://fishpi.cn/article/1641135630423" target="_blank" title="Python 客户端"><svg style="vertical-align: -2px;"><use xlink:href="#ic-python"></use></svg></a>&nbsp;
                         <a href="https://fishpi.cn/article/1641661864119" target="_blank" title="Golang 客户端"><svg style="vertical-align: -2px;"><use xlink:href="#ic-golang"></use></svg></a>
                         <a href="https://fishpi.cn/article/1748939764736" target="_blank" title="uTools 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-utools"></use></svg></a>
