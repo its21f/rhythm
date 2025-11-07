@@ -27,10 +27,6 @@
         </div>
         <br>
         <div>
-            <a href="https://ipw.cn/ipv6webcheck/?site=fishpi.cn" title="本站支持IPv6访问" target='_blank'><img style='display:inline-block;vertical-align:middle' alt="本站支持IPv6访问" src="https://static.ipw.cn/icon/ipv6-s1.svg"></a>
-        </div>
-        <br>
-        <div>
             摸鱼好站
         </div>
         <div>
@@ -57,7 +53,7 @@
                 <a href="https://fishpi.cn/article/1638189205758" target="_blank" title="IntelliJ IDEA插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-idea"></use></svg></a>&nbsp;
                 <a href="https://fishpi.cn/article/1639648815789" target="_blank" title="Chrome 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-chrome"></use></svg></a>&nbsp;
                 <a href="https://fishpi.cn/article/1745833503658" target="_blank" title="安卓 APK 应用"><svg style="vertical-align: -2px;"><use xlink:href="#ic-apk"></use></svg></a>&nbsp;
-                <a href="https://zhuanlan.zhihu.com/p/445372463" target="_blank" title="VSCode 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-vscode"></use></svg></a>&nbsp;
+                <a href="https://fishpi.cn/article/1642231999994" target="_blank" title="VSCode 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-vscode"></use></svg></a>&nbsp;
                 <a href="https://fishpi.cn/article/1641135630423" target="_blank" title="Python 客户端"><svg style="vertical-align: -2px;"><use xlink:href="#ic-python"></use></svg></a>&nbsp;
                 <a href="https://fishpi.cn/article/1641661864119" target="_blank" title="Golang 客户端"><svg style="vertical-align: -2px;"><use xlink:href="#ic-golang"></use></svg></a>
                 <a href="https://fishpi.cn/article/1748939764736" target="_blank" title="uTools 插件"><svg style="vertical-align: -2px;"><use xlink:href="#ic-utools"></use></svg></a>

@@ -284,10 +284,6 @@
                                 <div class="calendar-head" id="vLine1">距离放假还有 🎉</div>
                                 <div class="calendar-content" id="vLine2"><span
                                             id="vDay">?</span><span style="font-size: 30px"> 天</span></div>
-                                <#--  <div style="font-size: 10px; color: rgba(161,163,163,0.91)" id="vLine3">我还在编......</div>  -->
-                                <!--                            <a href="${servePath}/oldAlmanac">-->
-                                <!--                                <div style="font-size: 10px; color: rgba(161,163,163,0.91)">点击查看今日运势</div>-->
-                                <!--                            </a>-->
                             </div></div>
                     </div>
                     <div class="metro-item">

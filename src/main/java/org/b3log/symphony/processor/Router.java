@@ -148,8 +148,8 @@ public final class Router {
         //Dispatcher.get("/forward", forwardProcessor::showForward);
         // 领域
         final DomainProcessor domainProcessor = beanManager.getReference(DomainProcessor.class);
-        Dispatcher.get("/domain/{domainURI}", domainProcessor::showDomainArticles, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/domains", domainProcessor::showDomains, anonymousViewCheckMidware::handle);
+        Dispatcher.get("/domain/{domainURI}", domainProcessor::showDomainArticles, loginCheck::handle);
+        Dispatcher.get("/domains", domainProcessor::showDomains, loginCheck::handle);
         // RSS 订阅
         final FeedProcessor feedProcessor = beanManager.getReference(FeedProcessor.class);
         Dispatcher.group().router().get().head().uri("/rss/recent.xml").handler(feedProcessor::genRecentRSS);
