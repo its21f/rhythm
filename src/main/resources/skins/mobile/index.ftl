@@ -141,7 +141,7 @@
     <li class="menu__item"><a class="title" href="${servePath}/charge/point"><span
                     class="ft-red">❤</span>️ ${chargePointLabel}</a></li>
     <li class="menu__item">
-        <a class="title" href="${servePath}/vips">开通VIP</a>
+        <a class="title" href="${servePath}/vips">👑 开通VIP</a>
     </li>
     <li class="menu__item"><a class="title" href="${servePath}/top">🔥 排行榜</a></li>
     <li class="menu__item"><a class="title" href="${servePath}/shop">🏪 系统商店</a></li>

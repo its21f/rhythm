@@ -30,7 +30,7 @@
     <div class="module-panel form fn-clear">
         <br/>
         <div style="font-size: 12px;color:grey;margin-bottom: 1rem;">
-            注意️:转账收取1%手续费(100积分以内固定收取1积分,100积分以上收取1%)
+            注意️:转账收取1%手续费(100积分以内固定收取1积分,100积分以上收取1%,VIP4免税)
         </div>
         <input id="pointTransferUserName" type="text" placeholder="${userNameLabel}"/><br/> <br/>
         <input id="pointTransferAmount" type="number" placeholder="${amountLabel}"/> <br/><br/>
