@@ -1051,17 +1051,17 @@ public class ChatroomProcessor {
                 LOGGER.log(Level.INFO, "Sent red packet [content={}], userName={}]", content, userName);
                 // 是否收税
                 Boolean collectTaxes = false;
-                // 税率
-                BigDecimal taxRate = new BigDecimal("0.3");
+                // 基础税率 猜拳
+                BigDecimal taxRate = new BigDecimal("0.15");
                 try {
                     // 获取用户会员状态
                     JSONObject memberShip = membershipQueryService.getStatusByUserId(userId);
                     // 是否是尊贵的会员
-                    boolean isSVIP = false;
+                    boolean notSVIP = true;
                     if (Objects.nonNull(memberShip) && memberShip.getInt(Membership.STATE) != 0) {
                         if (memberShip.optString(Membership.LV_CODE).contains("VIP4")) {
                             // 免税
-                            isSVIP = true;
+                            notSVIP = false;
                         }
                     }
                     String redpacketString = content.replaceAll("^\\[redpacket\\]", "").replaceAll("\\[/redpacket\\]$", "");
@@ -1133,12 +1133,17 @@ public class ChatroomProcessor {
                                 count = 1;
                                 toatlMoney = money;
                                 // 征税 VIP4免税
-                                if (!isSVIP) {
+                                if (notSVIP) {
                                     collectTaxes = true;    
                                 }
                                 break;
                             case "average":
                                 toatlMoney = money * count;
+                                if (notSVIP) {
+                                    collectTaxes = true;
+                                    // 重新设置税点
+                                    taxRate = new BigDecimal("0.03");
+                                }
                                 break;
                             case "specify":
                                 if (StringUtils.isNotBlank(recivers)) {
@@ -1150,6 +1155,11 @@ public class ChatroomProcessor {
                                     }
                                     if (length > 0) {
                                         toatlMoney = money * length;
+                                        if (notSVIP) {
+                                            collectTaxes = true;
+                                            // 重新设置税点
+                                            taxRate = new BigDecimal("0.01");
+                                        }
                                     } else {
                                         context.renderJSON(StatusCodes.ERR).renderMsg("专属红包需要指定用户！");
                                         return;
@@ -1192,12 +1202,12 @@ public class ChatroomProcessor {
                     redPacketJSON.put("msgType", "redPacket");
 
                     // 税给admin V4没有税
-                    if (!isSVIP) {
+                    if (notSVIP) {
                         int tax = money - (BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue());
                         pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS,
                                 userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
                                 Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, tax, userId, System.currentTimeMillis(),
-                                "猜拳红包税收，纳税人：" + userName);
+                                type + " 红包税收，纳税人：" + userName);
                     }
                     // 写入数据库
                     final Transaction transaction = chatRoomRepository.beginTransaction();

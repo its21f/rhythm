@@ -213,6 +213,9 @@ public class SettingsProcessor {
     @Inject
     private UserRepository userRepository;
 
+    @Inject
+    private MembershipQueryService membershipQueryService;
+
     final private static SimpleCurrentLimiter updateProfilesLimiter = new SimpleCurrentLimiter(60 * 60, 5);
 
     /**
@@ -1196,12 +1199,6 @@ public class SettingsProcessor {
         context.renderJSON(ret);
 
         final JSONObject requestJSONObject = context.requestJSON();
-        // 手续费
-        BigDecimal feeRate = new BigDecimal("0.1");
-        int amountInt = requestJSONObject.optInt(Common.AMOUNT);
-        int fee = amountInt < 100 ? 1 : BigDecimal.valueOf(amountInt).multiply(feeRate).intValue();
-        // 最后金额
-        final int amount = amountInt - fee;
         final JSONObject toUser = (JSONObject) context.attr(Common.TO_USER);
         JSONObject currentUser = Sessions.getUser();
         try {
@@ -1214,6 +1211,27 @@ public class SettingsProcessor {
         }
 
         String fromId = currentUser.optString(Keys.OBJECT_ID);
+        // 手续费
+        BigDecimal feeRate = new BigDecimal("0.01");
+        int amountInt = requestJSONObject.optInt(Common.AMOUNT);
+        // 是否是尊贵的会员
+        boolean notSVIP = true;
+        try {
+            // 获取用户会员状态
+            JSONObject memberShip = membershipQueryService.getStatusByUserId(fromId);
+            if (Objects.nonNull(memberShip) && memberShip.getInt(Membership.STATE) != 0) {
+                if (memberShip.optString(Membership.LV_CODE).contains("VIP4")) {
+                    // 免税
+                    notSVIP = false;
+                }
+            }
+        } catch (final ServiceException e) {
+        }
+        // 手续费减免
+        int fee = notSVIP ? (amountInt < 100 ? 1 : BigDecimal.valueOf(amountInt).multiply(feeRate).intValue()) : 0;
+        // 最后金额
+        final int amount = amountInt - fee;
+
         String fromUsername = currentUser.optString(User.USER_NAME);
         if (fromUsername.equals("admin")) {
             fromId = Pointtransfer.ID_C_SYS;
@@ -1222,9 +1240,13 @@ public class SettingsProcessor {
 
         final String transferId = pointtransferMgmtService.transfer(fromId, toId,
                 Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, amount, toId, System.currentTimeMillis(), memo);
-        // 手续费给admin
-        pointtransferMgmtService.transfer(fromId, userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
-                Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, fee, fromId, System.currentTimeMillis(), "转账手续费，纳税人：" + fromUsername);
+        if (notSVIP) {
+            // 手续费给admin
+            pointtransferMgmtService.transfer(fromId, userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
+                    Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, fee, fromId, System.currentTimeMillis(),
+                    "转账手续费，纳税人：" + fromUsername);
+        }
+        
         final boolean succ = null != transferId;
         if (succ) {
             ret.put(Keys.CODE, StatusCodes.SUCC);
