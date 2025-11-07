@@ -1214,13 +1214,14 @@ public class ChatroomProcessor {
                             tax = 1;
                         }
                         if (StringUtils.isNotBlank(recivers)) {
+                            System.out.println("recivers " + recivers);
                             final JSONArray reciverArray = new JSONArray(recivers);
                             final int length = reciverArray.length();
                             if (length > 1) {
                                 tax *= length;
-                            }
-                        }else if(StringUtils.equals(type, "average")){
+                            }else if(StringUtils.equals(type, "average")){
                                 tax *= count;
+                            }
                         }
                         pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS,
                                 userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
