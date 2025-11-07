@@ -65,14 +65,17 @@ public class LogsProcessor {
     public void moreLogs(final RequestContext context) {
         int page = 1;
         int pageSize = 20;
+        String key3 = "增加积分";
         try {
             page = Integer.parseInt(context.param("page"));
             pageSize = Integer.parseInt(context.param("pageSize"));
+            key3 = context.param("key3");
         } catch (Exception ignored) {
         }
         try {
             Query query = new Query()
                     .setFilter(new PropertyFilter("public", FilterOperator.EQUAL, true))
+                    .setFilter(new PropertyFilter("key3", FilterOperator.EQUAL, key3))
                     .addSort(Keys.OBJECT_ID, SortDirection.DESCENDING)
                     .setPage(page, pageSize);
             List<JSONObject> list = logsRepository.getList(query);
