@@ -1209,7 +1209,7 @@ public class ChatroomProcessor {
 
                     // 税给admin V4没有税
                     if (notSVIP) {
-                        int tax = BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue();
+                        int tax = money - BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue();
                         if (tax < 1) {
                             tax = 1;
                         }
