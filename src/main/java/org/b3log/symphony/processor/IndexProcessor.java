@@ -172,15 +172,15 @@ public class IndexProcessor {
 
         final IndexProcessor indexProcessor = beanManager.getReference(IndexProcessor.class);
         Dispatcher.get("/CHANGE_LOGS.html", indexProcessor::showChangelogs);
-        Dispatcher.group().middlewares(anonymousViewCheckMidware::handle).router().get().uris(new String[]{"/qna", "/qna/unanswered", "/qna/reward", "/qna/hot"}).handler(indexProcessor::showQnA);
+        Dispatcher.group().middlewares(loginCheck::handle).router().get().uris(new String[]{"/qna", "/qna/unanswered", "/qna/reward", "/qna/hot"}).handler(indexProcessor::showQnA);
         Dispatcher.group().middlewares(loginCheck::handle).router().get().uris(new String[]{"/watch", "/watch/users"}).handler(indexProcessor::showWatch);
         Dispatcher.get("/", indexProcessor::showIndex);
-        Dispatcher.group().middlewares(anonymousViewCheckMidware::handle).router().get().uris(new String[]{"/recent", "/recent/hot", "/recent/good", "/recent/reply"}).handler(indexProcessor::showRecent);
+        Dispatcher.group().middlewares(loginCheck::handle).router().get().uris(new String[]{"/recent", "/recent/hot", "/recent/good", "/recent/reply"}).handler(indexProcessor::showRecent);
         Dispatcher.get("/about", indexProcessor::showAbout);
         Dispatcher.get("/kill-browser", indexProcessor::showKillBrowser);
-        Dispatcher.get("/hot", indexProcessor::showHotArticles, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/perfect", indexProcessor::showPerfectArticles, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/charge/point", indexProcessor::showChargePoint, anonymousViewCheckMidware::handle);
+        Dispatcher.get("/hot", indexProcessor::showHotArticles, loginCheck::handle);
+        Dispatcher.get("/perfect", indexProcessor::showPerfectArticles, loginCheck::handle);
+        Dispatcher.get("/charge/point", indexProcessor::showChargePoint, loginCheck::handle);
         Dispatcher.get("/games/handle/", indexProcessor::showHandle, loginCheck::handle);
         Dispatcher.get("/games/adarkroom/", indexProcessor::showADarkRoom, loginCheck::handle);
         Dispatcher.get("/games/lifeRestart/view/", indexProcessor::showLifeRestart, loginCheck::handle);
@@ -188,7 +188,7 @@ public class IndexProcessor {
         Dispatcher.get("/games/evolve/", indexProcessor::showEvolve, loginCheck::handle);
         Dispatcher.get("/user/checkedIn", indexProcessor::isCheckedIn, loginCheck::handle);
         Dispatcher.get("/download", indexProcessor::showDownload, anonymousViewCheckMidware::handle);
-        Dispatcher.get("/breezemoons", indexProcessor::showBreezemoons, anonymousViewCheckMidware::handle);
+        Dispatcher.get("/breezemoons", indexProcessor::showBreezemoons, loginCheck::handle);
         Dispatcher.get("/privacy", indexProcessor::showPrivacy, anonymousViewCheckMidware::handle);
         Dispatcher.get("/agreement", indexProcessor::showAgreement, anonymousViewCheckMidware::handle);
     }
