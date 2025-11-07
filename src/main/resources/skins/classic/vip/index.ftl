@@ -39,6 +39,30 @@
     </div>
     <#if membership.state == 1>
         <div class="change-config-box" id="vipConfigBox" style="text-align: center;">
+            <div style="margin-bottom: 1rem;font-size: 18px;font-weight: bold">
+                欢迎
+                <span style="color:red">
+                    <#switch membership.lvCode>
+                        <#case "VIP4_YEAR">年费VIP4<#break>
+                        <#case "VIP4_MONTH">月费VIP4<#break>
+                        <#case "VIP3_YEAR">年费VIP3<#break>
+                        <#case "VIP3_MONTH">月费VIP3<#break>
+                        <#case "VIP2_YEAR">年费VIP2<#break>
+                        <#case "VIP2_MONTH">月费VIP2<#break>
+                        <#case "VIP1_YEAR">年费VIP1<#break>
+                        <#case "VIP1_MONTH">月费VIP1<#break>
+                        <#default>${member.lvCode!}
+                    </#switch>
+                </span>
+                用户,您的会员到期时间为:
+                <span style="color:red">
+                    <#if membership.expiresAt?? && membership.expiresAt?has_content>
+                        <#assign timestamp = membership.expiresAt>
+                        <#assign date = timestamp?number_to_datetime>
+                        ${date?string("yyyy-MM-dd HH:mm:ss")}
+                    </#if>
+                </span>
+            </div>
             <div style="margin-bottom: 10px;font-weight:bold;font-size: 18px">效果预览:</div>
             <div style="margin:1rem">
                 <div id="configBox" style="margin-bottom: 2rem;font-size: 2rem"></div>
