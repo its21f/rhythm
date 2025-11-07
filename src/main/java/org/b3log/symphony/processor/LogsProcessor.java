@@ -26,10 +26,15 @@ import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
 import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
+import org.b3log.latke.repository.CompositeFilter;
+import org.b3log.latke.repository.CompositeFilterOperator;
+import org.b3log.latke.repository.Filter;
 import org.b3log.latke.repository.FilterOperator;
 import org.b3log.latke.repository.PropertyFilter;
 import org.b3log.latke.repository.Query;
 import org.b3log.latke.repository.SortDirection;
+import org.b3log.symphony.model.Article;
+import org.b3log.symphony.model.Tag;
 import org.b3log.symphony.processor.middleware.LoginCheckMidware;
 import org.b3log.symphony.repository.LogsRepository;
 import org.b3log.symphony.service.DataModelService;
@@ -38,6 +43,7 @@ import org.json.JSONObject;
 
 import com.alipay.service.schema.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,7 +87,10 @@ public class LogsProcessor {
                     .addSort(Keys.OBJECT_ID, SortDirection.DESCENDING)
                     .setPage(page, pageSize);
             if (StringUtils.isNotBlank(key3)) {
-                query.setFilter(new PropertyFilter("key3", FilterOperator.EQUAL, key3));
+                final List<Filter> filters = new ArrayList<>();
+                filters.add(new PropertyFilter("public", FilterOperator.EQUAL, true));
+                filters.add(new PropertyFilter("key3", FilterOperator.EQUAL, key3));
+                query.setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
             }
             List<JSONObject> list = logsRepository.getList(query);
             context.renderJSON(StatusCodes.SUCC);
