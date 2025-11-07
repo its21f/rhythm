@@ -1223,7 +1223,7 @@ public class SettingsProcessor {
         final String transferId = pointtransferMgmtService.transfer(fromId, toId,
                 Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, amount, toId, System.currentTimeMillis(), memo);
         // 手续费给admin
-        pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS, userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
+        pointtransferMgmtService.transfer(fromId, userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
                 Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, fee, fromId, System.currentTimeMillis(), "转账手续费，纳税人：" + fromUsername);
         final boolean succ = null != transferId;
         if (succ) {
