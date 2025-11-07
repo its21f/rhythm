@@ -18,6 +18,7 @@
  */
 package org.b3log.symphony.processor;
 
+import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.http.Dispatcher;
 import org.b3log.latke.http.RequestContext;
@@ -34,6 +35,8 @@ import org.b3log.symphony.repository.LogsRepository;
 import org.b3log.symphony.service.DataModelService;
 import org.b3log.symphony.util.StatusCodes;
 import org.json.JSONObject;
+
+import com.alipay.service.schema.util.StringUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -65,9 +68,11 @@ public class LogsProcessor {
     public void moreLogs(final RequestContext context) {
         int page = 1;
         int pageSize = 20;
+        String key3 = "";
         try {
             page = Integer.parseInt(context.param("page"));
             pageSize = Integer.parseInt(context.param("pageSize"));
+            key3 = context.param("key3");
         } catch (Exception ignored) {
         }
         try {
@@ -75,6 +80,9 @@ public class LogsProcessor {
                     .setFilter(new PropertyFilter("public", FilterOperator.EQUAL, true))
                     .addSort(Keys.OBJECT_ID, SortDirection.DESCENDING)
                     .setPage(page, pageSize);
+            if (StringUtils.isNotBlank(key3)) {
+                query.setFilter(new PropertyFilter("key3", FilterOperator.EQUAL, key3));
+            }
             List<JSONObject> list = logsRepository.getList(query);
             context.renderJSON(StatusCodes.SUCC);
             context.renderData(list);
