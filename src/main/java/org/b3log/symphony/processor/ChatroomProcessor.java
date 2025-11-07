@@ -37,6 +37,7 @@ import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.User;
 import org.b3log.latke.repository.*;
+import org.b3log.latke.util.CollectionUtils;
 import org.b3log.latke.util.Crypts;
 import org.b3log.symphony.model.*;
 import org.b3log.symphony.processor.bot.ChatRoomBot;
@@ -1208,7 +1209,17 @@ public class ChatroomProcessor {
 
                     // 税给admin V4没有税
                     if (notSVIP) {
-                        int tax = money - (BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue());
+                        int tax = BigDecimal.valueOf(money).multiply(BigDecimal.ONE.subtract(taxRate)).intValue();
+                        if (tax < 1) {
+                            tax = 1;
+                        }
+                        if (StringUtils.isNotBlank(recivers)) {
+                            final JSONArray reciverArray = new JSONArray(recivers);
+                            final int length = reciverArray.length();
+                            if (length > 1) {
+                                tax *= length;
+                            }
+                        }
                         pointtransferMgmtService.transfer(Pointtransfer.ID_C_SYS,
                                 userQueryService.getUserByName("admin").optString(Keys.OBJECT_ID),
                                 Pointtransfer.TRANSFER_TYPE_C_ACCOUNT2ACCOUNT, tax, userId, System.currentTimeMillis(),
