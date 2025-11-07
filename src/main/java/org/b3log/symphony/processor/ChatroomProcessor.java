@@ -1214,7 +1214,6 @@ public class ChatroomProcessor {
                             tax = 1;
                         }
                         if (StringUtils.isNotBlank(recivers)) {
-                            System.out.println("recivers " + recivers);
                             final JSONArray reciverArray = new JSONArray(recivers);
                             final int length = reciverArray.length();
                             if (length > 1) {
