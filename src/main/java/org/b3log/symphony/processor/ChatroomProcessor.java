@@ -18,8 +18,30 @@
  */
 package org.b3log.symphony.processor;
 
-import jodd.http.HttpRequest;
-import jodd.http.HttpResponse;
+import static org.b3log.symphony.processor.channel.ChatroomChannel.sendCustomMessage;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -36,10 +58,18 @@ import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.User;
-import org.b3log.latke.repository.*;
-import org.b3log.latke.util.CollectionUtils;
+import org.b3log.latke.repository.FilterOperator;
+import org.b3log.latke.repository.PropertyFilter;
+import org.b3log.latke.repository.Query;
+import org.b3log.latke.repository.RepositoryException;
+import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.util.Crypts;
-import org.b3log.symphony.model.*;
+import org.b3log.symphony.model.Common;
+import org.b3log.symphony.model.Liveness;
+import org.b3log.symphony.model.Membership;
+import org.b3log.symphony.model.Notification;
+import org.b3log.symphony.model.Pointtransfer;
+import org.b3log.symphony.model.UserExt;
 import org.b3log.symphony.processor.bot.ChatRoomBot;
 import org.b3log.symphony.processor.channel.ChatroomChannel;
 import org.b3log.symphony.processor.middleware.AnonymousViewCheckMidware;
@@ -47,8 +77,30 @@ import org.b3log.symphony.processor.middleware.LoginCheckMidware;
 import org.b3log.symphony.processor.middleware.validate.ChatMsgAddValidationMidware;
 import org.b3log.symphony.repository.ChatRoomRepository;
 import org.b3log.symphony.repository.UserRepository;
-import org.b3log.symphony.service.*;
-import org.b3log.symphony.util.*;
+import org.b3log.symphony.service.ArticleQueryService;
+import org.b3log.symphony.service.AvatarQueryService;
+import org.b3log.symphony.service.ChatRoomService;
+import org.b3log.symphony.service.CloudService;
+import org.b3log.symphony.service.CommentMgmtService;
+import org.b3log.symphony.service.CommentQueryService;
+import org.b3log.symphony.service.DataModelService;
+import org.b3log.symphony.service.LivenessMgmtService;
+import org.b3log.symphony.service.LogsService;
+import org.b3log.symphony.service.MembershipQueryService;
+import org.b3log.symphony.service.NotificationMgmtService;
+import org.b3log.symphony.service.NotificationQueryService;
+import org.b3log.symphony.service.PointtransferMgmtService;
+import org.b3log.symphony.service.ShortLinkQueryService;
+import org.b3log.symphony.service.UserMgmtService;
+import org.b3log.symphony.service.UserQueryService;
+import org.b3log.symphony.util.Emotions;
+import org.b3log.symphony.util.JSONs;
+import org.b3log.symphony.util.Markdowns;
+import org.b3log.symphony.util.MediaPlayers;
+import org.b3log.symphony.util.NodeUtil;
+import org.b3log.symphony.util.Sessions;
+import org.b3log.symphony.util.StatusCodes;
+import org.b3log.symphony.util.Symphonys;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -56,20 +108,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
-import pers.adlered.simplecurrentlimiter.cache.pair.CachePair;
+
+import jodd.http.HttpRequest;
+import jodd.http.HttpResponse;
 import pers.adlered.simplecurrentlimiter.main.SimpleCurrentLimiter;
-
-import java.lang.Character;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static org.b3log.symphony.processor.channel.ChatroomChannel.sendCustomMessage;
 
 
 /**
@@ -1645,6 +1687,7 @@ public class ChatroomProcessor {
         } else {
             dataModel.put(UserExt.CHAT_ROOM_PICTURE_STATUS, UserExt.USER_XXX_STATUS_C_ENABLED);
             dataModel.put("level3Permitted", false);
+            dataModel.put("membership", new JSONObject());
         }
         // 是否宵禁
         int start = 1930;
