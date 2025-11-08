@@ -18,6 +18,24 @@
  */
 package org.b3log.symphony.util;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.WebSocket;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,22 +50,9 @@ import org.b3log.symphony.service.AvatarQueryService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.WebSocket;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.TimeUnit;
-
 public class NodeUtil {
+
+    private static final ExecutorService BROADCAST_POOL = Executors.newVirtualThreadPerTaskExecutor();
 
     public static List<String> uriNodes = new ArrayList<>();
 
@@ -113,8 +118,14 @@ public class NodeUtil {
     }
 
     public static void notice(String text) {
-        for (WebSocket i : wsNodes) {
-            i.sendText(Symphonys.get("chatroom.node.adminKey") + ":::" + text, true);
+        String msg = Symphonys.get("chatroom.node.adminKey") + ":::" + text;
+        for (WebSocket ws : wsNodes) {
+            BROADCAST_POOL.submit(() -> {
+                try {
+                    ws.sendText(msg, true);
+                } catch (Exception ignore) {
+                }
+            });
         }
     }
 
