@@ -138,6 +138,10 @@ public final class Geos {
 
     public static JSONObject getAddressByGeoIP(String ip) {
         ip = IPUtils.getFirstIP(ip);
+        var isLocalHost = Networks.isInnerAddress(ip);
+        if (isLocalHost) {
+            return null;
+        }
         if (ipLocatesCache.containsKey(ip)) {
             return ipLocatesCache.get(ip);
         }

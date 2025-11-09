@@ -47,7 +47,6 @@ import org.b3log.symphony.processor.SettingsProcessor;
 import org.b3log.symphony.processor.middleware.validate.UserRegisterValidationMidware;
 import org.b3log.symphony.repository.*;
 import org.b3log.symphony.util.Geos;
-import org.b3log.symphony.util.Gravatars;
 import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
 

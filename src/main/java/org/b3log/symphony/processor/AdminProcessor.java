@@ -18,14 +18,15 @@
  */
 package org.b3log.symphony.processor;
 
-import com.alibaba.fastjson.JSON;
 import com.qiniu.cdn.CdnManager;
 import com.qiniu.cdn.CdnResult;
 import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.Region;
-import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
+
+import cn.hutool.core.collection.CollectionUtil;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -44,7 +45,6 @@ import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.model.User;
 import org.b3log.latke.repository.*;
-import org.b3log.latke.repository.jdbc.JdbcRepository;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.util.CollectionUtils;
@@ -68,9 +68,6 @@ import org.b3log.symphony.util.Sessions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
 
@@ -646,9 +643,14 @@ public class AdminProcessor {
         final List<Integer> pageNums = Paginator.paginate(pageNum, pageSize, pageCount, windowSize);
         pagination.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
         pagination.put(Pagination.PAGINATION_PAGE_NUMS, pageNums);
-
-        dataModel.put(Pagination.PAGINATION_FIRST_PAGE_NUM, pageNums.get(0));
-        dataModel.put(Pagination.PAGINATION_LAST_PAGE_NUM, pageNums.get(pageNums.size() - 1));
+        var firstPageNum = 0;
+        var lastPageNum = 0;
+        if (CollectionUtil.isNotEmpty(pageNums)) {
+            firstPageNum = pageNums.get(0);
+            lastPageNum = pageNums.get(pageNums.size() - 1);
+        }
+        dataModel.put(Pagination.PAGINATION_FIRST_PAGE_NUM, firstPageNum);
+        dataModel.put(Pagination.PAGINATION_LAST_PAGE_NUM, lastPageNum);
         dataModel.put(Pagination.PAGINATION_CURRENT_PAGE_NUM, pageNum);
         dataModel.put(Pagination.PAGINATION_PAGE_COUNT, pageCount);
         dataModel.put(Pagination.PAGINATION_PAGE_NUMS, pageNums);
