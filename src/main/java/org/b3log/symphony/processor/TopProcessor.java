@@ -18,8 +18,11 @@
  */
 package org.b3log.symphony.processor;
 
+import jodd.http.HttpException;
 import jodd.http.HttpRequest;
 import jodd.http.HttpResponse;
+
+import org.assertj.core.util.Lists;
 import org.b3log.latke.http.Dispatcher;
 import org.b3log.latke.http.Request;
 import org.b3log.latke.http.RequestContext;
@@ -47,8 +50,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static org.b3log.symphony.model.Common.UA;
 
 /**
  * Top ranking list processor.
@@ -712,53 +713,58 @@ public class TopProcessor {
      * @param context
      */
     public void showXiaoice(final RequestContext context) {
-        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "top/xiaoice.ftl");
-        final Map<String, Object> dataModel = renderer.getDataModel();
-        final Request request = context.getRequest();
-        final String type = request.getParameter("type") != null ?
-                request.getParameter("type") : "0";
-        dataModel.put("type", type);
-        final HttpResponse response = HttpRequest.get("https://pwl.yuis.cc/GetXiaoIceGameRank?key=xiaoIceGame&type=" + type)
-                .connectionTimeout(3000).timeout(7000).header("User-Agent", Vocation.UA)
-                .send();
+      final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "top/xiaoice.ftl");
+      final Map<String, Object> dataModel = renderer.getDataModel();
+      final Request request = context.getRequest();
+      final String type = request.getParameter("type") != null ? request.getParameter("type") : "0";
+      dataModel.put("type", type);
+      HttpResponse response;
+      try {
+        response = HttpRequest
+            .get("https://pwl.yuis.cc/GetXiaoIceGameRank?key=xiaoIceGame&type=" + type)
+            .connectionTimeout(3000).timeout(7000).header("User-Agent", Vocation.UA)
+            .send();
         if (200 == response.statusCode()) {
-            response.charset("UTF-8");
-            final JSONObject result = new JSONObject(response.bodyText());
-            JSONArray dataList = result.optJSONArray("data");
-            List<JSONObject> resultList = new ArrayList<>();
-            for (int i = 0; i < dataList.length(); i++) {
-                JSONObject data = dataList.optJSONObject(i);
-                String uname = data.optString("uname");
-                JSONObject family = new JSONObject(data.optString("family"));
+          response.charset("UTF-8");
+          final JSONObject result = new JSONObject(response.bodyText());
+          JSONArray dataList = result.optJSONArray("data");
+          List<JSONObject> resultList = new ArrayList<>();
+          for (int i = 0; i < dataList.length(); i++) {
+            JSONObject data = dataList.optJSONObject(i);
+            String uname = data.optString("uname");
+            JSONObject family = new JSONObject(data.optString("family"));
 
-                String[] lvFilter = new String[]{"黄阶低级", "黄阶中级", "黄阶高级", "玄阶低级", "玄阶中级", "玄阶高级", "地阶低级", "地阶中级", "地阶高级", "天阶低级", "天阶中级", "天阶高级"};
-                int ancestry = family.optInt("ancestry");
-                int gongfa = family.optInt("gongfa");
-                data.put("ancestry", lvFilter[ancestry]);
-                data.put("gongfa", lvFilter[gongfa]);
-                data.remove("family");
-                try {
-                    JSONObject user = userQueryService.getUserByName(uname);
-                    data.put("userAvatarURL", user.optString(UserExt.USER_AVATAR_URL));
-                    data.put("userIntro", user.optString(UserExt.USER_INTRO));
-                    data.put("userURL", user.optString(User.USER_URL));
-                    data.put("userNo", user.optInt(UserExt.USER_NO));
-                    data.put("userAppRole", user.optInt(UserExt.USER_APP_ROLE));
-                    avatarQueryService.fillUserAvatarURL(data);
-                } catch (Exception e) {
-                    continue;
-                }
-
-                resultList.add(data);
+            String[] lvFilter = new String[] { "黄阶低级", "黄阶中级", "黄阶高级", "玄阶低级", "玄阶中级", "玄阶高级", "地阶低级", "地阶中级", "地阶高级",
+                "天阶低级", "天阶中级", "天阶高级" };
+            int ancestry = family.optInt("ancestry");
+            int gongfa = family.optInt("gongfa");
+            data.put("ancestry", lvFilter[ancestry]);
+            data.put("gongfa", lvFilter[gongfa]);
+            data.remove("family");
+            try {
+              JSONObject user = userQueryService.getUserByName(uname);
+              data.put("userAvatarURL", user.optString(UserExt.USER_AVATAR_URL));
+              data.put("userIntro", user.optString(UserExt.USER_INTRO));
+              data.put("userURL", user.optString(User.USER_URL));
+              data.put("userNo", user.optInt(UserExt.USER_NO));
+              data.put("userAppRole", user.optInt(UserExt.USER_APP_ROLE));
+              avatarQueryService.fillUserAvatarURL(data);
+            } catch (Exception e) {
+              continue;
             }
-            dataModel.put("data", resultList);
-        }
 
-        dataModelService.fillHeaderAndFooter(context, dataModel);
-        dataModelService.fillRandomArticles(dataModel);
-        dataModelService.fillSideHotArticles(dataModel);
-        dataModelService.fillSideTags(dataModel);
-        dataModelService.fillLatestCmts(dataModel);
+            resultList.add(data);
+          }
+          dataModel.put("data", resultList);
+        }
+      } catch (HttpException e) {
+        dataModel.put("data", Lists.emptyList());
+      }
+      dataModelService.fillHeaderAndFooter(context, dataModel);
+      dataModelService.fillRandomArticles(dataModel);
+      dataModelService.fillSideHotArticles(dataModel);
+      dataModelService.fillSideTags(dataModel);
+      dataModelService.fillLatestCmts(dataModel);
     }
 
     private List<JSONObject> getXiaoiceData(String type) {
@@ -911,7 +917,7 @@ public class TopProcessor {
                   "from " + sponsorRepository.getName() + " " +
                   "limit 1;");
         JSONObject totalJSON = totalList.get(0);
-        double totalAmount = totalJSON.optDouble("totalAmount");
+        double totalAmount = totalJSON.optDouble("totalAmount", 0d);
         BigDecimal donateMakeDaysBigDecimal = new BigDecimal(String.valueOf(totalAmount / 13.33));
         double donateMakeDays = donateMakeDaysBigDecimal.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue();
         totalJSON.put("donateMakeDays", donateMakeDays);
