@@ -1003,6 +1003,31 @@ public class ChatroomProcessor {
     final private static SimpleCurrentLimiter chatRoomLivenessLimiter = new SimpleCurrentLimiter(60, 1);
     final private static SimpleCurrentLimiter risksControlMessageLimiter = new SimpleCurrentLimiter(15 * 60, 1);
     final private static SimpleCurrentLimiter openRedPacketLimiter = new SimpleCurrentLimiter(30 * 60, 1);
+    final private static List<String> LEGAL_CLIENT = List.of(
+            "Web",
+            "PC",
+            "Mobile",
+            "CLI",
+            "uTools",
+            "Windows",
+            "macOS",
+            "Linux",
+            "IceNet",
+            "ElvesOnline",
+            "iOS",
+            "Android",
+            "Extension",
+            "IDEA",
+            "Chrome",
+            "Edge",
+            "VSCode",
+            "Python",
+            "Golang",
+            "Bird",
+            "Dart",
+            "Harmony",
+            "Rust",
+            "Other");
 
     /**
      * Send chatroom message.
@@ -1021,32 +1046,7 @@ public class ChatroomProcessor {
                 if (version.length() > 32) {
                     version = version.substring(0, 31);
                 }
-                List<String> legalClient = new ArrayList<>();
-                legalClient.add("Web");
-                legalClient.add("PC");
-                legalClient.add("Mobile");
-                legalClient.add("CLI");
-                legalClient.add("uTools");
-                legalClient.add("Windows");
-                legalClient.add("macOS");
-                legalClient.add("Linux");
-                legalClient.add("IceNet");
-                legalClient.add("ElvesOnline");
-                legalClient.add("iOS");
-                legalClient.add("Android");
-                legalClient.add("Extension");
-                legalClient.add("IDEA");
-                legalClient.add("Chrome");
-                legalClient.add("Edge");
-                legalClient.add("VSCode");
-                legalClient.add("Python");
-                legalClient.add("Golang");
-                legalClient.add("Bird");
-                legalClient.add("Dart");
-                legalClient.add("Harmony");
-                legalClient.add("Rust");
-                legalClient.add("Other");
-                if (legalClient.contains(client)) {
+                if (LEGAL_CLIENT.contains(client)) {
                     source = client + "/" + version;
                 }
             } catch (Exception ignored) {

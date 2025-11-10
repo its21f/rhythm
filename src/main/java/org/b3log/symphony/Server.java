@@ -271,16 +271,16 @@ public final class Server extends BaseServer {
         final ArticleQueryService articleQueryService = beanManager.getReference(ArticleQueryService.class);
         articleQueryService.refreshHotArticlesCache();
 
-        new Thread(() -> {
+        Thread.startVirtualThread(() -> {
             if (!Vocation.refresh()) {
                 Vocation.refresh();
             }
-        }).start();
+        });
 
-        new Thread(() -> {
+        Thread.startVirtualThread(() -> {
             NodeUtil.init();
             NodeUtil.initOnline();
-        }).start();
+        });
 
         System.out.println(">>> Quick boot mode requirements is ready!");
 

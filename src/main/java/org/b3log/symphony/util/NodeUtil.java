@@ -182,7 +182,8 @@ public class NodeUtil {
                     webSocket.sendClose(1000, "Nornal Closure");
                 } catch (Exception e) {
                     webSocket.sendClose(1000, "Nornal Closure");
-                    LOGGER.log(Level.ERROR, "Send clear command to " + serverUri + " has no response within 10 seconds. giveup.", e);
+                    LOGGER.log(Level.ERROR,
+                            "Send clear command to " + serverUri + " has no response within 10 seconds. giveup.", e);
                 }
             } catch (Exception ignored) {
             }
@@ -297,7 +298,8 @@ public class NodeUtil {
                     LOGGER.log(Level.INFO, "Remote " + i + " has received the full online list.");
                 } catch (Exception e) {
                     webSocket.sendClose(1000, "Nornal Closure");
-                    LOGGER.log(Level.ERROR, "Push online list to " + serverUri + " has no response within 10 seconds. giveup.", e);
+                    LOGGER.log(Level.ERROR,
+                            "Push online list to " + serverUri + " has no response within 10 seconds. giveup.", e);
                 }
             } catch (Exception ignored) {
             }
@@ -306,7 +308,7 @@ public class NodeUtil {
 
     // 创建忽略 SSL 证书的 SSLContext
     private static SSLContext createInsecureSSLContext() throws Exception {
-        TrustManager[] trustAllCerts = new TrustManager[]{
+        TrustManager[] trustAllCerts = new TrustManager[] {
                 new X509TrustManager() {
                     @Override
                     public void checkClientTrusted(X509Certificate[] chain, String authType) {

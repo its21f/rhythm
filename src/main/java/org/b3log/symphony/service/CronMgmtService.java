@@ -298,10 +298,10 @@ public class CronMgmtService {
 
         Symphonys.SCHEDULED_EXECUTOR_SERVICE.scheduleAtFixedRate(() -> {
             try {
-                new Thread(() -> {
+                Thread.startVirtualThread(() -> {
                     NodeUtil.init();
                     NodeUtil.initOnline();
-                }).start();
+                });
             } catch (final Exception e) {
                 LOGGER.log(Level.ERROR, "Executes cron failed", e);
             } finally {
