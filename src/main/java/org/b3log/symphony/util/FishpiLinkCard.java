@@ -166,23 +166,34 @@ public class FishpiLinkCard {
         return card.toString();
     }
 
-
-    // 缓存
-
     // 处理HTML，替换站内链接<a>为卡片
     public static String processHtml(String rawHtml) {
         Document doc = Jsoup.parse(rawHtml);
-        for (Element a : doc.select("a[href]")) {
-            String href = a.attr("href");
-            if (href.startsWith("https://fishpi.cn")) {
-                String cardHtml = generateCard(href);
-                if (cardHtml != null) {
-                    Element cardElement = Jsoup.parse(cardHtml).body().child(0);
-                    a.replaceWith(cardElement);
+
+        // 只处理 <p> 里面只有一个 a 标签且没有其他内容的情况
+        for (Element p : doc.select("p")) {
+            // 检查是否只有一个子节点，且是 <a>
+            if (p.children().size() == 1 && p.child(0).tagName().equals("a")) {
+                Element a = p.child(0);
+
+                // 检查 <p> 是否只有 <a>，没有其他文本
+                String pText = p.text();
+                String aText = a.text();
+                // p.text() 只会返回 a 的文本，如果没有其他文本则相等
+                if (pText.equals(aText)) {
+                    String href = a.attr("href");
+                    if (href.startsWith("https://fishpi.cn")) {
+                        String cardHtml = generateCard(href);
+                        if (cardHtml != null) {
+                            Element cardElement = Jsoup.parse(cardHtml).body().child(0);
+                            // 用卡片替换整个 <p>
+                            p.replaceWith(cardElement);
+                        }
+                    }
                 }
-                // 如果没有图片，什么都不做，原样保留
             }
         }
+
         return doc.body().html();
     }
 }
