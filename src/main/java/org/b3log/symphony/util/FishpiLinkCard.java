@@ -78,8 +78,8 @@ public class FishpiLinkCard {
             } else {
                 fetchUrl = url + "?apiKey=" + apiKey;
             }
-            fetchUrl = fetchUrl.replaceFirst("fishpi.cn", "127.0.0.1");
-            Document doc = Jsoup.connect(fetchUrl).timeout(5000).header("Host", "fishpi.cn").get();
+            fetchUrl = fetchUrl.replaceFirst("https://fishpi.cn", "http://localhost:8080");
+            Document doc = Jsoup.connect(fetchUrl).timeout(500).header("Host", "fishpi.cn").get();
 
             // 优先用第一张图片
             Elements imgs = doc.select("img[src]");
@@ -107,8 +107,8 @@ public class FishpiLinkCard {
         } catch (Exception e) {
             try {
                 fetchUrl = url;
-                fetchUrl = fetchUrl.replaceFirst("fishpi.cn", "127.0.0.1");
-                Document doc = Jsoup.connect(fetchUrl).timeout(5000).header("Host", "fishpi.cn").cookie("sym-ce", Symphonys.get("linkCard.symce")).get();
+                fetchUrl = fetchUrl.replaceFirst("https://fishpi.cn", "http://localhost:8080");
+                Document doc = Jsoup.connect(fetchUrl).timeout(500).header("Host", "fishpi.cn").cookie("sym-ce", Symphonys.get("linkCard.symce")).get();
 
                 // 优先用第一张图片
                 Elements imgs = doc.select("img[src]");

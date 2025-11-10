@@ -1992,7 +1992,8 @@ public class ChatroomProcessor {
         content = Markdowns.cleanChat(content, "");
         content = MediaPlayers.renderAudio(content);
         content = MediaPlayers.renderVideo(content);
-        content = FishpiLinkCard.processHtml(content);
+        // 不要启用，有爆卡Bug
+        //content = FishpiLinkCard.processHtml(content);
 
         return content;
     }

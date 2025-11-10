@@ -287,9 +287,6 @@ public final class Server extends BaseServer {
 
         System.out.println(">>> Quick boot mode requirements is ready!");
 
-        disableSslVerification();
-        System.out.println(">>> SSL Verification is disabled!");
-
         final String unixDomainSocketPath = commandLine.getOptionValue("unix_domain_socket_path");
         if (StringUtils.isNotBlank(unixDomainSocketPath)) {
             server.start(unixDomainSocketPath);
@@ -299,24 +296,6 @@ public final class Server extends BaseServer {
                 portArg = "8080";
             }
             server.start(Integer.parseInt(portArg));
-        }
-    }
-
-    public static void disableSslVerification() {
-        try {
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        public X509Certificate[] getAcceptedIssuers() { return null; }
-                        public void checkClientTrusted(X509Certificate[] certs, String authType) { }
-                        public void checkServerTrusted(X509Certificate[] certs, String authType) { }
-                    }
-            };
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }
