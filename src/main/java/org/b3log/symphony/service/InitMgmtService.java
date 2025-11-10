@@ -18,6 +18,11 @@
  */
 package org.b3log.symphony.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -30,15 +35,19 @@ import org.b3log.latke.repository.Transaction;
 import org.b3log.latke.repository.jdbc.util.JdbcRepositories;
 import org.b3log.latke.service.annotation.Service;
 import org.b3log.latke.util.Ids;
-import org.b3log.symphony.model.*;
-import org.b3log.symphony.repository.*;
+import org.b3log.symphony.model.Article;
+import org.b3log.symphony.model.Option;
+import org.b3log.symphony.model.Permission;
+import org.b3log.symphony.model.Role;
+import org.b3log.symphony.model.Tag;
+import org.b3log.symphony.model.UserExt;
+import org.b3log.symphony.repository.OptionRepository;
+import org.b3log.symphony.repository.PermissionRepository;
+import org.b3log.symphony.repository.RolePermissionRepository;
+import org.b3log.symphony.repository.RoleRepository;
+import org.b3log.symphony.repository.TagRepository;
 import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 /**
  * Initialization management service.
@@ -478,6 +487,8 @@ public class InitMgmtService {
             permission.put(Keys.OBJECT_ID, Permission.PERMISSION_ID_C_MISC_LANGUAGE);
             permissionRepository.add(permission);
             permission.put(Keys.OBJECT_ID, Permission.PERMISSION_ID_C_MISC_REGISTER_METHOD);
+            permissionRepository.add(permission);
+            permission.put(Keys.OBJECT_ID, Permission.PERMISSION_ID_C_MISC_BROAD_CAST);
             permissionRepository.add(permission);
 
             // reserved word management permissions
