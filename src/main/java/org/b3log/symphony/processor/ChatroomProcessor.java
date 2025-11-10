@@ -93,14 +93,7 @@ import org.b3log.symphony.service.PointtransferMgmtService;
 import org.b3log.symphony.service.ShortLinkQueryService;
 import org.b3log.symphony.service.UserMgmtService;
 import org.b3log.symphony.service.UserQueryService;
-import org.b3log.symphony.util.Emotions;
-import org.b3log.symphony.util.JSONs;
-import org.b3log.symphony.util.Markdowns;
-import org.b3log.symphony.util.MediaPlayers;
-import org.b3log.symphony.util.NodeUtil;
-import org.b3log.symphony.util.Sessions;
-import org.b3log.symphony.util.StatusCodes;
-import org.b3log.symphony.util.Symphonys;
+import org.b3log.symphony.util.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -253,7 +246,7 @@ public class ChatroomProcessor {
 
         final ChatroomProcessor chatroomProcessor = beanManager.getReference(ChatroomProcessor.class);
         Dispatcher.post("/chat-room/send", chatroomProcessor::addChatRoomMsg, loginCheck::handle, chatMsgAddValidationMidware::handle);
-        Dispatcher.get("/cr", chatroomProcessor::showChatRoom, anonymousViewCheckMidware::handle);
+        Dispatcher.get("/cr", chatroomProcessor::showChatRoom, loginCheck::handle);
         Dispatcher.get("/chat-room/more", chatroomProcessor::getMore);
         Dispatcher.get("/chat-room/getMessage", chatroomProcessor::getContextMessage);
         Dispatcher.get("/chat-room/online-users", chatroomProcessor::getChatRoomUsers);
@@ -1999,6 +1992,7 @@ public class ChatroomProcessor {
         content = Markdowns.cleanChat(content, "");
         content = MediaPlayers.renderAudio(content);
         content = MediaPlayers.renderVideo(content);
+        content = FishpiLinkCard.processHtml(content);
 
         return content;
     }
