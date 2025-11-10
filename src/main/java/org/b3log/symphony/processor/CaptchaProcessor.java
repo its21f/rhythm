@@ -30,12 +30,14 @@ import org.b3log.latke.Latkes;
 import org.b3log.latke.http.Dispatcher;
 import org.b3log.latke.http.RequestContext;
 import org.b3log.latke.http.Response;
+import org.b3log.latke.http.renderer.AbstractFreeMarkerRenderer;
 import org.b3log.latke.http.renderer.PngRenderer;
 import org.b3log.latke.ioc.BeanManager;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.Strings;
 import org.b3log.symphony.model.Common;
+import org.b3log.symphony.util.StatusCodes;
 import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
 import org.patchca.background.BackgroundFactory;
@@ -99,8 +101,28 @@ public class CaptchaProcessor {
         final BeanManager beanManager = BeanManager.getInstance();
         final CaptchaProcessor captchaProcessor = beanManager.getReference(CaptchaProcessor.class);
 
+        Dispatcher.get("/test", captchaProcessor::captcha);
+        Dispatcher.post("/validateCaptcha", captchaProcessor::validateCaptcha);
         Dispatcher.get("/captcha", captchaProcessor::get);
         Dispatcher.get("/captcha/login", captchaProcessor::getLoginCaptcha);
+    }
+
+    public void captcha(final RequestContext context) {
+        final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "captcha.ftl");
+        final Map<String, Object> dataModel = renderer.getDataModel();
+
+    }
+
+    public void validateCaptcha(final RequestContext context) {
+        final JSONObject requestJSONObject = context.requestJSON();
+        final String captcha = requestJSONObject.optString(CaptchaProcessor.CAPTCHA);
+        if (CaptchaProcessor.jiyan(captcha)) {
+            context.renderJSON(StatusCodes.ERR);
+            System.out.println("验证成功");
+        } else {
+            context.renderJSON(StatusCodes.ERR);
+            System.out.println("验证失败");
+        }
     }
 
     public static boolean jiyan(String captcha) {
