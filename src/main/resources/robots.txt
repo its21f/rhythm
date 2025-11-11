@@ -10,3 +10,4 @@ Disallow: /cr
 Disallow: /post
 Disallow: /update
 Disallow: /guide
+Disallow: /member/

@@ -35,16 +35,20 @@ import org.b3log.latke.util.AntPathMatcher;
 import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.URLs;
 import org.b3log.symphony.model.Article;
+import org.b3log.symphony.model.Common;
 import org.b3log.symphony.model.Option;
 import org.b3log.symphony.repository.ArticleRepository;
 import org.b3log.symphony.service.OptionQueryService;
 import org.b3log.symphony.service.UserMgmtService;
 import org.b3log.symphony.service.UserQueryService;
+import org.b3log.symphony.util.Headers;
 import org.b3log.symphony.util.Sessions;
 import org.b3log.symphony.util.Symphonys;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -158,19 +162,22 @@ public class AnonymousViewCheckMidware {
                     return;
                 } else if (Article.ARTICLE_ANONYMOUS_VIEW_C_ALLOW == article.optInt(Article.ARTICLE_ANONYMOUS_VIEW)) {
                     final String ip = Requests.getRemoteAddr(context.getRequest());
-                    // 计数逻辑
-                    Integer count = ipVisitCountCache.getIfPresent(ip);
-                    if (count == null) count = 0;
-                    count++;
-                    ipVisitCountCache.put(ip, count);
-                    System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
-                    if (count >= 5) {
-                        // 进入黑名单
-                        ipBlacklistCache.put(ip, true);
-                        // 跳转到验证码页面
-                        context.sendRedirect("/test");
-                        System.out.println(ip + " 进入黑名单");
-                        return;
+                    final String ua = Headers.getHeader(request, Common.USER_AGENT, "");
+                    if (!isSearchEngineBot(ua)) {
+                        // 计数逻辑
+                        Integer count = ipVisitCountCache.getIfPresent(ip);
+                        if (count == null) count = 0;
+                        count++;
+                        ipVisitCountCache.put(ip, count);
+                        System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                        if (count >= 5) {
+                            // 进入黑名单
+                            ipBlacklistCache.put(ip, true);
+                            // 跳转到验证码页面
+                            context.sendRedirect("/test");
+                            System.out.println(ip + " 进入黑名单");
+                            return;
+                        }
                     }
                     context.handle();
                     return;
@@ -194,19 +201,22 @@ public class AnonymousViewCheckMidware {
 
             if (null == currentUser) {
                 final String ip = Requests.getRemoteAddr(context.getRequest());
-                // 计数逻辑
-                Integer count = ipVisitCountCache.getIfPresent(ip);
-                if (count == null) count = 0;
-                count++;
-                ipVisitCountCache.put(ip, count);
-                System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
-                if (count >= 5) {
-                    // 进入黑名单
-                    ipBlacklistCache.put(ip, true);
-                    // 跳转到验证码页面
-                    context.sendRedirect("/test");
-                    System.out.println(ip + " 进入黑名单");
-                    return;
+                final String ua = Headers.getHeader(request, Common.USER_AGENT, "");
+                if (!isSearchEngineBot(ua)) {
+                    // 计数逻辑
+                    Integer count = ipVisitCountCache.getIfPresent(ip);
+                    if (count == null) count = 0;
+                    count++;
+                    ipVisitCountCache.put(ip, count);
+                    System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                    if (count >= 5) {
+                        // 进入黑名单
+                        ipBlacklistCache.put(ip, true);
+                        // 跳转到验证码页面
+                        context.sendRedirect("/test");
+                        System.out.println(ip + " 进入黑名单");
+                        return;
+                    }
                 }
 
                 if (null != visitsCookie) {
@@ -250,4 +260,17 @@ public class AnonymousViewCheckMidware {
 
         context.handle();
     }
+
+    private static final List<String> SEARCH_ENGINE_BOTS = Arrays.asList(
+            "Googlebot", "Bingbot", "Baiduspider", "Sogou", "360Spider", "YandexBot", "DuckDuckBot"
+    );
+
+    public static boolean isSearchEngineBot(String ua) {
+        if (ua == null) return false;
+        for (String bot : SEARCH_ENGINE_BOTS) {
+            if (ua.contains(bot)) return true;
+        }
+        return false;
+    }
+
 }
