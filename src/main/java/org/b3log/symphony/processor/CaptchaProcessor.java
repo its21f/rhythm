@@ -117,7 +117,7 @@ public class CaptchaProcessor {
         final JSONObject requestJSONObject = context.requestJSON();
         final String captcha = requestJSONObject.optString(CaptchaProcessor.CAPTCHA);
         if (CaptchaProcessor.jiyan(captcha)) {
-            context.renderJSON(StatusCodes.ERR);
+            context.renderJSON(StatusCodes.SUCC);
             System.out.println("验证成功");
         } else {
             context.renderJSON(StatusCodes.ERR);

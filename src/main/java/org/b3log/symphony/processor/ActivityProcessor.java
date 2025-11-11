@@ -158,7 +158,7 @@ public class ActivityProcessor {
         final ActivityProcessor activityProcessor = beanManager.getReference(ActivityProcessor.class);
         Dispatcher.get("/activity/character", activityProcessor::showCharacter, loginCheck::handle, csrfMidware::fill);
         Dispatcher.post("/activity/character/submit", activityProcessor::submitCharacter, loginCheck::handle);
-        Dispatcher.get("/activities", activityProcessor::showActivities);
+        Dispatcher.get("/activities", activityProcessor::showActivities, loginCheck::handle);
         // Dispatcher.get("/activity/daily-checkin-api", activityProcessor::dailyCheckinApi, loginCheck::handle);
         Dispatcher.get("/activity/yesterday-liveness-reward-api", activityProcessor::yesterdayLivenessRewardApi, loginCheck::handle);
         Dispatcher.post("/activity/yesterday-liveness-reward-api", activityProcessor::yesterdayLivenessRewardApiGold);
