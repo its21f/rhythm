@@ -258,6 +258,27 @@ public class AnonymousViewCheckMidware {
             }
         }
 
+        final JSONObject currentUser = Sessions.getUser();
+        if (null == currentUser) {
+            final String ip = Requests.getRemoteAddr(context.getRequest());
+            final String ua = Headers.getHeader(request, Common.USER_AGENT, "");
+            if (!isSearchEngineBot(ua)) {
+                // 计数逻辑
+                Integer count = ipVisitCountCache.getIfPresent(ip);
+                if (count == null) count = 0;
+                count++;
+                ipVisitCountCache.put(ip, count);
+                System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                if (count >= 5) {
+                    // 进入黑名单
+                    ipBlacklistCache.put(ip, true);
+                    // 跳转到验证码页面
+                    context.sendRedirect("/test");
+                    System.out.println(ip + " 进入黑名单");
+                    return;
+                }
+            }
+        }
         context.handle();
     }
 
