@@ -117,7 +117,7 @@ public class BreezemoonProcessor {
         Dispatcher.post("/breezemoon", breezemoonProcessor::addBreezemoon, loginCheck::handle, permissionMidware::check);
         Dispatcher.put("/breezemoon/{id}", breezemoonProcessor::updateBreezemoon, loginCheck::handle, csrfMidware::check, permissionMidware::check);
         Dispatcher.delete("/breezemoon/{id}", breezemoonProcessor::removeBreezemoon, loginCheck::handle, csrfMidware::check, permissionMidware::check);
-        Dispatcher.get("/api/breezemoons", breezemoonProcessor::getBreezemoons, anonymousViewCheckMidware::handle);
+        Dispatcher.get("/api/breezemoons", breezemoonProcessor::getBreezemoons);
     }
 
     /**

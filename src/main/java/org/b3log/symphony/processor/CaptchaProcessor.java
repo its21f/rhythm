@@ -37,6 +37,7 @@ import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.Strings;
 import org.b3log.symphony.model.Common;
+import org.b3log.symphony.processor.middleware.AnonymousViewCheckMidware;
 import org.b3log.symphony.util.StatusCodes;
 import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
@@ -116,12 +117,15 @@ public class CaptchaProcessor {
     public void validateCaptcha(final RequestContext context) {
         final JSONObject requestJSONObject = context.requestJSON();
         final String captcha = requestJSONObject.optString(CaptchaProcessor.CAPTCHA);
+        final String ip = Requests.getRemoteAddr(context.getRequest());
         if (CaptchaProcessor.jiyan(captcha)) {
+            AnonymousViewCheckMidware.ipBlacklistCache.invalidate(ip);
+            AnonymousViewCheckMidware.ipVisitCountCache.invalidate(ip);
             context.renderJSON(StatusCodes.SUCC);
-            System.out.println("验证成功");
+            System.out.println(ip + " 验证成功");
         } else {
             context.renderJSON(StatusCodes.ERR);
-            System.out.println("验证失败");
+            System.out.println(ip + " 验证失败");
         }
     }
 

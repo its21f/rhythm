@@ -38,6 +38,7 @@ import org.b3log.latke.util.Stopwatchs;
 import org.b3log.symphony.model.Common;
 import org.b3log.symphony.model.Option;
 import org.b3log.symphony.model.UserExt;
+import org.b3log.symphony.processor.middleware.AnonymousViewCheckMidware;
 import org.b3log.symphony.repository.OptionRepository;
 import org.b3log.symphony.service.UserQueryService;
 import org.b3log.symphony.util.Sessions;
@@ -78,6 +79,15 @@ public class BeforeRequestHandler implements Handler {
 
         if (context.header(Common.USER_AGENT) == null) {
             context.sendStatus(500);
+            return;
+        }
+
+        final String ip = Requests.getRemoteAddr(context.getRequest());
+        // 黑名单判断
+        if (AnonymousViewCheckMidware.ipBlacklistCache.getIfPresent(ip) != null && !context.requestURI().equals("/test") && !context.requestURI().equals("/validateCaptcha")) {
+            // 已经在黑名单，强制跳转到验证码页面
+            context.sendRedirect("/test");
+            System.out.println(ip + " 已经在黑名单中");
             return;
         }
 

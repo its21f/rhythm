@@ -35,11 +35,6 @@
                     <div class="slogan-register">
                         <button onclick="Util.goRegister()" class="green">${nowLabel}${registerLabel}</button>
                     </div>
-                    <div class="slogan-text">
-                        ${indexIntroLabel} &nbsp; &nbsp;
-                        <a href="https://github.com/88250/symphony" target="_blank" class="tooltipped tooltipped-n" aria-label="${siteCodeLabel}">
-                            <svg><use xlink:href="#github"></use></svg></a> &nbsp;
-                    </div>
                 </div>
             </div>
         </div>

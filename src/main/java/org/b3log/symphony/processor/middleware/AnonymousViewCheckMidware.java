@@ -18,6 +18,8 @@
  */
 package org.b3log.symphony.processor.middleware;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +32,7 @@ import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.util.AntPathMatcher;
+import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.URLs;
 import org.b3log.symphony.model.Article;
 import org.b3log.symphony.model.Option;
@@ -83,6 +86,16 @@ public class AnonymousViewCheckMidware {
     @Inject
     private OptionQueryService optionQueryService;
 
+    // 计数缓存，5分钟过期
+    public static final Cache<String, Integer> ipVisitCountCache = Caffeine.newBuilder()
+            .expireAfterWrite(5, java.util.concurrent.TimeUnit.MINUTES)
+            .maximumSize(100000)
+            .build();
+    // 黑名单缓存，无过期，手动移除
+    public static final Cache<String, Boolean> ipBlacklistCache = Caffeine.newBuilder()
+            .maximumSize(100000)
+            .build();
+
     private static Cookie getCookie(final Request request, final String name) {
         final Set<Cookie> cookies = request.getCookies();
         if (cookies.isEmpty()) {
@@ -112,7 +125,7 @@ public class AnonymousViewCheckMidware {
         final Request request = context.getRequest();
         final String requestURI = context.requestURI();
 
-        if (requestURI.startsWith(Latkes.getContextPath() + "/member/")) {
+        if (requestURI.startsWith(Latkes.getContextPath() + "/member/") || requestURI.startsWith(Latkes.getContextPath() + "/article/1636516552191")) {
             final JSONObject currentUser = Sessions.getUser();
             if (null == currentUser) {
                 context.sendError(401);
@@ -144,6 +157,21 @@ public class AnonymousViewCheckMidware {
                     context.abort();
                     return;
                 } else if (Article.ARTICLE_ANONYMOUS_VIEW_C_ALLOW == article.optInt(Article.ARTICLE_ANONYMOUS_VIEW)) {
+                    final String ip = Requests.getRemoteAddr(context.getRequest());
+                    // 计数逻辑
+                    Integer count = ipVisitCountCache.getIfPresent(ip);
+                    if (count == null) count = 0;
+                    count++;
+                    ipVisitCountCache.put(ip, count);
+                    System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                    if (count >= 5) {
+                        // 进入黑名单
+                        ipBlacklistCache.put(ip, true);
+                        // 跳转到验证码页面
+                        context.sendRedirect("/test");
+                        System.out.println(ip + " 进入黑名单");
+                        return;
+                    }
                     context.handle();
                     return;
                 }
@@ -165,6 +193,22 @@ public class AnonymousViewCheckMidware {
             final Cookie visitsCookie = getCookie(request, cookieNameVisits);
 
             if (null == currentUser) {
+                final String ip = Requests.getRemoteAddr(context.getRequest());
+                // 计数逻辑
+                Integer count = ipVisitCountCache.getIfPresent(ip);
+                if (count == null) count = 0;
+                count++;
+                ipVisitCountCache.put(ip, count);
+                System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                if (count >= 5) {
+                    // 进入黑名单
+                    ipBlacklistCache.put(ip, true);
+                    // 跳转到验证码页面
+                    context.sendRedirect("/test");
+                    System.out.println(ip + " 进入黑名单");
+                    return;
+                }
+
                 if (null != visitsCookie) {
                     final JSONArray uris = new JSONArray(URLs.decode(visitsCookie.getValue()));
                     for (int i = 0; i < uris.length(); i++) {
