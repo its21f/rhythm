@@ -132,8 +132,8 @@ public class OpenIdProcessor {
             context.sendError(500);
             return;
         }
-        // 判断return url 是否是https
-        if(!return_to.startsWith("https://")){
+        // 判断return url 是否是https 如果是localhost 和 127.0.0.1 也可以的
+        if(!(return_to.startsWith("https://")||return_to.startsWith("http://localhost")||return_to.startsWith("http://127.0.0.1"))){
             context.sendError(500);
             return;
         }
@@ -143,8 +143,10 @@ public class OpenIdProcessor {
             return;
         }
 
-        // 取得目标站点名称
-        String realmName = realm.substring(realm.lastIndexOf("/")+1);
+        // 取得目标站点名称 需要从realm 中取得开头那一段域名，去掉http或https，到第一个/结尾
+        String realmName = realm.replaceFirst("^(https?://)?([^/]+).*", "$2");
+//        String realmName = realm.substring(realm.lastIndexOf("/")+1);
+
 
         renderer.setTemplateName("verify/openid.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
@@ -195,8 +197,8 @@ public class OpenIdProcessor {
             redirectWithError(context,return_to);
             return;
         }
-        // 判断return url 是否是https
-        if(!return_to.startsWith("https://")){
+        // 判断return url 是否是https  如果是localhost 和 127.0.0.1 也可以的
+        if(!(return_to.startsWith("https://")||return_to.startsWith("http://localhost")||return_to.startsWith("http://127.0.0.1"))){
             redirectWithError(context,return_to);
             return;
         }
