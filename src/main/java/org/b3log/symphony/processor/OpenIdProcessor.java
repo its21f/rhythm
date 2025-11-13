@@ -39,6 +39,7 @@ import org.b3log.symphony.util.StatusCodes;
 import org.b3log.symphony.util.Symphonys;
 import org.json.JSONObject;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -132,19 +133,34 @@ public class OpenIdProcessor {
             context.sendError(500);
             return;
         }
-        // 判断return url 是否是https
-        if(!return_to.startsWith("https://")){
+
+        // 判断return url 是否是https 如果是localhost 和 127.0.0.1 也可以的
+        try{
+            URI returnTo = new URI(return_to);
+            String scheme = returnTo.getScheme();
+            String host = returnTo.getHost();
+
+            boolean isAllowed = ("https".equalsIgnoreCase(scheme)) ||
+                    ("localhost".equals(host)) ||
+                    ("127.0.0.1".equals(host));
+            if (!isAllowed) {
+                context.sendError(500);
+                return;
+            }
+        }catch (Exception e){
             context.sendError(500);
-            return;
         }
+
         // 判断return_to 是否在 realm 下
         if(!return_to.startsWith(realm)){
             context.sendError(500);
             return;
         }
 
-        // 取得目标站点名称
-        String realmName = realm.substring(realm.lastIndexOf("/")+1);
+        // 取得目标站点名称 需要从realm 中取得开头那一段域名，去掉http或https，到第一个/结尾
+        String realmName = realm.replaceFirst("^(https?://)?([^/]+).*", "$2");
+//        String realmName = realm.substring(realm.lastIndexOf("/")+1);
+
 
         renderer.setTemplateName("verify/openid.ftl");
         final Map<String, Object> dataModel = renderer.getDataModel();
@@ -195,11 +211,25 @@ public class OpenIdProcessor {
             redirectWithError(context,return_to);
             return;
         }
-        // 判断return url 是否是https
-        if(!return_to.startsWith("https://")){
+
+        // 判断return url 是否是https  如果是localhost 和 127.0.0.1 也可以的
+        try{
+            URI returnTo = new URI(return_to);
+            String scheme = returnTo.getScheme();
+            String host = returnTo.getHost();
+
+            boolean isAllowed = ("https".equalsIgnoreCase(scheme)) ||
+                    ("localhost".equals(host)) ||
+                    ("127.0.0.1".equals(host));
+            if (!isAllowed) {
+                redirectWithError(context, return_to);
+                return;
+            }
+        }catch (Exception e){
             redirectWithError(context,return_to);
-            return;
         }
+
+
         // 判断return_to 是否在 realm 下
         if(!return_to.startsWith(realm)){
             redirectWithError(context,return_to);
@@ -349,10 +379,23 @@ public class OpenIdProcessor {
             sendVerifyResult(context,false);
             return;
         }
-        if(!return_to.startsWith("https://")){
-//            context.renderJSON(StatusCodes.ERR).renderMsg("验证失败10");
+
+        try{
+            URI returnTo = new URI(return_to);
+            String scheme = returnTo.getScheme();
+            String host = returnTo.getHost();
+
+            boolean isAllowed = ("https".equalsIgnoreCase(scheme)) ||
+                    ("localhost".equals(host)) ||
+                    ("127.0.0.1".equals(host));
+            if (!isAllowed) {
+                sendVerifyResult(context,false);
+                //context.renderJSON(StatusCodes.ERR).renderMsg("验证失败10");
+                return;
+            }
+        }catch (Exception e){
+            //context.renderJSON(StatusCodes.ERR).renderMsg("验证失败10");
             sendVerifyResult(context,false);
-            return;
         }
 
         if(!identity.equals(claimed_id)){
