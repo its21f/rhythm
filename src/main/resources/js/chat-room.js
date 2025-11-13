@@ -38,8 +38,10 @@ var thisClient = 'Web/PC网页端';
 var BarragerColorPicker = null;
 var DarwColorPicker = null;
 var redPacketMap = new Map();
-var catchUserParam = window.localStorage['robot_list'] ? window.localStorage['robot_list'] : '';
+var catchUserParam = window.localStorage['robot_list'] ?? '';
+var catchKeysParam = window.localStorage['robot_list'] ?? '';
 var catchUsers = catchUserParam.length > 0 ? catchUserParam.split(',') : [];
+var catchKeys = catchKeysParam.length > 0 ? catchKeysParam.split(",") : [];
 var catchWordFlag;
 if (window.localStorage['catch-word-flag']) {
     catchWordFlag = window.localStorage['catch-word-flag'] == true || window.localStorage['catch-word-flag'] == 'true' ? true : false;
@@ -57,7 +59,10 @@ try {
 var ChatRoom = {
     init: function () {
         if (window.localStorage['robot_list'] == undefined) {
-            ChatRoom.changeCatchUser('xiaoIce,b,sevenSummer');
+            ChatRoom.changeCatchUser('xiaoIce,b,its21f,xds');
+        }
+        if (window.localStorage['robot_list_keys'] == undefined) {
+            ChatRoom.changeCatchKeys('冰冰,鸽,~,小斗士');
         }
         // 聊天窗口高度设置
         /* if ($.ua.device.type !== 'mobile') {
@@ -344,7 +349,7 @@ var ChatRoom = {
                     $("#countx").text("开盘人数");
                     $("#redPacketCount").val("3");
                 }
-                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4($("#redPacketMoney").val(),type))
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4($("#redPacketMoney").val(), type))
             });
 
             $("#redPacketMoney").unbind();
@@ -362,7 +367,7 @@ var ChatRoom = {
                 if (type === 'average' || type === 'specify') {
                     number = $("#redPacketMoney").val() * $("#redPacketCount").val();
                 }
-                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number,type))
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number, type))
             });
 
             $('#redPacketMoney,#redPacketCount').bind('input propertychange', function () {
@@ -383,7 +388,7 @@ var ChatRoom = {
                 } else if (type === 'rockPaperScissors') {
                     number = $("#redPacketMoney").val();
                 }
-                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number,type))
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number, type))
             });
 
             $("#redPacketType").on('change', function () {
@@ -406,7 +411,7 @@ var ChatRoom = {
                 } else if (type === 'dice') {
                     $("#redPacketMsg").val("买定离手！");
                 }
-                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number,type))
+                $("#redPacketAmount").html(ChatRoom.redPacketCheckVip4(number, type))
             });
 
             $("#redPacketCount").on('change', function () {
@@ -1828,7 +1833,7 @@ ${result.info.msg}
         if ((!more) && catchUsers.includes(userName) && newContent.indexOf("\"msgType\":\"redPacket\"") == -1 && newContent.indexOf("\"msgType\":\"music\"") == -1 && newContent.indexOf("\"msgType\":\"weather\"") == -1) {
             let robotDom = '<div class="robot-msg-item"><div class="avatar" style="background-image: url(' + robotAvatar + ')"></div><div class="robot-msg-content"><div class="robot-username"><p>' + userName + '</p></div> ' + newContent + ' <div class="fn__right" style="margin-top: 5px; font-size: 10px;">' + data.time + '</div></div></div>';
             ChatRoom.addRobotMsg(robotDom);
-        } else if ((!more) && $('#catch-word').prop('checked') && newContent.indexOf("\"msgType\":\"redPacket\"") == -1 && (newMd.startsWith("鸽 ") || newMd.startsWith("小冰 ") || newMd.startsWith("凌 ") || newMd.startsWith("ida "))) {
+        } else if ((!more) && $('#catch-word').prop('checked') && newContent.indexOf("\"msgType\":\"redPacket\"") == -1 && catchKeys.some(key => newMd.startsWith(key))) {
             let robotDom = '<div class="robot-msg-item"><div class="avatar" style="background-image: url(' + robotAvatar + ')"></div><div class="robot-msg-content"><div class="robot-username"><p>' + userName + '</p></div> ' + newContent + ' <div class="fn__right" style="margin-top: 5px; font-size: 10px;">' + data.time + '</div></div></div>';
             ChatRoom.addRobotMsg(robotDom);
         } else {
@@ -2780,6 +2785,25 @@ ${result.info.msg}
         window.localStorage['robot_list'] = robotList;
         catchUsers = robotList.split(",");
     },
+    /**
+     * 捕获口令被修改时
+     * @param robotList
+     */
+    changeCatchKeys: function (robotList) {
+        if (robotList && robotList.length > 0) {
+            let changeCatch = '<div class="robot-msg-item">' +
+                '<div class="robot-msg-content">当前捕获口令:' + robotList + '</div>' +
+                '</div></div>';
+            $("#robotMsgList").prepend(changeCatch);
+        } else {
+            let changeCatch = '<div class="robot-msg-item">' +
+                '<div class="robot-msg-content">当前不存在需要捕获的口令</div>' +
+                '</div></div>';
+            $("#robotMsgList").prepend(changeCatch);
+        }
+        window.localStorage['robot_list_keys'] = robotList;
+        catchKeys = robotList.split(",");
+    },
 
     /**
      * 初始化用户捕获功能
@@ -2802,26 +2826,24 @@ ${result.info.msg}
         // }
         // 点击事件
         $("#robotBtn").click(function () {
-            $("#robotBox").show(200),
-                $("#robotBtn").hide(200),
-                setTimeout(() => {
-                        // 自动调整css样式，每次打开小窗，都要调整小窗高度，宽度目前固定300px;小窗用户概率性出现遮挡聊天室的情况
-                        $("#robotBox").addClass("robot-active");
-                        $("#robotBox").attr("style", "height:" + (window.innerHeight - 25 - 58) + "px");
-                        $("#robotMsgList").attr("style", "height:" + (window.innerHeight - 85 - 58) + "px");
-                    }
-                    , 220)
+            $("#robotBox").show(200)
+            $("#robotBtn").hide(200)
+            setTimeout(() => {
+                // 自动调整css样式，每次打开小窗，都要调整小窗高度，宽度目前固定300px;小窗用户概率性出现遮挡聊天室的情况
+                $("#robotBox").addClass("robot-active");
+                $("#robotBox").attr("style", "height:" + (window.innerHeight - 25 - 58) + "px");
+                $("#robotMsgList").attr("style", "height:" + (window.innerHeight - 85 - 58) + "px");
+            }, 220)
         })
         $("#robotClose").click(function () {
             var e = $("#robotBox");
+            e.removeClass("robot-active")
+            e.css("height", "")
             setTimeout(() => {
-                    $(".robot-chat-input").val(""),
-                        $("#robotBox").hide(200),
-                        $("#robotBtn").show(200)
-                }
-                , e.hasClass("robot-active") ? 420 : 1),
-                e.removeClass("robot-active")
-            e.css("height", "");
+                $(".robot-chat-input").val("")
+                $("#robotBox").hide(200)
+                $("#robotBtn").show(200)
+            }, 200);
         })
         $("#robotMinimize").click(function () {
             $("#robotBox").toggleClass("robot-active")
@@ -2849,9 +2871,28 @@ ${result.info.msg}
             $("#robot-catch-user").val(window.localStorage['robot_list'] ? window.localStorage['robot_list'] : '');
         })
 
+        $("#changeCatchKeys").click(function () {
+            Util.alert("" +
+                "<div class=\"form fn__flex-column\">\n" +
+                "<label>\n" +
+                "  <div class=\"ft__smaller\" style=\"float: left\">将捕获的口令填写到下方输入框；<br>多个口令的情况用英文逗号隔开。</div>\n" +
+                "  <div class=\"fn-hr5 fn__5\"></div>\n" +
+                "  <input type=\"text\" id=\"robot-catch-keys\">\n" +
+                "</label>\n" +
+                "<div class=\"fn-hr5\"></div>\n" +
+                "<div class=\"fn__flex\" style=\"margin-top: 15px; justify-content: flex-end;\">\n" +
+                "  <button class=\"btn btn--confirm\" onclick='ChatRoom.changeCatchKeys($(\"#robot-catch-keys\").val());Util.closeAlert();'>确认</button>\n" +
+                "</div>\n" +
+                "</div>" +
+                "", "编辑捕获口令列表");
+            $("#robot-catch-keys").val(window.localStorage['robot_list_keys'] ? window.localStorage['robot_list_keys'] : '');
+        })
+
         // 读取浏览器缓存，获取捕获的用户    和是否捕获关键字
-        var robotList = window.localStorage['robot_list'] ? window.localStorage['robot_list'] : '';
+        var robotList = window.localStorage['robot_list'] ?? '';
+        var robotListKeys = window.localStorage['robot_list_keys'] ?? '';
         ChatRoom.changeCatchUser(robotList);
+        ChatRoom.changeCatchKeys(robotListKeys);
         let status = false;
         if (window.localStorage['catch-word-flag'] === 'true') {
             status = true;

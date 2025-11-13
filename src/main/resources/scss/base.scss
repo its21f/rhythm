@@ -2294,11 +2294,12 @@ a[class*=" icon-"]:hover {
       padding: 5px 55px 5px 10px;
       box-sizing: border-box;
     }
-    .robot-change-btn {
+    .robot-change-btn,
+    .robot-keys-btn {
       position: absolute;
       right: 60px;
       top: 3px;
-      width: 100px;
+      width: 80px;
       height: 24px;
       line-height: 24px;
       text-align: center;
@@ -2306,6 +2307,9 @@ a[class*=" icon-"]:hover {
       background-color: #60b044;
       color: #fff;
       border-radius: 2px;
+    }
+    .robot-keys-btn{
+      right: 145px;
     }
   }
 }

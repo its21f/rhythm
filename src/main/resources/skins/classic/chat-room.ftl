@@ -217,7 +217,9 @@
     </div>
 </div>
 <div class="music-list-box"></div>
-<div id="robotBtn" class="robot-btn" style=""><img src="https://file.fishpi.cn/2024/05/chatbot-7857bb0c.gif" class="ice-game-icon" style="border-radius: 50%;" alt=""></div>
+<div id="robotBtn" class="robot-btn" style="">
+    <img src="https://file.fishpi.cn/2024/05/chatbot-7857bb0c.gif" class="ice-game-icon" style="border-radius: 50%;" alt="">
+</div>
 <div id="robotBox" style="display: none;" class="">
     <div class="robot-tool-bar">
         <img src="https://www.iconninja.com/files/400/1008/1019/align-left-icon.png" class="robot-logo" alt="">
@@ -230,8 +232,9 @@
         </div>
     </div>
     <div class="robot-chat-box" style="position: relative; height: 30px">
-        <input id="catch-word" class="robot-catch-input" type="checkbox"> 捕获机器人指令
-        <div id="changeCatchUsers" class="robot-change-btn">修改捕获用户</div>
+        <input id="catch-word" class="robot-catch-input" type="checkbox">捕获
+        <div id="changeCatchKeys" class="robot-keys-btn">修改口令</div>
+        <div id="changeCatchUsers" class="robot-change-btn">修改用户</div>
         <div id="clearRobotMsg" class="robot-clear-btn">清屏</div>
     </div>
     <div id="robotMsgList"></div>
