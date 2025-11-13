@@ -271,7 +271,7 @@
             </div>
         </div>
     </div>
-
+    <#if isLoggedIn>
     <div class="wrapper index-full-size" id="goodNight" style="display: none"></div>
 
     <div class="index-bottom" style="margin-top: 20px">
@@ -300,6 +300,13 @@
                             </p>
                         </a>
                     </div>
+                    <div class="metro-item">
+                        <a class="preview" target="_blank" href="https://market.time-pack.com/">
+                            <img style="border-radius: 0"
+                                 src="https://file.fishpi.cn/2025/11/市场点击-0698aad6.png">
+                            <b>交易市场</b>
+                        </a>
+                    </div>
                     <div class="metro-item" style="cursor: pointer">
                         <a class="preview" id="yesterday" onclick="yesterday()">
                             <img style="border-radius: 0" id="yesterdayImg"
@@ -310,14 +317,7 @@
                         <a class="preview" href="${servePath}/activities">
                             <img style="border-radius: 10px"
                                  src="https://file.fishpi.cn/2021/10/psp-game-1a94ae64.png">
-                            <b>摸鱼派在线游戏</b>
-                        </a>
-                    </div>
-                    <div class="metro-item">
-                        <a class="preview" href="https://market.time-pack.com/">
-                            <img style="border-radius: 0"
-                                 src="https://file.fishpi.cn/2025/05/Shoppingnor-d26831a5.png">
-                            <b>系统商店</b>
+                            <b>在线游戏</b>
                         </a>
                     </div>
                 </div>
@@ -332,7 +332,7 @@
             </div>
         </div>
     </div>
-
+</#if>
 
     <div class="index-bottom" style="padding-top:20px;padding-bottom: 20px;">
         <div class="wrapper">

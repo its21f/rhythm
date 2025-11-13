@@ -88,7 +88,7 @@
     </div>
     <div class="fn-hr10"></div>
 </#if>
-
+<#if isLoggedIn>
 <div class="module_new">
     <h2 class="module__title ft__fade fn__clear">
         <div class="module__title ft__fade fn__clear">
@@ -144,9 +144,9 @@
         <a class="title" href="${servePath}/vips">👑 开通VIP</a>
     </li>
     <li class="menu__item"><a class="title" href="${servePath}/top">🔥 排行榜</a></li>
-    <li class="menu__item"><a class="title" href="https://market.time-pack.com/">🏪 系统商店</a></li>
+    <li class="menu__item"><a class="title" href="https://market.time-pack.com/">🏪 交易市场</a></li>
 </ul>
-
+</#if>
 <#if showSideAd && ADLabel != ''>
 <div class="main">
     <div class="wrapper">
