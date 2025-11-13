@@ -32,6 +32,7 @@ import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.ioc.Singleton;
 import org.b3log.latke.repository.RepositoryException;
 import org.b3log.latke.util.AntPathMatcher;
+import org.b3log.latke.util.Execs;
 import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.URLs;
 import org.b3log.symphony.model.Article;
@@ -170,6 +171,10 @@ public class AnonymousViewCheckMidware {
                         count++;
                         ipVisitCountCache.put(ip, count);
                         System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                        if (count >= 30) {
+                            String result = Execs.exec(new String[]{"sh", "-c", "ipset add fishpi " + ip}, 1000 * 3);
+                            System.out.println(ip + " 已封禁");
+                        }
                         if (count >= 5) {
                             // 进入黑名单
                             ipBlacklistCache.put(ip, true);
@@ -209,6 +214,10 @@ public class AnonymousViewCheckMidware {
                     count++;
                     ipVisitCountCache.put(ip, count);
                     System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                    if (count >= 30) {
+                        String result = Execs.exec(new String[]{"sh", "-c", "ipset add fishpi " + ip}, 1000 * 3);
+                        System.out.println(ip + " 已封禁");
+                    }
                     if (count >= 5) {
                         // 进入黑名单
                         ipBlacklistCache.put(ip, true);
@@ -269,6 +278,10 @@ public class AnonymousViewCheckMidware {
                 count++;
                 ipVisitCountCache.put(ip, count);
                 System.out.println(ip + " 访问计数：" + count + " " + context.requestURI());
+                if (count >= 30) {
+                    String result = Execs.exec(new String[]{"sh", "-c", "ipset add fishpi " + ip}, 1000 * 3);
+                    System.out.println(ip + " 已封禁");
+                }
                 if (count >= 5) {
                     // 进入黑名单
                     ipBlacklistCache.put(ip, true);
