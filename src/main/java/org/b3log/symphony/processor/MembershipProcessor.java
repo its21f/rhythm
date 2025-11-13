@@ -262,15 +262,6 @@ public class MembershipProcessor {
             context.renderJSON(response);
             return;
         }
-        final JSONObject user = getUser(context);
-        if (null == user) {
-            final JSONObject response = new JSONObject();
-            response.put("code", StatusCodes.ERR);
-            response.put("msg", "未登录");
-            response.put("data", new JSONObject());
-            context.renderJSON(response);
-            return;
-        }
         try {
             final org.json.JSONObject status = membershipQueryService.getStatusByUserId(userId);
             final JSONObject response = new JSONObject();
