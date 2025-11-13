@@ -68,7 +68,8 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="hide-list" id="emojiList">
+                                <#-- z-index 130 因为猜拳红包是128 会覆盖表情包 所以这里改成130 oh-yeh！ -->
+                                <div class="hide-list" id="emojiList" style="z-index: 130">
                                     <div class="hide-list-emojis" id="emojis" style="max-height: 200px">
                                     </div>
                                     <div class="hide-list-emojis__tail">
