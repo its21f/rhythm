@@ -52,8 +52,8 @@ public final class Router {
         Dispatcher.webSocket("/user-channel", userChannel);
         final ChatChannel chatChannel = beanManager.getReference(ChatChannel.class);
         Dispatcher.webSocket("/chat-channel", chatChannel);
-        final ShopChannel shopChannel = beanManager.getReference(ShopChannel.class);
-        Dispatcher.webSocket("/shop-channel", shopChannel);
+        //final ShopChannel shopChannel = beanManager.getReference(ShopChannel.class);
+        //Dispatcher.webSocket("/shop-channel", shopChannel);
         final LoginChannel loginChannel = beanManager.getReference(LoginChannel.class);
         Dispatcher.webSocket("/login-channel", loginChannel);
         //final LogsChannel logsChannel = beanManager.getReference(LogsChannel.class);

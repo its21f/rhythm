@@ -85,8 +85,8 @@ public class ShopProcessor {
         final LoginCheckMidware loginCheck = beanManager.getReference(LoginCheckMidware.class);
 
         final ShopProcessor shopProcessor = beanManager.getReference(ShopProcessor.class);
-        Dispatcher.get("/shop", shopProcessor::showShop, loginCheck::handle);
-        Dispatcher.post("/shop", shopProcessor::runCmd, loginCheck::handle);
+        //Dispatcher.get("/shop", shopProcessor::showShop, loginCheck::handle);
+        //Dispatcher.post("/shop", shopProcessor::runCmd, loginCheck::handle);
     }
 
     public void showShop(RequestContext context) {

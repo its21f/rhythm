@@ -144,7 +144,7 @@
         <a class="title" href="${servePath}/vips">👑 开通VIP</a>
     </li>
     <li class="menu__item"><a class="title" href="${servePath}/top">🔥 排行榜</a></li>
-    <li class="menu__item"><a class="title" href="${servePath}/shop">🏪 系统商店</a></li>
+    <li class="menu__item"><a class="title" href="https://market.time-pack.com/">🏪 系统商店</a></li>
 </ul>
 
 <#if showSideAd && ADLabel != ''>

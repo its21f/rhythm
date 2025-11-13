@@ -314,7 +314,7 @@
                         </a>
                     </div>
                     <div class="metro-item">
-                        <a class="preview" href="${servePath}/shop">
+                        <a class="preview" href="https://market.time-pack.com/">
                             <img style="border-radius: 0"
                                  src="https://file.fishpi.cn/2025/05/Shoppingnor-d26831a5.png">
                             <b>系统商店</b>
