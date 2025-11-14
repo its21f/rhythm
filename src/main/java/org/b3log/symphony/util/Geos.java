@@ -210,8 +210,8 @@ public final class Geos {
         }
 
         result.put("country", country);
-        result.put("province", province);
-        result.put("city", city);
+        result.put("province", back_province);
+        result.put("city", province);
 
         LOGGER.log(Level.INFO, "Geolocated by API [ip=" + ip + ", " + result + "]");
 
