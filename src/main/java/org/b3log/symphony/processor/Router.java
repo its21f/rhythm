@@ -136,13 +136,13 @@ public final class Router {
 
         // 搜索
         final SearchProcessor searchProcessor = beanManager.getReference(SearchProcessor.class);
-        Dispatcher.get("/search", searchProcessor::search);
+        Dispatcher.get("/search", searchProcessor::search, loginCheck::handle);
         // Sitemap
         final SitemapProcessor sitemapProcessor = beanManager.getReference(SitemapProcessor.class);
         Dispatcher.get("/sitemap.xml", sitemapProcessor::sitemap);
         // 统计
         final StatisticProcessor statisticProcessor = beanManager.getReference(StatisticProcessor.class);
-        Dispatcher.get("/statistic", statisticProcessor::showStatistic, anonymousViewCheckMidware::handle);
+        Dispatcher.get("/statistic", statisticProcessor::showStatistic, loginCheck::handle);
         // 跳转页
         //final ForwardProcessor forwardProcessor = beanManager.getReference(ForwardProcessor.class);
         //Dispatcher.get("/forward", forwardProcessor::showForward);
@@ -160,7 +160,7 @@ public final class Router {
         Dispatcher.get("/city/{city}/users", cityProcessor::showCityUsers, loginCheck::handle);
         // 假期
         final Vocation vocation = beanManager.getReference(Vocation.class);
-        Dispatcher.get("/api/vocation", vocation::vocation);
+        Dispatcher.get("/api/vocation", vocation::vocation, loginCheck::handle);
         // 举报
         final ReportProcessor reportProcessor = beanManager.getReference(ReportProcessor.class);
         Dispatcher.post("/report", reportProcessor::report, loginCheck::handle);
