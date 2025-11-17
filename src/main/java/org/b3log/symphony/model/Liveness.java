@@ -116,8 +116,8 @@ public final class Liveness {
             comment = 5;
         }
         int pv = liveness.optInt(Liveness.LIVENESS_PV);
-        if (pv > 20) {
-            pv = 20;
+        if (pv > 5) {
+            pv = 5;
         }
         final int reward = liveness.optInt(Liveness.LIVENESS_REWARD);
         final int thank = liveness.optInt(Liveness.LIVENESS_THANK);
