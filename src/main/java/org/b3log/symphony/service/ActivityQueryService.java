@@ -310,7 +310,7 @@ public class ActivityQueryService {
     public synchronized boolean isCollectedYesterdayLivenessReward(final String userId) {
         final Date now = new Date();
 
-        final List<JSONObject> records = pointtransferQueryService.getLatestPointtransfers(userId,
+        final List<JSONObject> records = pointtransferQueryService.getYesterdayPointtrasfers(userId,
                 Pointtransfer.TRANSFER_TYPE_C_ACTIVITY_YESTERDAY_LIVENESS_REWARD, 1);
         if (records.isEmpty()) {
             return false;

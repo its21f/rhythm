@@ -30,6 +30,7 @@ import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.annotation.Service;
 import org.b3log.symphony.model.*;
 import org.b3log.symphony.repository.*;
+import org.b3log.symphony.util.DateUtils;
 import org.b3log.symphony.util.Emotions;
 import org.b3log.symphony.util.Escapes;
 import org.b3log.symphony.util.Symphonys;
@@ -115,6 +116,41 @@ public class PointtransferQueryService {
         final List<Filter> filters = new ArrayList<>();
         filters.add(new CompositeFilter(CompositeFilterOperator.OR, userFilters));
         filters.add(new PropertyFilter(Pointtransfer.TYPE, FilterOperator.EQUAL, type));
+        final Query query = new Query().addSort(Keys.OBJECT_ID, SortDirection.DESCENDING).
+                setPage(1, fetchSize).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
+        try {
+            return pointtransferRepository.getList(query);
+        } catch (final RepositoryException e) {
+            LOGGER.log(Level.ERROR, "Gets latest pointtransfers failed", e);
+        }
+        return ret;
+    }
+
+    /**
+     * Gets the yesterday pointtransfers with the specified user id, type and fetch size.
+     *
+     * @param userId    the specified user id
+     * @param type      the specified type
+     * @param fetchSize the specified fetch size
+     * @return pointtransfers, returns an empty list if not found
+     */
+    public List<JSONObject> getYesterdayPointtrasfers(final String userId, final int type, final int fetchSize) {
+        final List<JSONObject> ret = new ArrayList<>();
+
+        long yesterdayStart = DateUtils.getYesterdayStartMillis();
+        long yesterdayEnd = DateUtils.getYesterdayEndMillis();
+
+        final List<Filter> userFilters = new ArrayList<>();
+        userFilters.add(new PropertyFilter(Pointtransfer.FROM_ID, FilterOperator.EQUAL, userId));
+        userFilters.add(new PropertyFilter(Pointtransfer.TO_ID, FilterOperator.EQUAL, userId));
+
+        final List<Filter> filters = new ArrayList<>();
+        filters.add(new CompositeFilter(CompositeFilterOperator.OR, userFilters));
+        filters.add(new PropertyFilter(Pointtransfer.TYPE, FilterOperator.EQUAL, type));
+        filters.add(new PropertyFilter(Pointtransfer.TIME, FilterOperator.GREATER_THAN_OR_EQUAL, yesterdayStart));
+        filters.add(new PropertyFilter(Pointtransfer.TIME, FilterOperator.LESS_THAN_OR_EQUAL, yesterdayEnd));
+        System.out.println("yesterdayStart: " + yesterdayStart);
+        System.out.println("yesterdayEnd: " + yesterdayEnd);
         final Query query = new Query().addSort(Keys.OBJECT_ID, SortDirection.DESCENDING).
                 setPage(1, fetchSize).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
         try {

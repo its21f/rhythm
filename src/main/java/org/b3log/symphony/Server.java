@@ -68,12 +68,12 @@ public final class Server extends BaseServer {
     /**
      * Symphony version.
      */
-    public static final String VERSION = "3.6.2";
+    public static final String VERSION = "3.6.3";
 
     /**
      * Fishing Pi version.
      */
-    public static final String FISHING_PI_VERSION = "0.1.4";
+    public static final String FISHING_PI_VERSION = "1.0.0";
 
     /**
      * Main.
