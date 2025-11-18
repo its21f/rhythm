@@ -315,7 +315,12 @@ public class ChatProcessor {
         for (JSONObject listItem : infoList) {
             String sessionId = listItem.optString("sessionId");
             String[] ids = sessionId.split("_");
-            final String otherId = Arrays.stream(ids).filter(id -> !id.equals(userId)).findAny().get();
+            final Optional<String> otherIdOpt = Arrays.stream(ids).filter(id -> !id.equals(userId)).findAny();
+            if (!otherIdOpt.isPresent()) {
+                LOGGER.warn("sessionId [{}] does not contain other user id, userId [{}]", sessionId, userId);
+                continue;
+            }
+            final String otherId = otherIdOpt.get();
             JSONObject otherUser = userQueryService.getUser(otherId);
             if (otherUser == null) {
                 continue;
