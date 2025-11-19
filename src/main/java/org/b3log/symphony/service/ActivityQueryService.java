@@ -311,7 +311,7 @@ public class ActivityQueryService {
         final Date now = new Date();
 
         final List<JSONObject> records = pointtransferQueryService.getYesterdayPointtrasfers(userId,
-                Pointtransfer.TRANSFER_TYPE_C_ACTIVITY_YESTERDAY_LIVENESS_REWARD, 1);
+                Pointtransfer.TRANSFER_TYPE_C_ACTIVITY_YESTERDAY_LIVENESS_REWARD, 1, true);
         if (records.isEmpty()) {
             return false;
         }

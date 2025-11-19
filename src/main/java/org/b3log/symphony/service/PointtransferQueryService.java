@@ -134,23 +134,22 @@ public class PointtransferQueryService {
      * @param fetchSize the specified fetch size
      * @return pointtransfers, returns an empty list if not found
      */
-    public List<JSONObject> getYesterdayPointtrasfers(final String userId, final int type, final int fetchSize) {
+    public List<JSONObject> getYesterdayPointtrasfers(final String userId, final int type, final int fetchSize, boolean isToId) {
         final List<JSONObject> ret = new ArrayList<>();
 
-        long yesterdayStart = DateUtils.getYesterdayStartMillis();
-        long yesterdayEnd = DateUtils.getYesterdayEndMillis();
-
-        final List<Filter> userFilters = new ArrayList<>();
-        userFilters.add(new PropertyFilter(Pointtransfer.FROM_ID, FilterOperator.EQUAL, userId));
-        userFilters.add(new PropertyFilter(Pointtransfer.TO_ID, FilterOperator.EQUAL, userId));
+        long todayStart = DateUtils.getTodayStartMillis();
+        long todayEnd = DateUtils.getTodayEndMillis();
 
         final List<Filter> filters = new ArrayList<>();
-        filters.add(new CompositeFilter(CompositeFilterOperator.OR, userFilters));
+        if (isToId) {
+            filters.add(new PropertyFilter(Pointtransfer.TO_ID, FilterOperator.EQUAL, userId));
+        } else {
+            filters.add(new PropertyFilter(Pointtransfer.FROM_ID, FilterOperator.EQUAL, userId));
+        }
+
         filters.add(new PropertyFilter(Pointtransfer.TYPE, FilterOperator.EQUAL, type));
-        filters.add(new PropertyFilter(Pointtransfer.TIME, FilterOperator.GREATER_THAN_OR_EQUAL, yesterdayStart));
-        filters.add(new PropertyFilter(Pointtransfer.TIME, FilterOperator.LESS_THAN_OR_EQUAL, yesterdayEnd));
-        System.out.println("yesterdayStart: " + yesterdayStart);
-        System.out.println("yesterdayEnd: " + yesterdayEnd);
+        filters.add(new PropertyFilter(Pointtransfer.TIME, FilterOperator.GREATER_THAN_OR_EQUAL, todayStart));
+        filters.add(new PropertyFilter(Pointtransfer.TIME, FilterOperator.LESS_THAN_OR_EQUAL, todayEnd));
         final Query query = new Query().addSort(Keys.OBJECT_ID, SortDirection.DESCENDING).
                 setPage(1, fetchSize).setFilter(new CompositeFilter(CompositeFilterOperator.AND, filters));
         try {
